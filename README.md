@@ -1,0 +1,3 @@
+Your rude personal ASSistant:)
+Python version using pocketsphix.
+Work in progress...
