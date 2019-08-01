@@ -5,6 +5,23 @@ import subprocess
 import time
 import string
 
+def main():
+    exe = '''pocketsphinx_continuous -adcdev plughw:1,0  -lm ./resources/bender.lm -dict ./resources/bender.dic''' + \
+          ''' -jsgf ./resources/bender.gram -dictcase yes -inmic yes'''
+    # '''./resources/bender.gram -dictcase yes -inmic yes -logfn /dev/null'''
+    p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
+
+    while True:
+        retcode = p.returncode
+        line = p.stdout.readline()
+        print ("utterance = " + line)
+        command = parse_utterance(string.lower(line))
+        print ("command = " + command)
+        time.sleep(0.15)
+        if (retcode is not None):
+            break
+
+
 def parse_utterance(utt):
     if 'shutdown' in utt:
         command = 'shutdown'
@@ -34,18 +51,6 @@ def parse_utterance(utt):
         command = 'unrecognized'
     return command
 
-exe = '''pocketsphinx_continuous -adcdev plughw:1,0  -lm ./resources/bender.lm -dict ./resources/bender.dic''' + \
-    ''' -jsgf ./resources/bender.gram -dictcase yes -inmic yes'''
-        #'''./resources/bender.gram -dictcase yes -inmic yes -logfn /dev/null'''
-p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
+main()
 
-while True:
-    retcode = p.returncode
-    line = p.stdout.readline()
-    print ("utterance = " + line)
-    command = parse_utterance(string.lower(line))
-    print ("command = " + command)
-    time.sleep(0.15)
-    if (retcode is not None):
-        break
 

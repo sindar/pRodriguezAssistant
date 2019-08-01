@@ -125,6 +125,7 @@ dmypy.json
 
 # audio files
 audio/
+audio
 *.wav
 
 # content below from: https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
