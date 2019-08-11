@@ -1,0 +1,137 @@
+Language model created by QuickLM on Sun Aug 11 14:17:59 EDT 2019
+Copyright (c) 1996-2010 Carnegie Mellon University and Alexander I. Rudnicky
+
+The model is in standard ARPA format, designed by Doug Paul while he was at MITRE.
+
+The code that was used to produce this language model is available in Open Source.
+Please visit http://www.speech.cs.cmu.edu/tools/ for more information
+
+The (fixed) discount mass is 0.5. The backoffs are computed using the ratio method.
+This model based on a corpus of 29 sentences and 30 words
+
+\data\
+ngram 1=30
+ngram 2=56
+ngram 3=28
+
+\1-grams:
+-0.7782 </s> -0.3010
+-0.7782 <s> -0.2218
+-2.2405 A -0.2218
+-2.2405 ANIMAL -0.2218
+-2.2405 ARE -0.2218
+-2.2405 BIRTH -0.2218
+-2.2405 BIRTHDATE -0.2218
+-2.2405 BORN -0.2218
+-2.2405 BYE -0.2218
+-2.2405 DATE -0.2218
+-2.2405 FAVORITE -0.2218
+-2.2405 FROM -0.2218
+-2.2405 GOOD -0.2218
+-2.2405 GREAT -0.2218
+-2.2405 HOW -0.2218
+-2.2405 IS -0.2218
+-2.2405 MAGNET -0.2218
+-2.2405 NEW -0.2218
+-2.2405 OF -0.2218
+-2.2405 SING -0.2218
+-2.2405 SONG -0.2218
+-2.2405 STOP -0.2218
+-2.2405 SWEATER -0.2218
+-2.2405 WERE -0.2218
+-2.2405 WHAT -0.2218
+-2.2405 WHEN -0.2218
+-2.2405 WHERE -0.2218
+-2.2405 WHO -0.2218
+-2.2405 YOU -0.2218
+-1.9395 YOUR -0.2218
+
+\2-grams:
+-1.7634 <s> A 0.0000
+-1.7634 <s> ANIMAL 0.0000
+-1.7634 <s> ARE 0.0000
+-1.7634 <s> BIRTH 0.0000
+-1.7634 <s> BIRTHDATE 0.0000
+-1.7634 <s> BORN 0.0000
+-1.7634 <s> BYE 0.0000
+-1.7634 <s> DATE 0.0000
+-1.7634 <s> FAVORITE 0.0000
+-1.7634 <s> FROM 0.0000
+-1.7634 <s> GOOD 0.0000
+-1.7634 <s> GREAT 0.0000
+-1.7634 <s> HOW 0.0000
+-1.7634 <s> IS 0.0000
+-1.7634 <s> MAGNET 0.0000
+-1.7634 <s> NEW 0.0000
+-1.7634 <s> OF 0.0000
+-1.7634 <s> SING 0.0000
+-1.7634 <s> SONG 0.0000
+-1.7634 <s> STOP 0.0000
+-1.7634 <s> SWEATER 0.0000
+-1.7634 <s> WERE 0.0000
+-1.7634 <s> WHAT 0.0000
+-1.7634 <s> WHEN 0.0000
+-1.7634 <s> WHERE 0.0000
+-1.7634 <s> WHO 0.0000
+-1.7634 <s> YOU 0.0000
+-1.4624 <s> YOUR 0.0000
+-0.3010 A </s> -0.3010
+-0.3010 ANIMAL </s> -0.3010
+-0.3010 ARE </s> -0.3010
+-0.3010 BIRTH </s> -0.3010
+-0.3010 BIRTHDATE </s> -0.3010
+-0.3010 BORN </s> -0.3010
+-0.3010 BYE </s> -0.3010
+-0.3010 DATE </s> -0.3010
+-0.3010 FAVORITE </s> -0.3010
+-0.3010 FROM </s> -0.3010
+-0.3010 GOOD </s> -0.3010
+-0.3010 GREAT </s> -0.3010
+-0.3010 HOW </s> -0.3010
+-0.3010 IS </s> -0.3010
+-0.3010 MAGNET </s> -0.3010
+-0.3010 NEW </s> -0.3010
+-0.3010 OF </s> -0.3010
+-0.3010 SING </s> -0.3010
+-0.3010 SONG </s> -0.3010
+-0.3010 STOP </s> -0.3010
+-0.3010 SWEATER </s> -0.3010
+-0.3010 WERE </s> -0.3010
+-0.3010 WHAT </s> -0.3010
+-0.3010 WHEN </s> -0.3010
+-0.3010 WHERE </s> -0.3010
+-0.3010 WHO </s> -0.3010
+-0.3010 YOU </s> -0.3010
+-0.3010 YOUR </s> -0.3010
+
+\3-grams:
+-0.3010 <s> A </s>
+-0.3010 <s> ANIMAL </s>
+-0.3010 <s> ARE </s>
+-0.3010 <s> BIRTH </s>
+-0.3010 <s> BIRTHDATE </s>
+-0.3010 <s> BORN </s>
+-0.3010 <s> BYE </s>
+-0.3010 <s> DATE </s>
+-0.3010 <s> FAVORITE </s>
+-0.3010 <s> FROM </s>
+-0.3010 <s> GOOD </s>
+-0.3010 <s> GREAT </s>
+-0.3010 <s> HOW </s>
+-0.3010 <s> IS </s>
+-0.3010 <s> MAGNET </s>
+-0.3010 <s> NEW </s>
+-0.3010 <s> OF </s>
+-0.3010 <s> SING </s>
+-0.3010 <s> SONG </s>
+-0.3010 <s> STOP </s>
+-0.3010 <s> SWEATER </s>
+-0.3010 <s> WERE </s>
+-0.3010 <s> WHAT </s>
+-0.3010 <s> WHEN </s>
+-0.3010 <s> WHERE </s>
+-0.3010 <s> WHO </s>
+-0.3010 <s> YOU </s>
+-0.3010 <s> YOUR </s>
+
+\end\

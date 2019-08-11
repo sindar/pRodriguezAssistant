@@ -1,0 +1,117 @@
+Language model created by QuickLM on Sun Aug 11 14:33:55 EDT 2019
+Copyright (c) 1996-2010 Carnegie Mellon University and Alexander I. Rudnicky
+
+The model is in standard ARPA format, designed by Doug Paul while he was at MITRE.
+
+The code that was used to produce this language model is available in Open Source.
+Please visit http://www.speech.cs.cmu.edu/tools/ for more information
+
+The (fixed) discount mass is 0.5. The backoffs are computed using the ratio method.
+This model based on a corpus of 23 sentences and 25 words
+
+\data\
+ngram 1=25
+ngram 2=46
+ngram 3=23
+
+\1-grams:
+-0.7782 </s> -0.3010
+-0.7782 <s> -0.2218
+-2.1399 DISABLE -0.2218
+-2.1399 EIGHT -0.2218
+-2.1399 ENABLE -0.2218
+-2.1399 EXIT -0.2218
+-2.1399 FIVE -0.2218
+-2.1399 FOUR -0.2218
+-2.1399 MAGNET -0.2218
+-2.1399 NINE -0.2218
+-2.1399 OH -0.2218
+-2.1399 ONE -0.2218
+-2.1399 PROGRAM -0.2218
+-2.1399 QUIT -0.2218
+-2.1399 SET -0.2218
+-2.1399 SEVEN -0.2218
+-2.1399 SHUTDOWN -0.2218
+-2.1399 SIX -0.2218
+-2.1399 SLEEP -0.2218
+-2.1399 SLEEPING -0.2218
+-2.1399 THE -0.2218
+-2.1399 THREE -0.2218
+-2.1399 TO -0.2218
+-2.1399 TWO -0.2218
+-2.1399 ZERO -0.2218
+
+\2-grams:
+-1.6628 <s> DISABLE 0.0000
+-1.6628 <s> EIGHT 0.0000
+-1.6628 <s> ENABLE 0.0000
+-1.6628 <s> EXIT 0.0000
+-1.6628 <s> FIVE 0.0000
+-1.6628 <s> FOUR 0.0000
+-1.6628 <s> MAGNET 0.0000
+-1.6628 <s> NINE 0.0000
+-1.6628 <s> OH 0.0000
+-1.6628 <s> ONE 0.0000
+-1.6628 <s> PROGRAM 0.0000
+-1.6628 <s> QUIT 0.0000
+-1.6628 <s> SET 0.0000
+-1.6628 <s> SEVEN 0.0000
+-1.6628 <s> SHUTDOWN 0.0000
+-1.6628 <s> SIX 0.0000
+-1.6628 <s> SLEEP 0.0000
+-1.6628 <s> SLEEPING 0.0000
+-1.6628 <s> THE 0.0000
+-1.6628 <s> THREE 0.0000
+-1.6628 <s> TO 0.0000
+-1.6628 <s> TWO 0.0000
+-1.6628 <s> ZERO 0.0000
+-0.3010 DISABLE </s> -0.3010
+-0.3010 EIGHT </s> -0.3010
+-0.3010 ENABLE </s> -0.3010
+-0.3010 EXIT </s> -0.3010
+-0.3010 FIVE </s> -0.3010
+-0.3010 FOUR </s> -0.3010
+-0.3010 MAGNET </s> -0.3010
+-0.3010 NINE </s> -0.3010
+-0.3010 OH </s> -0.3010
+-0.3010 ONE </s> -0.3010
+-0.3010 PROGRAM </s> -0.3010
+-0.3010 QUIT </s> -0.3010
+-0.3010 SET </s> -0.3010
+-0.3010 SEVEN </s> -0.3010
+-0.3010 SHUTDOWN </s> -0.3010
+-0.3010 SIX </s> -0.3010
+-0.3010 SLEEP </s> -0.3010
+-0.3010 SLEEPING </s> -0.3010
+-0.3010 THE </s> -0.3010
+-0.3010 THREE </s> -0.3010
+-0.3010 TO </s> -0.3010
+-0.3010 TWO </s> -0.3010
+-0.3010 ZERO </s> -0.3010
+
+\3-grams:
+-0.3010 <s> DISABLE </s>
+-0.3010 <s> EIGHT </s>
+-0.3010 <s> ENABLE </s>
+-0.3010 <s> EXIT </s>
+-0.3010 <s> FIVE </s>
+-0.3010 <s> FOUR </s>
+-0.3010 <s> MAGNET </s>
+-0.3010 <s> NINE </s>
+-0.3010 <s> OH </s>
+-0.3010 <s> ONE </s>
+-0.3010 <s> PROGRAM </s>
+-0.3010 <s> QUIT </s>
+-0.3010 <s> SET </s>
+-0.3010 <s> SEVEN </s>
+-0.3010 <s> SHUTDOWN </s>
+-0.3010 <s> SIX </s>
+-0.3010 <s> SLEEP </s>
+-0.3010 <s> SLEEPING </s>
+-0.3010 <s> THE </s>
+-0.3010 <s> THREE </s>
+-0.3010 <s> TO </s>
+-0.3010 <s> TWO </s>
+-0.3010 <s> ZERO </s>
+
+\end\
