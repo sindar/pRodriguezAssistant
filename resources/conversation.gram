@@ -1,0 +1,22 @@
+#JSGF V1.0;
+
+grammar questions;
+
+<sing_request> = sing [a] song;
+
+<birthplace_question> = where (are you from | were you born);
+<birthdate_question> = when were you born | date of your birth;
+<favorite_animal_question> = [what[s] [is]] your favorite animal;
+<who_are_you_question> = who are you;
+<how_are_you_question> = how are you;
+
+public <misc_phrases> = magnet | [a] [great] new sweater;
+
+public <requests> = <sing_request>;
+
+public <common_questions> = <birthplace_question> | <birthdate_question>
+                            | <favorite_animal_question>
+                            | <who_are_you_question> | <how_are_you_question>;
+
+public <stop_phrase> = stop | [good] bye;
+

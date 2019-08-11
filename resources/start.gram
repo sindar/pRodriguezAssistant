@@ -1,0 +1,4 @@
+#JSGF V1.0;
+
+grammar start;
+public <start_command> = (hey | hi | hello) bender;
