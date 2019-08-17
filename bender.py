@@ -5,6 +5,8 @@ import subprocess
 import time
 import string
 
+fsmState = 0
+
 audio_files = {}
 audio_files['shutdown'] = 'with_bjah'
 audio_files['start'] = 'lets_get_drunk'
@@ -30,24 +32,51 @@ audio_files['how are you'] = 'right_now_i_feel_sorry_for_you'
 audio_files['unrecognized'] = 'beat_children'
 audio_files['no audio'] = 'silence'
 
+class PsLiveRecognizer:
+    def __init__(self, resources_dir, parameter_set):
+        self.resources_dir = resources_dir
+        self.parameter_set = parameter_set
+        self.generatePsCmdLine()
+
+    def generatePsCmdLine(self):
+        self.cmd_line = '''pocketsphinx_continuous -adcdev plughw:1,0''' \
+                        + ' -lm ' + self.resources_dir + self.parameter_set + '.lm' \
+                        + ' -dict ' + self.resources_dir + self.parameter_set + '.dic' \
+                        + ' -jsgf ' + self.resources_dir + self.parameter_set + '.gram' \
+                        + ' -dictcase yes -inmic yes '
+                        # + '-logfn /dev/null'
 
 def main():
-    exe = '''pocketsphinx_continuous -adcdev plughw:1,0  -lm ./resources/bender.lm -dict ./resources/bender.dic''' + \
-          ''' -jsgf ./resources/bender.gram -dictcase yes -inmic yes'''
-    # '''./resources/bender.gram -dictcase yes -inmic yes -logfn /dev/null'''
-    p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
+    fsmState = 0
+    while True:
+        if (fsmState == 0):
+            start_mode()
+        elif (fsmState == 1):
+            fsmState = 0
+        else:
+            fsmState = 0
+
+def start_mode():
+    ps = PsLiveRecognizer('./resources/', 'start')
+    p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
 
     while True:
         retcode = p.returncode
         line = p.stdout.readline()
-        print("utterance = " + line)
+        print('utterance = ' + line)
         command = parse_utterance(string.lower(line))
-        print("command = " + command)
-        play_answer(command)
+        print('command = ' + command)
+        if ('hey bender' in command):
+            play_answer(command)
+            fsmState = 1
+            break
         time.sleep(0.15)
         if (retcode is not None):
             break
 
+    exe = 'killall pocketsphinx_continuous'
+    p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
+    code = p.wait()
 
 def parse_utterance(utt):
     current_milli_time = int(round(time.time() * 1000))
@@ -84,6 +113,7 @@ def play_answer(command):
     if answer != None:
         exe = 'aplay ' + './audio/' + answer + '.wav'
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
+        code = p.wait()
     else:
         print('No answer to this question!')
 
