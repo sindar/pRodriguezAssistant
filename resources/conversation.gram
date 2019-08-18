@@ -3,6 +3,7 @@
 grammar questions;
 
 <sing_request> = sing [a] song;
+<configure_request> = configure | configuration;
 
 <birthplace_question> = where (are you from | were you born);
 <birthdate_question> = when were you born | date of your birth;

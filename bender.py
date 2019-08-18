@@ -29,6 +29,7 @@ audio_files['enable'] = 'can_do'
 audio_files['disable'] = 'can_do'
 audio_files['set'] = 'can_do'
 audio_files['how are you'] = 'right_now_i_feel_sorry_for_you'
+audio_files['configuration'] = 'can_do'
 audio_files['unrecognized'] = 'beat_children'
 audio_files['no audio'] = 'silence'
 
@@ -53,6 +54,8 @@ def main():
             start_mode()
         elif (fsmState == 1):
             conversation_mode()
+        elif (fsmState ==2):
+            configuration_mode()
         else:
             fsmState = 0
 
@@ -118,11 +121,49 @@ def conversation_mode():
             command = 'sweater'
         elif ('wake up' in utt) or ('awake' in utt):
             command = 'wake up'
+        elif ('configuration' in utt) or ('configure' in utt):
+            command = 'configuration'
+            fsmState = 2
         else:
             command = 'unrecognized'
         play_answer(command)
         time.sleep(0.15)
         if (retcode is not None) or (fsmState != 1):
+            break
+    kill_pocketsphinx()
+
+def configuration_mode():
+    global fsmState
+    ps = PsLiveRecognizer('./resources/', 'configuration')
+    p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
+
+    print(["%s" % ps.cmd_line])
+
+    while True:
+        print('Configuration mode:')
+        current_milli_time = int(round(time.time() * 1000))
+        retcode = p.returncode
+        utt = p.stdout.readline().lower()
+        print('utterance = ' + utt)
+
+        if ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
+            command = 'exit'
+            fsmState = 0
+        elif ('set' in utt):
+            command = 'set'
+            #TODO: implement set logic
+        elif('enable' in utt):
+            command = 'enable'
+            #TODO: implement enable logic
+        elif('disable' in utt):
+            command = 'disable'
+            #TODO: implement disable logic
+        else:
+            command = 'unrecognized'
+
+        play_answer(command)
+        time.sleep(0.15)
+        if (retcode is not None) or (fsmState != 2):
             break
     kill_pocketsphinx()
 
