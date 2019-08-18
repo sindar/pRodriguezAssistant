@@ -6,7 +6,7 @@ grammar questions;
 
 <birthplace_question> = where (are you from | were you born);
 <birthdate_question> = when were you born | date of your birth;
-<favorite_animal_question> = [what[s] [is]] your favorite animal;
+<favorite_animal_question> = [what [is]] your favorite animal;
 <who_are_you_question> = who are you;
 <how_are_you_question> = how are you;
 
