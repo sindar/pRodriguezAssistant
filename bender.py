@@ -43,9 +43,9 @@ class PsLiveRecognizer:
         self.cmd_line = '''pocketsphinx_continuous -adcdev plughw:1,0''' \
                         + ' -lm ' + self.resources_dir + self.parameter_set + '.lm' \
                         + ' -dict ' + self.resources_dir + self.parameter_set + '.dic' \
-                        + ' -jsgf ' + self.resources_dir + self.parameter_set + '.gram' \
                         + ' -dictcase yes -inmic yes ' \
-                        + '-logfn /dev/null'
+                        + '-logfn /dev/null' \
+                        + ' -jsgf ' + self.resources_dir + self.parameter_set + '.gram' \
 
 def main():
     global fsmState
