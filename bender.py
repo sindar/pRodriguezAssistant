@@ -33,22 +33,67 @@ audio_files['configuration'] = 'can_do'
 audio_files['unrecognized'] = 'beat_children'
 audio_files['no audio'] = 'silence'
 
+tr_start_ru_en  = {
+    u'привет бендер': 'hi bender',
+    u'эй бендер': 'hi bender',
+}
+
+tr_conversation_ru_en = {
+    u'спой песню': 'sing song',
+    u'конфигурация': 'configure',
+    u'откуда ты': 'where are you from',
+    u'где ты родился': 'where were you born',
+    u'когда ты родился': 'when were you born',
+    u'дата рождения': 'when were you born',
+    u'какое твоё любимое животное': 'your favorite animal',
+    u'какой твой любимый зверь': 'your favorite animal',
+    u'кто ты': 'who are you',
+    u'как ты': 'how are you',
+    u'как поживаешь': 'how are you',
+    u'магнит': 'magnet',
+    u'хороший новый свитер': 'new sweater',
+    u'стоп': 'stop',
+    u'пока': 'stop'
+}
+
+tr_configuration_ru_en = {
+    u'сон': 'sleep',
+    u'засыпание': 'sleep',
+    u'выключение': 'shutdown',
+    u'выход': 'exit',
+    u'закрой': 'exit',
+    u'включи': 'enable',
+    u'выключи': 'disable',
+    u'в': 'to',
+    u'магнит': 'magnet'
+}
+
 class PsLiveRecognizer:
+    lang = 'ru'
     def __init__(self, resources_dir, parameter_set):
         self.resources_dir = resources_dir
         self.parameter_set = parameter_set
         self.generatePsCmdLine()
 
     def generatePsCmdLine(self):
-        self.cmd_line = '''pocketsphinx_continuous -adcdev plughw:1,0''' \
+        if self.lang == 'en':
+            self.cmd_line = '''pocketsphinx_continuous -adcdev plughw:1,0''' \
                         + ' -lm ' + self.resources_dir + self.parameter_set + '.lm' \
                         + ' -dict ' + self.resources_dir + self.parameter_set + '.dic' \
                         + ' -dictcase yes -inmic yes ' \
-                        + '-logfn /dev/null' \
-                        + ' -jsgf ' + self.resources_dir + self.parameter_set + '.gram' \
+                        + ' -logfn /dev/null ' \
+                        + ' -jsgf ' + self.resources_dir + self.parameter_set + '.gram'
+        else:
+            self.cmd_line = '''pocketsphinx_continuous -adcdev plughw:1,0''' \
+                            + ' -hmm /home/sindar/zero_ru_cont_8k_v3/zero_ru.cd_semi_4000/ ' \
+                            + ' -dict ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.dic' \
+                            + ' -dictcase yes -inmic yes ' \
+                            + ' -logfn /dev/null ' \
+                            + ' -jsgf ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.gram'
 
 def main():
     global fsmState
+    kill_pocketsphinx()
     while True:
         if (fsmState == 0):
             start_mode()
@@ -70,8 +115,15 @@ def start_mode():
         print('Start mode:')
         current_milli_time = int(round(time.time() * 1000))
         retcode = p.returncode
-        utt = p.stdout.readline().lower()
+        utt = p.stdout.readline().decode('utf8').rstrip().lower()
         print('utterance = ' + utt)
+
+        if PsLiveRecognizer.lang == 'ru':
+            try:
+                utt = tr_start_ru_en[utt]
+            except KeyError as e:
+                raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
+
         if ('bender' in utt) and (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
             command = 'hey bender ' + str(current_milli_time % 3)
             play_answer(command)
@@ -92,8 +144,14 @@ def conversation_mode():
         print ('Conversation mode:')
         current_milli_time = int(round(time.time() * 1000))
         retcode = p.returncode
-        utt = p.stdout.readline().lower()
+        utt = p.stdout.readline().decode('utf8').rstrip().lower()
         print('utterance = ' + utt)
+
+        if PsLiveRecognizer.lang == 'ru':
+            try:
+                utt = tr_conversation_ru_en[utt]
+            except KeyError as e:
+                raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
         if 'shutdown' in utt:
             command = 'shutdown'
@@ -143,8 +201,14 @@ def configuration_mode():
         print('Configuration mode:')
         current_milli_time = int(round(time.time() * 1000))
         retcode = p.returncode
-        utt = p.stdout.readline().lower()
+        utt = p.stdout.readline().decode('utf8').rstrip().lower()
         print('utterance = ' + utt)
+
+        if PsLiveRecognizer.lang == 'ru':
+            try:
+                utt = tr_configuration_ru_en[utt]
+            except KeyError as e:
+                raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
         if ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
             command = 'exit'

@@ -16,14 +16,14 @@ grammar bender;
 
 <number> = <digit>+ [point <digit>+];
 
-<parameters> = sleep | sleeping;
+<parameters> = (sleep) | (sleeping);
 
-<shutdown_command> = shutdown;
-<exit_command> = exit [[the] program] | quit [[the] program];
+<shutdown_command> = (shutdown);
+<exit_command> = (exit) [[the] program] | (quit) [[the] program];
 <enable_disable_command> = (enable | disable) [<parameters>];
-<set_command> = set [<parameters>] [to] [<number>];
+<set_command> = (set) [<parameters>] [to] [<number>];
 
-public <misc_phrases> = magnet;
+public <misc_phrases> = (magnet);
 
 public <command> = <exit_command> | <shutdown_command>
                     | <enable_disable_command> | <set_command>
