@@ -1,0 +1,29 @@
+#JSGF V1.0;
+
+grammar bender;
+
+<digit> = ноль   |
+          один   |
+          два    |
+          три    |
+          четыре |
+          пять   |
+          шесть  |
+          семь   |
+          восемь |
+          девять ;
+
+<number> = <digit>+ [точка | запятая <digit>+];
+
+<parameters> = (сон) | (засыпание);
+
+<shutdown_command> = (выключение);
+<exit_command> = (выход | закрой);
+<enable_disable_command> = (включи | выключи) [<parameters>];
+<set_command> = set [<parameters>] [в] [<number>];
+
+public <misc_phrases> = (магнит);
+
+public <command> = <exit_command> | <shutdown_command>
+                    | <enable_disable_command> | <set_command>
+                    ;
