@@ -81,16 +81,15 @@ class PsLiveRecognizer:
                         + ' -lm ' + self.resources_dir + self.parameter_set + '.lm' \
                         + ' -dict ' + self.resources_dir + self.parameter_set + '.dic' \
                         + ' -dictcase yes -inmic yes ' \
-                        + ' -logfn /dev/null ' \
                         + ' -jsgf ' + self.resources_dir + self.parameter_set + '.gram'
+                        #+ ' -logfn /dev/null ' \
         else:
             self.cmd_line = '''pocketsphinx_continuous -adcdev plughw:1,0''' \
-                            + ' -hmm /home/sindar/zero_ru_cont_8k_v3/zero_ru.cd_semi_4000/ ' \
+                            + ' -hmm ' + self.resources_dir + self.lang + '/lm/zero_ru.cd_semi_4000/' \
                             + ' -dict ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.dic' \
                             + ' -dictcase yes -inmic yes ' \
-                            + ' -logfn /dev/null ' \
                             + ' -jsgf ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.gram'
-
+                            #+ ' -logfn /dev/null ' \
 def main():
     global fsmState
     kill_pocketsphinx()

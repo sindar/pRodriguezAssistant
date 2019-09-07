@@ -11,13 +11,12 @@ grammar questions;
 <who_are_you_question> = (кто ты);
 <how_are_you_question> = (как ты) | (как поживаешь);
 
-public <misc_phrases> = (магнит) | (хороший новый свитер);
-
-public <requests> = <sing_request>;
+<stop_commands> = (стоп) | (пока);
+<misc_phrases> = (магнит) | (хороший новый свитер);
 
 public <common_questions> = <birthplace_question> | <birthdate_question>
                             | <favorite_animal_question>
-                            | <who_are_you_question> | <how_are_you_question>;
-
-public <stop_phrase> = (стоп) | (пока);
+                            | <who_are_you_question> | <how_are_you_question>
+                            | <configure_request> | <sing_request>
+                            | <stop_commands> | <misc_phrases>;
 

@@ -23,8 +23,8 @@ grammar bender;
 <enable_disable_command> = (enable | disable) [<parameters>];
 <set_command> = (set) [<parameters>] [to] [<number>];
 
-public <misc_phrases> = (magnet);
+<misc_phrases> = (magnet);
 
 public <command> = <exit_command> | <shutdown_command>
                     | <enable_disable_command> | <set_command>
-                    ;
+                    | <misc_phrases>;

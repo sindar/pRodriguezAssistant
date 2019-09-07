@@ -22,8 +22,8 @@ grammar bender;
 <enable_disable_command> = (включи | выключи) [<parameters>];
 <set_command> = set [<parameters>] [в] [<number>];
 
-public <misc_phrases> = (магнит);
+<misc_phrases> = (магнит);
 
 public <command> = <exit_command> | <shutdown_command>
                     | <enable_disable_command> | <set_command>
-                    ;
+                    | <misc_phrases>;

@@ -11,13 +11,16 @@ grammar questions;
 <who_are_you_question> = (who are you);
 <how_are_you_question> = (how are you);
 
-public <misc_phrases> = (magnet) | [a] [great] (new sweater);
+<stop_phrase> = (stop) | [good] (bye);
 
-public <requests> = <sing_request>;
+<misc_phrases> = (magnet) | [a] [great] (new sweater);
+
+<requests> = <sing_request>;
 
 public <common_questions> = <birthplace_question> | <birthdate_question>
                             | <favorite_animal_question>
-                            | <who_are_you_question> | <how_are_you_question>;
+                            | <who_are_you_question> | <how_are_you_question>
+                            | <stop_phrase> | <misc_phrases>  | <requests>;
 
-public <stop_phrase> = (stop) | [good] (bye);
+
 
