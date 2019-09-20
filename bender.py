@@ -175,7 +175,7 @@ def conversation_mode():
         elif 'magnet' in utt:
             command = 'magnet ' + str(current_milli_time % 2)
         elif 'new sweater' in utt:
-            command = 'sweater'
+            command = 'new sweater'
         elif ('wake up' in utt) or ('awake' in utt):
             command = 'wake up'
         elif ('configuration' in utt) or ('configure' in utt):
@@ -231,7 +231,7 @@ def configuration_mode():
     kill_pocketsphinx()
 
 def kill_pocketsphinx():
-    kill_exe = 'killall pocketsphinx_continuous'
+    kill_exe = 'killall pocketsphinx_co'
     p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
     code = p.wait()
 
@@ -239,7 +239,13 @@ def play_answer(command):
     global audio_files
     answer = audio_files.get(command)
     if answer != None:
+        exe = "amixer -q -c 1 set 'Mic' toggle"
+        p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
+        code = p.wait()
         exe = 'aplay ' + './audio/' + answer + '.wav'
+        p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
+        code = p.wait()
+        exe = "amixer -q -c 1 set 'Mic' toggle"
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
     else:
