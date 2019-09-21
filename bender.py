@@ -100,8 +100,11 @@ def main():
     global fsmState
     global eyes_on
     global eyes_off
+    global teeth_on
+    global teeth_off
     kill_pocketsphinx()
 
+    p = subprocess.call(teeth_off)
     p = subprocess.call(eyes_off)
     p = subprocess.call(eyes_on)
 
