@@ -3,7 +3,7 @@
 # project: pRodriguezAssistant
 import subprocess
 import time
-import string
+import os
 
 fsmState = 0
 
@@ -68,6 +68,12 @@ tr_configuration_ru_en = {
     u'магнит': 'magnet'
 }
 
+eyes_off = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "off"]
+eyes_on = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "on"]
+teeth_off = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "off"]
+teeth_on = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on"]
+
+
 class PsLiveRecognizer:
     lang = 'ru'
     def __init__(self, resources_dir, parameter_set):
@@ -92,7 +98,13 @@ class PsLiveRecognizer:
                             #+ ' -logfn /dev/null ' \
 def main():
     global fsmState
+    global eyes_on
+    global eyes_off
     kill_pocketsphinx()
+
+    p = subprocess.call(eyes_off)
+    p = subprocess.call(eyes_on)
+
     while True:
         if (fsmState == 0):
             start_mode()
@@ -237,14 +249,21 @@ def kill_pocketsphinx():
 
 def play_answer(command):
     global audio_files
+    global teeth_on
+    global teeth_off
+
     answer = audio_files.get(command)
     if answer != None:
         exe = "amixer -q -c 1 set 'Mic' toggle"
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
+
+        p = subprocess.call(teeth_on)
         exe = 'aplay ' + './audio/' + answer + '.wav'
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
+        p = subprocess.call(teeth_off)
+
         exe = "amixer -q -c 1 set 'Mic' toggle"
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
