@@ -1,0 +1,253 @@
+Language model created by QuickLM on Sun Sep 22 08:24:11 EDT 2019
+Copyright (c) 1996-2010 Carnegie Mellon University and Alexander I. Rudnicky
+
+The model is in standard ARPA format, designed by Doug Paul while he was at MITRE.
+
+The code that was used to produce this language model is available in Open Source.
+Please visit http://www.speech.cs.cmu.edu/tools/ for more information
+
+The (fixed) discount mass is 0.5. The backoffs are computed using the ratio method.
+This model based on a corpus of 58 sentences and 59 words
+
+\data\
+ngram 1=59
+ngram 2=114
+ngram 3=57
+
+\1-grams:
+-0.7782 </s> -0.3010
+-0.7782 <s> -0.2218
+-2.5416 A -0.2218
+-2.5416 ANIMAL -0.2218
+-2.5416 ARE -0.2218
+-2.5416 BENDER -0.2218
+-2.5416 BIRTH -0.2218
+-2.5416 BIRTHDATE -0.2218
+-2.5416 BORN -0.2218
+-2.5416 BYE -0.2218
+-2.5416 CONFIGURATION -0.2218
+-2.5416 CONFIGURE -0.2218
+-2.5416 DATE -0.2218
+-2.5416 DISABLE -0.2218
+-2.5416 EIGHT -0.2218
+-2.5416 ENABLE -0.2218
+-2.5416 EXIT -0.2218
+-2.5416 FAVORITE -0.2218
+-2.5416 FIVE -0.2218
+-2.5416 FOUR -0.2218
+-2.5416 FROM -0.2218
+-2.5416 GOOD -0.2218
+-2.5416 GREAT -0.2218
+-2.5416 HELLO -0.2218
+-2.5416 HEY -0.2218
+-2.5416 HI -0.2218
+-2.5416 HOW -0.2218
+-2.5416 IS -0.2218
+-2.2405 MAGNET -0.2218
+-2.5416 NEW -0.2218
+-2.5416 NINE -0.2218
+-2.5416 OF -0.2218
+-2.5416 OH -0.2218
+-2.5416 ONE -0.2218
+-2.5416 POINT -0.2218
+-2.5416 PROGRAM -0.2218
+-2.5416 QUIT -0.2218
+-2.5416 SET -0.2218
+-2.5416 SEVEN -0.2218
+-2.5416 SHUTDOWN -0.2218
+-2.5416 SING -0.2218
+-2.5416 SIX -0.2218
+-2.5416 SLEEP -0.2218
+-2.5416 SLEEPING -0.2218
+-2.5416 SONG -0.2218
+-2.5416 STOP -0.2218
+-2.5416 SWEATER -0.2218
+-2.5416 THE -0.2218
+-2.5416 THREE -0.2218
+-2.5416 TO -0.2218
+-2.5416 TWO -0.2218
+-2.5416 WERE -0.2218
+-2.5416 WHAT -0.2218
+-2.5416 WHEN -0.2218
+-2.5416 WHERE -0.2218
+-2.5416 WHO -0.2218
+-2.5416 YOU -0.2218
+-2.5416 YOUR -0.2218
+-2.5416 ZERO -0.2218
+
+\2-grams:
+-2.0645 <s> A 0.0000
+-2.0645 <s> ANIMAL 0.0000
+-2.0645 <s> ARE 0.0000
+-2.0645 <s> BENDER 0.0000
+-2.0645 <s> BIRTH 0.0000
+-2.0645 <s> BIRTHDATE 0.0000
+-2.0645 <s> BORN 0.0000
+-2.0645 <s> BYE 0.0000
+-2.0645 <s> CONFIGURATION 0.0000
+-2.0645 <s> CONFIGURE 0.0000
+-2.0645 <s> DATE 0.0000
+-2.0645 <s> DISABLE 0.0000
+-2.0645 <s> EIGHT 0.0000
+-2.0645 <s> ENABLE 0.0000
+-2.0645 <s> EXIT 0.0000
+-2.0645 <s> FAVORITE 0.0000
+-2.0645 <s> FIVE 0.0000
+-2.0645 <s> FOUR 0.0000
+-2.0645 <s> FROM 0.0000
+-2.0645 <s> GOOD 0.0000
+-2.0645 <s> GREAT 0.0000
+-2.0645 <s> HELLO 0.0000
+-2.0645 <s> HEY 0.0000
+-2.0645 <s> HI 0.0000
+-2.0645 <s> HOW 0.0000
+-2.0645 <s> IS 0.0000
+-1.7634 <s> MAGNET 0.0000
+-2.0645 <s> NEW 0.0000
+-2.0645 <s> NINE 0.0000
+-2.0645 <s> OF 0.0000
+-2.0645 <s> OH 0.0000
+-2.0645 <s> ONE 0.0000
+-2.0645 <s> POINT 0.0000
+-2.0645 <s> PROGRAM 0.0000
+-2.0645 <s> QUIT 0.0000
+-2.0645 <s> SET 0.0000
+-2.0645 <s> SEVEN 0.0000
+-2.0645 <s> SHUTDOWN 0.0000
+-2.0645 <s> SING 0.0000
+-2.0645 <s> SIX 0.0000
+-2.0645 <s> SLEEP 0.0000
+-2.0645 <s> SLEEPING 0.0000
+-2.0645 <s> SONG 0.0000
+-2.0645 <s> STOP 0.0000
+-2.0645 <s> SWEATER 0.0000
+-2.0645 <s> THE 0.0000
+-2.0645 <s> THREE 0.0000
+-2.0645 <s> TO 0.0000
+-2.0645 <s> TWO 0.0000
+-2.0645 <s> WERE 0.0000
+-2.0645 <s> WHAT 0.0000
+-2.0645 <s> WHEN 0.0000
+-2.0645 <s> WHERE 0.0000
+-2.0645 <s> WHO 0.0000
+-2.0645 <s> YOU 0.0000
+-2.0645 <s> YOUR 0.0000
+-2.0645 <s> ZERO 0.0000
+-0.3010 A </s> -0.3010
+-0.3010 ANIMAL </s> -0.3010
+-0.3010 ARE </s> -0.3010
+-0.3010 BENDER </s> -0.3010
+-0.3010 BIRTH </s> -0.3010
+-0.3010 BIRTHDATE </s> -0.3010
+-0.3010 BORN </s> -0.3010
+-0.3010 BYE </s> -0.3010
+-0.3010 CONFIGURATION </s> -0.3010
+-0.3010 CONFIGURE </s> -0.3010
+-0.3010 DATE </s> -0.3010
+-0.3010 DISABLE </s> -0.3010
+-0.3010 EIGHT </s> -0.3010
+-0.3010 ENABLE </s> -0.3010
+-0.3010 EXIT </s> -0.3010
+-0.3010 FAVORITE </s> -0.3010
+-0.3010 FIVE </s> -0.3010
+-0.3010 FOUR </s> -0.3010
+-0.3010 FROM </s> -0.3010
+-0.3010 GOOD </s> -0.3010
+-0.3010 GREAT </s> -0.3010
+-0.3010 HELLO </s> -0.3010
+-0.3010 HEY </s> -0.3010
+-0.3010 HI </s> -0.3010
+-0.3010 HOW </s> -0.3010
+-0.3010 IS </s> -0.3010
+-0.3010 MAGNET </s> -0.3010
+-0.3010 NEW </s> -0.3010
+-0.3010 NINE </s> -0.3010
+-0.3010 OF </s> -0.3010
+-0.3010 OH </s> -0.3010
+-0.3010 ONE </s> -0.3010
+-0.3010 POINT </s> -0.3010
+-0.3010 PROGRAM </s> -0.3010
+-0.3010 QUIT </s> -0.3010
+-0.3010 SET </s> -0.3010
+-0.3010 SEVEN </s> -0.3010
+-0.3010 SHUTDOWN </s> -0.3010
+-0.3010 SING </s> -0.3010
+-0.3010 SIX </s> -0.3010
+-0.3010 SLEEP </s> -0.3010
+-0.3010 SLEEPING </s> -0.3010
+-0.3010 SONG </s> -0.3010
+-0.3010 STOP </s> -0.3010
+-0.3010 SWEATER </s> -0.3010
+-0.3010 THE </s> -0.3010
+-0.3010 THREE </s> -0.3010
+-0.3010 TO </s> -0.3010
+-0.3010 TWO </s> -0.3010
+-0.3010 WERE </s> -0.3010
+-0.3010 WHAT </s> -0.3010
+-0.3010 WHEN </s> -0.3010
+-0.3010 WHERE </s> -0.3010
+-0.3010 WHO </s> -0.3010
+-0.3010 YOU </s> -0.3010
+-0.3010 YOUR </s> -0.3010
+-0.3010 ZERO </s> -0.3010
+
+\3-grams:
+-0.3010 <s> A </s>
+-0.3010 <s> ANIMAL </s>
+-0.3010 <s> ARE </s>
+-0.3010 <s> BENDER </s>
+-0.3010 <s> BIRTH </s>
+-0.3010 <s> BIRTHDATE </s>
+-0.3010 <s> BORN </s>
+-0.3010 <s> BYE </s>
+-0.3010 <s> CONFIGURATION </s>
+-0.3010 <s> CONFIGURE </s>
+-0.3010 <s> DATE </s>
+-0.3010 <s> DISABLE </s>
+-0.3010 <s> EIGHT </s>
+-0.3010 <s> ENABLE </s>
+-0.3010 <s> EXIT </s>
+-0.3010 <s> FAVORITE </s>
+-0.3010 <s> FIVE </s>
+-0.3010 <s> FOUR </s>
+-0.3010 <s> FROM </s>
+-0.3010 <s> GOOD </s>
+-0.3010 <s> GREAT </s>
+-0.3010 <s> HELLO </s>
+-0.3010 <s> HEY </s>
+-0.3010 <s> HI </s>
+-0.3010 <s> HOW </s>
+-0.3010 <s> IS </s>
+-0.3010 <s> MAGNET </s>
+-0.3010 <s> NEW </s>
+-0.3010 <s> NINE </s>
+-0.3010 <s> OF </s>
+-0.3010 <s> OH </s>
+-0.3010 <s> ONE </s>
+-0.3010 <s> POINT </s>
+-0.3010 <s> PROGRAM </s>
+-0.3010 <s> QUIT </s>
+-0.3010 <s> SET </s>
+-0.3010 <s> SEVEN </s>
+-0.3010 <s> SHUTDOWN </s>
+-0.3010 <s> SING </s>
+-0.3010 <s> SIX </s>
+-0.3010 <s> SLEEP </s>
+-0.3010 <s> SLEEPING </s>
+-0.3010 <s> SONG </s>
+-0.3010 <s> STOP </s>
+-0.3010 <s> SWEATER </s>
+-0.3010 <s> THE </s>
+-0.3010 <s> THREE </s>
+-0.3010 <s> TO </s>
+-0.3010 <s> TWO </s>
+-0.3010 <s> WERE </s>
+-0.3010 <s> WHAT </s>
+-0.3010 <s> WHEN </s>
+-0.3010 <s> WHERE </s>
+-0.3010 <s> WHO </s>
+-0.3010 <s> YOU </s>
+-0.3010 <s> YOUR </s>
+-0.3010 <s> ZERO </s>
+
+\end\

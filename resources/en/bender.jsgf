@@ -1,0 +1,51 @@
+#JSGF V1.0;
+
+grammar bender;
+
+<start_command> = (hey | hi | hello) (bender);
+
+<sing_request> = (sing) [a] [song];
+<configure_request> = (configure) | (configuration);
+
+<birthplace_question> = (where) ((are you from) | (were you born));
+<birthdate_question> = (when were you born) | (date of your birth);
+<favorite_animal_question> = [what [is]] (your favorite animal);
+<who_are_you_question> = (who are you);
+<how_are_you_question> = (how are you);
+
+<stop_phrase> = (stop) | [good] (bye);
+
+<misc_phrases> = (magnet) | [a] [great] (new sweater);
+
+<requests> = <sing_request>;
+
+<digit> = oh    |
+          zero  |
+          one   |
+          two   |
+          three |
+          four  |
+          five  |
+          six   |
+          seven |
+          eight |
+          nine  ;
+
+<number> = <digit>+ [point <digit>+];
+
+<parameters> = (sleep) | (sleeping);
+
+<shutdown_command> = (shutdown);
+<exit_command> = (exit) [[the] program] | (quit) [[the] program];
+<enable_disable_command> = (enable | disable) [<parameters>];
+<set_command> = (set) [<parameters>] [to] [<number>];
+
+<commands> = <start_command> | <exit_command> | <shutdown_command>
+                    | <enable_disable_command> | <set_command>
+                    | <misc_phrases>;
+
+public <commands_and_questions> = <commands>
+                            | <birthplace_question> | <birthdate_question>
+                            | <favorite_animal_question>
+                            | <who_are_you_question> | <how_are_you_question>
+                            | <stop_phrase> | <misc_phrases>  | <requests>;
