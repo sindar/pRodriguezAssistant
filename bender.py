@@ -94,7 +94,7 @@ class PsLiveRecognizer:
                             + ' -hmm ' + self.resources_dir + self.lang + '/lm/zero_ru.cd_semi_4000/' \
                             + ' -dict ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.dic' \
                             + ' -dictcase yes -inmic yes ' \
-                            + ' -jsgf ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.gram'
+                            + ' -jsgf ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.jsgf'
                             #+ ' -logfn /dev/null ' \
 def main():
     global fsmState
@@ -108,22 +108,27 @@ def main():
     p = subprocess.call(eyes_off)
     p = subprocess.call(eyes_on)
 
-    while True:
-        if (fsmState == 0):
-            start_mode()
-        elif (fsmState == 1):
-            conversation_mode()
-        elif (fsmState ==2):
-            configuration_mode()
-        else:
-            fsmState = 0
-
-def start_mode():
-    global fsmState
-    ps = PsLiveRecognizer('./resources/', 'start')
+    ps = PsLiveRecognizer('./resources/', 'bender')
     p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
 
     print(["%s" % ps.cmd_line])
+
+    while True:
+        if (fsmState == 0):
+            start_mode(p)
+        elif (fsmState == 1):
+            conversation_mode(p)
+        elif (fsmState ==2):
+            configuration_mode(p)
+        else:
+            fsmState = 0
+
+def start_mode(p):
+    global fsmState
+    #ps = PsLiveRecognizer('./resources/', 'bender')
+    #p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
+
+    #print(["%s" % ps.cmd_line])
 
     while True:
         print('Start mode:')
@@ -136,7 +141,8 @@ def start_mode():
             try:
                 utt = tr_start_ru_en[utt]
             except KeyError as e:
-                raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
+                utt = 'unrecognized'
+                #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
         if ('bender' in utt) and (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
             command = 'hey bender ' + str(current_milli_time % 3)
@@ -145,14 +151,14 @@ def start_mode():
         time.sleep(0.15)
         if (retcode is not None) or (fsmState != 0):
             break
-    kill_pocketsphinx()
+    #kill_pocketsphinx()
 
-def conversation_mode():
+def conversation_mode(p):
     global fsmState
-    ps = PsLiveRecognizer('./resources/', 'conversation')
-    p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
+    #ps = PsLiveRecognizer('./resources/', 'conversation')
+    #p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
 
-    print (["%s" % ps.cmd_line])
+    #print (["%s" % ps.cmd_line])
 
     while True:
         print ('Conversation mode:')
@@ -165,7 +171,8 @@ def conversation_mode():
             try:
                 utt = tr_conversation_ru_en[utt]
             except KeyError as e:
-                raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
+                utt = 'unrecognized'
+                #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
         if 'shutdown' in utt:
             command = 'shutdown'
@@ -202,14 +209,14 @@ def conversation_mode():
         time.sleep(0.15)
         if (retcode is not None) or (fsmState != 1):
             break
-    kill_pocketsphinx()
+    #kill_pocketsphinx()
 
-def configuration_mode():
+def configuration_mode(p):
     global fsmState
-    ps = PsLiveRecognizer('./resources/', 'configuration')
-    p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
+    #ps = PsLiveRecognizer('./resources/', 'configuration')
+    #p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
 
-    print(["%s" % ps.cmd_line])
+    #print(["%s" % ps.cmd_line])
 
     while True:
         print('Configuration mode:')
@@ -222,7 +229,8 @@ def configuration_mode():
             try:
                 utt = tr_configuration_ru_en[utt]
             except KeyError as e:
-                raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
+                utt = 'unrecognized'
+                #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
         if ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
             command = 'exit'
@@ -243,7 +251,7 @@ def configuration_mode():
         time.sleep(0.15)
         if (retcode is not None) or (fsmState != 2):
             break
-    kill_pocketsphinx()
+    #kill_pocketsphinx()
 
 def kill_pocketsphinx():
     kill_exe = 'killall pocketsphinx_co'

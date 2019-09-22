@@ -1,0 +1,49 @@
+#JSGF V1.0;
+
+grammar bender;
+<start_command> = (привет | эй ) (бендер);
+
+<digit> = ноль   |
+          один   |
+          два    |
+          три    |
+          четыре |
+          пять   |
+          шесть  |
+          семь   |
+          восемь |
+          девять ;
+
+<number> = <digit>+ [точка | запятая <digit>+];
+
+<parameters> = (сон) | (засыпание);
+
+<shutdown_command> = (выключение);
+<exit_command> = (выход | закрой);
+<enable_disable_command> = (включи | отключи) [<parameters>];
+<set_command> = установи [<parameters>] [в] [<number>];
+
+
+<sing_request> = (спой песню);
+<configure_request> = (конфигурация);
+
+<birthplace_question> = (откуда ты) | (где ты родился);
+<birthdate_question> = (когда ты родился) | (дата рождения);
+<favorite_animal_question> = (какое твоё любимое животное) | (какой твой любимый зверь);
+<who_are_you_question> = (кто ты);
+<how_are_you_question> = (как ты) | (как поживаешь);
+
+<stop_commands> = (стоп) | (пока);
+<misc_phrases> = (магнит) | (хороший новый свитер);
+
+<common_questions> = <birthplace_question> | <birthdate_question>
+                            | <favorite_animal_question>
+                            | <who_are_you_question> | <how_are_you_question>
+                            | <configure_request> | <sing_request>
+                            | <stop_commands> | <misc_phrases>;
+
+
+public <command> = <start_command> | <exit_command> | <shutdown_command>
+                    | <enable_disable_command> | <set_command>
+                    | <misc_phrases> | <common_questions>
+                    ;
