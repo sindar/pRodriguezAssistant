@@ -7,6 +7,8 @@ import os
 
 fsmState = 0
 
+audio_lang = 'ru'
+recognize_lang ='ru'
 audio_files = {}
 audio_files['shutdown'] = 'with_bjah'
 audio_files['start'] = 'lets_get_drunk'
@@ -30,7 +32,7 @@ audio_files['disable'] = 'can_do'
 audio_files['set'] = 'can_do'
 audio_files['how are you'] = 'right_now_i_feel_sorry_for_you'
 audio_files['configuration'] = 'can_do'
-audio_files['unrecognized'] = 'beat_children'
+audio_files['unrecognized'] = 'silence'
 audio_files['no audio'] = 'silence'
 
 tr_start_ru_en  = {
@@ -73,9 +75,9 @@ eyes_on = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "on"]
 teeth_off = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "off"]
 teeth_on = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on"]
 
-
 class PsLiveRecognizer:
-    lang = 'ru'
+    global recognize_lang
+    lang = recognize_lang
     def __init__(self, resources_dir, parameter_set):
         self.resources_dir = resources_dir
         self.parameter_set = parameter_set
@@ -125,10 +127,6 @@ def main():
 
 def start_mode(p):
     global fsmState
-    #ps = PsLiveRecognizer('./resources/', 'bender')
-    #p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
-
-    #print(["%s" % ps.cmd_line])
 
     while True:
         print('Start mode:')
@@ -151,14 +149,9 @@ def start_mode(p):
         time.sleep(0.15)
         if (retcode is not None) or (fsmState != 0):
             break
-    #kill_pocketsphinx()
 
 def conversation_mode(p):
     global fsmState
-    #ps = PsLiveRecognizer('./resources/', 'conversation')
-    #p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
-
-    #print (["%s" % ps.cmd_line])
 
     while True:
         print ('Conversation mode:')
@@ -209,14 +202,9 @@ def conversation_mode(p):
         time.sleep(0.15)
         if (retcode is not None) or (fsmState != 1):
             break
-    #kill_pocketsphinx()
 
 def configuration_mode(p):
     global fsmState
-    #ps = PsLiveRecognizer('./resources/', 'configuration')
-    #p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
-
-    #print(["%s" % ps.cmd_line])
 
     while True:
         print('Configuration mode:')
@@ -251,7 +239,6 @@ def configuration_mode(p):
         time.sleep(0.15)
         if (retcode is not None) or (fsmState != 2):
             break
-    #kill_pocketsphinx()
 
 def kill_pocketsphinx():
     kill_exe = 'killall pocketsphinx_co'
@@ -262,6 +249,7 @@ def play_answer(command):
     global audio_files
     global teeth_on
     global teeth_off
+    global audio_lang
 
     answer = audio_files.get(command)
     if answer != None:
@@ -270,7 +258,7 @@ def play_answer(command):
         code = p.wait()
 
         p = subprocess.call(teeth_on)
-        exe = 'aplay ' + './audio/' + answer + '.wav'
+        exe = 'play ' + './audio/' + audio_lang + '/' + answer + '.ogg'
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
         p = subprocess.call(teeth_off)
