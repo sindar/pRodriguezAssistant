@@ -32,6 +32,7 @@ audio_files['disable'] = 'can_do'
 audio_files['set'] = 'can_do'
 audio_files['how are you'] = 'right_now_i_feel_sorry_for_you'
 audio_files['configuration'] = 'can_do'
+audio_files['player'] = 'can_do'
 audio_files['unrecognized'] = 'silence'
 audio_files['no audio'] = 'silence'
 
@@ -41,6 +42,7 @@ tr_start_ru_en  = {
 }
 
 tr_conversation_ru_en = {
+    u'плеер': 'player',
     u'спой песню': 'sing song',
     u'конфигурация': 'configure',
     u'откуда ты': 'where are you from',
@@ -106,6 +108,7 @@ def main():
     global teeth_on
     global teeth_off
     kill_pocketsphinx()
+    kill_player()
 
     p = subprocess.call(teeth_off)
     p = subprocess.call(eyes_off)
@@ -121,8 +124,10 @@ def main():
             start_mode(p)
         elif (fsmState == 1):
             conversation_mode(p)
-        elif (fsmState ==2):
+        elif (fsmState == 2):
             configuration_mode(p)
+        elif(fsmState == 3):
+            player_mode(p)
         else:
             fsmState = 0
 
@@ -197,6 +202,9 @@ def conversation_mode(p):
         elif ('configuration' in utt) or ('configure' in utt):
             command = 'configuration'
             fsmState = 2
+        elif ('player' in utt):
+            command = 'player'
+            fsmState = 3
         else:
             command = 'unrecognized'
         play_answer(command)
@@ -241,8 +249,42 @@ def configuration_mode(p):
         if (retcode is not None) or (fsmState != 2):
             break
 
+def player_mode(p):
+    global fsmState
+
+    play_exe = 'find /home/pi/music -iname "*.mp3" | mpg123 -m -Z --list -'
+    player = subprocess.Popen(["%s" % play_exe], shell=True, stdout=subprocess.PIPE)
+
+    while True:
+        print('Player mode:')
+        current_milli_time = int(round(time.time() * 1000))
+        retcode = p.returncode
+        utt = p.stdout.readline().decode('utf8').rstrip().lower()
+        print('utterance = ' + utt)
+
+        if PsLiveRecognizer.lang == 'ru':
+            try:
+                utt = tr_start_ru_en[utt]
+            except KeyError as e:
+                utt = 'unrecognized'
+                #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
+
+        if ('bender' in utt) and (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
+            kill_player()
+            command = 'hey bender ' + str(current_milli_time % 3)
+            play_answer(command)
+            fsmState = 1
+        time.sleep(0.15)
+        if (fsmState != 3):
+            break
+
 def kill_pocketsphinx():
     kill_exe = 'killall pocketsphinx_co'
+    p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
+    code = p.wait()
+
+def kill_player():
+    kill_exe = 'killall mpg123'
     p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
     code = p.wait()
 
