@@ -73,7 +73,8 @@ tr_configuration_ru_en = {
 eyes_off = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "off"]
 eyes_on = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "on"]
 teeth_off = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "off"]
-teeth_on = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on"]
+teeth_on_ok = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on"]
+teeth_on_notok = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on", "-r", "255", "-g", "0"]
 
 class PsLiveRecognizer:
     global recognize_lang
@@ -257,7 +258,10 @@ def play_answer(command):
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
 
-        p = subprocess.call(teeth_on)
+        if (command == 'unrecognized'):
+            p = subprocess.call(teeth_on_notok)
+        else:
+            p = subprocess.call(teeth_on_ok)
         exe = 'play ' + './audio/' + audio_lang + '/' + answer + '.ogg'
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
