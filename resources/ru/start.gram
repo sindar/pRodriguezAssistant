@@ -1,4 +1,0 @@
-#JSGF V1.0;
-
-grammar start;
-public <start_command> = (привет | эй ) (бендер);
