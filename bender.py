@@ -42,7 +42,8 @@ tr_start_ru_en  = {
 }
 
 tr_conversation_ru_en = {
-    u'плеер': 'player',
+    u'включи музыкальный плеер': 'enable music player',
+    u'отключи музыкальный плеер': 'disable music player',
     u'спой песню': 'sing song',
     u'конфигурация': 'configure',
     u'откуда ты': 'where are you from',
@@ -70,6 +71,10 @@ tr_configuration_ru_en = {
     u'выключи': 'disable',
     u'в': 'to',
     u'магнит': 'magnet'
+}
+
+tr_player_ru_en  = {
+    u'отключи музыкальный плеер': 'disable music player'
 }
 
 eyes_off = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "off"]
@@ -202,7 +207,7 @@ def conversation_mode(p):
         elif ('configuration' in utt) or ('configure' in utt):
             command = 'configuration'
             fsmState = 2
-        elif ('player' in utt):
+        elif ('enable music player' in utt):
             command = 'player'
             fsmState = 3
         else:
@@ -264,14 +269,14 @@ def player_mode(p):
 
         if PsLiveRecognizer.lang == 'ru':
             try:
-                utt = tr_start_ru_en[utt]
+                utt = tr_player_ru_en[utt]
             except KeyError as e:
                 utt = 'unrecognized'
                 #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
-        if ('bender' in utt) and (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
+        if ('disable music player' in utt):
             kill_player()
-            command = 'hey bender ' + str(current_milli_time % 3)
+            command = 'player'
             play_answer(command)
             fsmState = 1
         time.sleep(0.15)

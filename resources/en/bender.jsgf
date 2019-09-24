@@ -32,7 +32,9 @@ grammar bender;
 <enable_disable_command> = (enable | disable) [<parameters>];
 <set_command> = (set) [<parameters>] [to] [<number>];
 
-<music_player_command> = [music] (player);
+<music_player_enable> = (enable music player);
+<music_player_disable> = (disable music player);
+<music_player_commands> = <music_player_enable> | <music_player_disable>;
 
 <birthplace_question> = (where) ((are you from) | (were you born));
 <birthdate_question> = (when were you born) | (date of your birth);
@@ -45,7 +47,7 @@ grammar bender;
 <commands> = <start_command> | <exit_command> | <shutdown_command>
                     | <enable_disable_command> | <set_command>
                     | <misc_phrases>
-                    | <music_player_command>;
+                    | <music_player_commands>;
 
 public <commands_and_questions> = <commands>
                             | <birthplace_question> | <birthdate_question>
