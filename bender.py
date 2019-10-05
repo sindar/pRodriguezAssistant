@@ -6,9 +6,10 @@ import time
 import os
 
 fsmState = 0
-
 audio_lang = 'ru'
 recognize_lang ='ru'
+backlightEnabled = False
+
 audio_files = {}
 audio_files['shutdown'] = 'with_bjah'
 audio_files['start'] = 'lets_get_drunk'
@@ -112,12 +113,13 @@ def main():
     global eyes_off
     global teeth_on
     global teeth_off
+    global backlightEnabled
     kill_pocketsphinx()
     kill_player()
 
-    p = subprocess.call(teeth_off)
-    p = subprocess.call(eyes_off)
-    p = subprocess.call(eyes_on)
+    backlight(teeth_off)
+    backlight(eyes_off)
+    backlight(eyes_on)
 
     ps = PsLiveRecognizer('./resources/', 'bender')
     p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
@@ -306,18 +308,23 @@ def play_answer(command):
         code = p.wait()
 
         if (command == 'unrecognized'):
-            p = subprocess.call(teeth_on_notok)
+            backlight(teeth_on_notok)
         else:
-            p = subprocess.call(teeth_on_ok)
+            backlight(teeth_on_ok)
         exe = 'play ' + './audio/' + audio_lang + '/' + answer + '.ogg'
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
-        p = subprocess.call(teeth_off)
+        backlight(teeth_off)
 
         exe = "amixer -q -c 1 set 'Mic' toggle"
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
     else:
         print('No answer to this question!')
+
+def backlight(backlight_command):
+    global backlightEnabled
+    if backlightEnabled:
+        p = subprocess.call(backlight_command)
 
 main()
