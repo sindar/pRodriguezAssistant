@@ -4,11 +4,16 @@
 import subprocess
 import time
 import os
+from threading import Timer
+
+SLEEPING_TIME = 600.0
 
 fsmState = 0
 audio_lang = 'ru'
 recognize_lang ='ru'
 backlightEnabled = False
+sleepEnabled = True
+isSleeping = False
 
 audio_files = {}
 audio_files['shutdown'] = 'with_bjah'
@@ -138,11 +143,18 @@ def main():
         else:
             fsmState = 0
 
+def sleep_timeout():
+    global isSleeping
+    play_answer('kill all humans')
+    isSleeping = True
+
 def start_mode(p):
     global fsmState
+    global sleepEnabled
 
     while True:
         print('Start mode:')
+
         current_milli_time = int(round(time.time() * 1000))
         retcode = p.returncode
         utt = p.stdout.readline().decode('utf8').rstrip().lower()
@@ -165,9 +177,17 @@ def start_mode(p):
 
 def conversation_mode(p):
     global fsmState
+    global sleepEnabled
+    global isSleeping
 
     while True:
         print ('Conversation mode:')
+        sleepTimer = None
+
+        if sleepEnabled:
+            sleepTimer = Timer(SLEEPING_TIME, sleep_timeout)
+            sleepTimer.start()
+
         current_milli_time = int(round(time.time() * 1000))
         retcode = p.returncode
         utt = p.stdout.readline().decode('utf8').rstrip().lower()
@@ -179,6 +199,13 @@ def conversation_mode(p):
             except KeyError as e:
                 utt = 'unrecognized'
                 #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
+
+        if sleepEnabled:
+            if utt != None and sleepTimer != None:
+                sleepTimer.cancel()
+            if utt != None and isSleeping:
+                utt = 'wake up'
+                isSleeping = False
 
         if 'shutdown' in utt:
             command = 'shutdown'
@@ -224,6 +251,11 @@ def configuration_mode(p):
 
     while True:
         print('Configuration mode:')
+
+        if sleepEnabled:
+            sleepTimer = Timer(SLEEPING_TIME, sleep_timeout)
+            sleepTimer.start()
+
         current_milli_time = int(round(time.time() * 1000))
         retcode = p.returncode
         utt = p.stdout.readline().decode('utf8').rstrip().lower()
@@ -236,6 +268,17 @@ def configuration_mode(p):
                 utt = 'unrecognized'
                 #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
+        if sleepEnabled:
+            if utt != None and sleepTimer != None:
+                sleepTimer.cancel()
+            if utt != None and isSleeping:
+                utt = 'wake up'
+                isSleeping = False
+
+        if ('bender' in utt) and (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
+            command = 'hey bender ' + str(current_milli_time % 3)
+            play_answer(command)
+            fsmState = 1
         if ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
             command = 'exit'
             fsmState = 0
@@ -326,5 +369,7 @@ def backlight(backlight_command):
     global backlightEnabled
     if backlightEnabled:
         p = subprocess.call(backlight_command)
+
+
 
 main()
