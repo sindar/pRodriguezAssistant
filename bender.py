@@ -63,6 +63,7 @@ tr_conversation_ru_en = {
     u'как поживаешь': 'how are you',
     u'магнит': 'magnet',
     u'хороший новый свитер': 'new sweater',
+    u'выключение': 'shutdown',
     u'стоп': 'stop',
     u'пока': 'stop'
 }
@@ -70,7 +71,6 @@ tr_conversation_ru_en = {
 tr_configuration_ru_en = {
     u'сон': 'sleep',
     u'засыпание': 'sleep',
-    u'выключение': 'shutdown',
     u'выход': 'exit',
     u'закрой': 'exit',
     u'включи': 'enable',
@@ -138,10 +138,13 @@ def main():
             conversation_mode(p)
         elif (fsmState == 2):
             configuration_mode(p)
-        elif(fsmState == 3):
+        elif (fsmState == 3):
             player_mode(p)
+        elif (fsmState == 4):
+            break
         else:
             fsmState = 0
+        kill_pocketsphinx()
 
 def sleep_timeout():
     global isSleeping
@@ -209,7 +212,7 @@ def conversation_mode(p):
 
         if 'shutdown' in utt:
             command = 'shutdown'
-            fsmState = 0
+            fsmState = 4
         elif ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
             command = 'exit'
             fsmState = 0
@@ -369,7 +372,5 @@ def backlight(backlight_command):
     global backlightEnabled
     if backlightEnabled:
         p = subprocess.call(backlight_command)
-
-
 
 main()
