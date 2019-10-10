@@ -146,7 +146,7 @@ def main():
             break
         else:
             fsmState = 0
-        kill_pocketsphinx()
+    kill_pocketsphinx()
 
 def sleep_timeout():
     global isSleeping
