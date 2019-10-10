@@ -11,7 +11,7 @@ SLEEPING_TIME = 600.0
 fsmState = 0
 audio_lang = 'ru'
 recognize_lang ='ru'
-backlightEnabled = False
+backlightEnabled = True
 sleepEnabled = True
 isSleeping = False
 
@@ -125,6 +125,8 @@ def main():
     backlight(teeth_off)
     backlight(eyes_off)
     backlight(eyes_on)
+
+    mic_set(100)
 
     ps = PsLiveRecognizer('./resources/', 'bender')
     p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
@@ -341,6 +343,11 @@ def kill_player():
     p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
     code = p.wait()
 
+def mic_set(val):
+    exe = "amixer -q -c 1 sset 'Mic' " + str(val)
+    p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
+    code = p.wait()
+
 def play_answer(command):
     global audio_files
     global teeth_on
@@ -349,22 +356,19 @@ def play_answer(command):
 
     answer = audio_files.get(command)
     if answer != None:
-        exe = "amixer -q -c 1 set 'Mic' toggle"
-        p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
-        code = p.wait()
-
         if (command == 'unrecognized'):
             backlight(teeth_on_notok)
         else:
             backlight(teeth_on_ok)
+
+        mic_set(0)
+
         exe = 'play ' + './audio/' + audio_lang + '/' + answer + '.ogg'
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
         backlight(teeth_off)
 
-        exe = "amixer -q -c 1 set 'Mic' toggle"
-        p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
-        code = p.wait()
+        mic_set(100)
     else:
         print('No answer to this question!')
 
