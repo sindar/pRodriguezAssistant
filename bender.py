@@ -14,6 +14,7 @@ recognize_lang ='ru'
 backlightEnabled = True
 sleepEnabled = True
 isSleeping = False
+micGain = 50
 
 audio_files = {}
 audio_files['shutdown'] = 'with_bjah'
@@ -89,6 +90,9 @@ teeth_off = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "off
 teeth_on_ok = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on"]
 teeth_on_notok = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on", "-r", "255", "-g", "0"]
 
+eyes_music = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "music"]
+teeth_music = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "music"]
+
 class PsLiveRecognizer:
     global recognize_lang
     lang = recognize_lang
@@ -119,6 +123,8 @@ def main():
     global teeth_on
     global teeth_off
     global backlightEnabled
+    global micGain
+
     kill_pocketsphinx()
     kill_player()
 
@@ -126,7 +132,7 @@ def main():
     backlight(eyes_off)
     backlight(eyes_on)
 
-    mic_set(100)
+    mic_set(micGain)
 
     ps = PsLiveRecognizer('./resources/', 'bender')
     p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
@@ -310,6 +316,8 @@ def player_mode(p):
     play_exe = 'find /home/pi/music -iname "*.mp3" | mpg123 -m -Z --list -'
     player = subprocess.Popen(["%s" % play_exe], shell=True, stdout=subprocess.PIPE)
 
+    bl_proc = backlight_music(teeth_music)
+
     while True:
         print('Player mode:')
         current_milli_time = int(round(time.time() * 1000))
@@ -331,6 +339,8 @@ def player_mode(p):
             fsmState = 1
         time.sleep(0.15)
         if (fsmState != 3):
+            if bl_proc:
+                bl_proc.kill()
             break
 
 def kill_pocketsphinx():
@@ -364,11 +374,12 @@ def play_answer(command):
         mic_set(0)
 
         exe = 'play ' + './audio/' + audio_lang + '/' + answer + '.ogg'
+        print(exe)
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
         backlight(teeth_off)
 
-        mic_set(100)
+        mic_set(micGain)
     else:
         print('No answer to this question!')
 
@@ -376,5 +387,13 @@ def backlight(backlight_command):
     global backlightEnabled
     if backlightEnabled:
         p = subprocess.call(backlight_command)
+
+def backlight_music(backlight_command):
+    global backlightEnabled
+    if backlightEnabled:
+        p = subprocess.Popen(backlight_command)
+        return p
+    else:
+        return None
 
 main()
