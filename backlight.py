@@ -13,6 +13,9 @@ teeth_num = 18
 
 ORDER = neopixel.GRB
 
+default_color = (243, 253, 0)
+no_color = (0, 0, 0)
+
 def switch_pixels(pixels, on, color):
     if on:
         pixels.fill(color)
@@ -30,16 +33,57 @@ def music(pixels, num):
         pixels.show()
         time.sleep(0.1)
 
+def talk(pixels, num):
+    pixels[6] = default_color
+    pixels[7] = default_color
+    pixels[8] = default_color
+    pixels[9] = default_color
+    pixels[10] = default_color
+    pixels[11] = default_color
+
+    while True:
+        #pixels[1] = default_color
+        pixels[2] = default_color
+        pixels[3] = default_color
+        #pixels[4] = default_color
+
+        pixels[6] = default_color
+        pixels[11] = default_color
+
+        pixels[13] = no_color
+        pixels[14] = no_color
+        pixels[15] = no_color
+        pixels[16] = no_color
+
+        pixels.show()
+        time.sleep(0.25)
+
+        #pixels[1] = no_color
+        pixels[2] = no_color
+        pixels[3] = no_color
+        #pixels[4] = no_color
+        pixels[13] = default_color
+        pixels[14] = default_color
+        pixels[15] = default_color
+        pixels[16] = default_color
+
+        pixels[6] = no_color
+        pixels[11] = no_color
+
+        pixels.show()
+        time.sleep(0.25)
+
 def main(argv):
     #print ('Argument List:', str(sys.argv))
     pixels = None
     on = False
-    musicOn = False
+    music_on = False
+    talk_on = False
     red = 243
     green = 253
     blue = 0
     if len(argv) < 2:
-        print ('backlight.py -l <eyes|teeth> -s <on|off|music> -r <val> -g <val> -b <val>')
+        print ('backlight.py -l <eyes|teeth> -s <on|off|music|talk> -r <val> -g <val> -b <val>')
     try:
         opts, args = getopt.getopt(argv, "hl:s:r:g:b:", ["light=", "switch=", "red=", "green=", "blue="])
     except getopt.GetoptError:
@@ -62,7 +106,9 @@ def main(argv):
             if (arg == 'on'):
                 on = True
             elif (arg == 'music'):
-                musicOn = True
+                music_on = True
+            elif (arg == 'talk'):
+                talk_on = True
         elif opt in ("-r", "--red"):
             red = int(arg)
         elif opt in ("-g", "--green"):
@@ -73,8 +119,11 @@ def main(argv):
     if (pixels):
         switch_pixels(pixels, on, (red, green, blue))
 
-    if (musicOn):
+    if (music_on):
         music(pixels, num)
+
+    if (talk_on):
+        talk(pixels, num)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
