@@ -14,7 +14,7 @@ recognize_lang ='ru'
 backlightEnabled = True
 sleepEnabled = True
 isSleeping = False
-micGain = 50
+micGain = 80
 
 audio_files = {}
 audio_files['shutdown'] = 'with_bjah'
@@ -93,6 +93,8 @@ teeth_on_notok = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s",
 eyes_music = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "music"]
 teeth_music = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "music"]
 
+teeth_talk = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "talk"]
+
 class PsLiveRecognizer:
     global recognize_lang
     lang = recognize_lang
@@ -152,7 +154,9 @@ def main():
             break
         else:
             fsmState = 0
+
     kill_pocketsphinx()
+    backlight(eyes_off)
 
 def sleep_timeout():
     global isSleeping
@@ -316,7 +320,7 @@ def player_mode(p):
     play_exe = 'find /home/pi/music -iname "*.mp3" | mpg123 -m -Z --list -'
     player = subprocess.Popen(["%s" % play_exe], shell=True, stdout=subprocess.PIPE)
 
-    bl_proc = backlight_music(teeth_music)
+    bl_proc = backlight(teeth_music)
 
     while True:
         print('Player mode:')
@@ -369,26 +373,25 @@ def play_answer(command):
         if (command == 'unrecognized'):
             backlight(teeth_on_notok)
         else:
-            backlight(teeth_on_ok)
+            mic_set(0)
 
-        mic_set(0)
+            exe = 'play ' + './audio/' + audio_lang + '/' + answer + '.ogg'
 
-        exe = 'play ' + './audio/' + audio_lang + '/' + answer + '.ogg'
-        print(exe)
-        p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
-        code = p.wait()
+            bl_proc = backlight(teeth_talk)
+            time.sleep(0.5)
+
+            p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
+            code = p.wait()
+            bl_proc.kill()
+            mic_set(micGain)
+
         backlight(teeth_off)
 
-        mic_set(micGain)
+
     else:
         print('No answer to this question!')
 
 def backlight(backlight_command):
-    global backlightEnabled
-    if backlightEnabled:
-        p = subprocess.call(backlight_command)
-
-def backlight_music(backlight_command):
     global backlightEnabled
     if backlightEnabled:
         p = subprocess.Popen(backlight_command)
