@@ -44,6 +44,7 @@ audio_files['unrecognized'] = 'silence'
 audio_files['no audio'] = 'silence'
 
 tr_start_ru_en  = {
+    u'бендер': 'bender',
     u'привет бендер': 'hi bender',
     u'эй бендер': 'hi bender',
 }
@@ -182,10 +183,13 @@ def start_mode(p):
                 utt = 'unrecognized'
                 #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
-        if ('bender' in utt) and (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
-            command = 'hey bender ' + str(current_milli_time % 3)
-            play_answer(command)
-            fsmState = 1
+        if ('bender' in utt):
+            if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
+                command = 'hey bender ' + str(current_milli_time % 3)
+                play_answer(command)
+            else:
+                fsmState = 1
+
         time.sleep(0.15)
         if (retcode is not None) or (fsmState != 0):
             break
@@ -222,12 +226,13 @@ def conversation_mode(p):
                 utt = 'wake up'
                 isSleeping = False
 
+        fsmState = 0
         if 'shutdown' in utt:
             command = 'shutdown'
             fsmState = 4
-        elif ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
-            command = 'exit'
-            fsmState = 0
+        #elif ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
+        #    command = 'exit'
+        #    fsmState = 0
         elif ('sing' in utt) or ('song' in utt):
             command = 'sing'
         elif 'who are you' in utt:
@@ -250,13 +255,14 @@ def conversation_mode(p):
             command = 'wake up'
         elif ('configuration' in utt) or ('configure' in utt):
             command = 'configuration'
-            fsmState = 2
+            #fsmState = 2
         elif ('enable music player' in utt):
             command = 'player'
-            fsmState = 3
+            #fsmState = 3
         else:
             command = 'unrecognized'
         play_answer(command)
+
         time.sleep(0.15)
         if (retcode is not None) or (fsmState != 1):
             break
@@ -384,10 +390,7 @@ def play_answer(command):
             code = p.wait()
             bl_proc.kill()
             mic_set(micGain)
-
         backlight(teeth_off)
-
-
     else:
         print('No answer to this question!')
 
