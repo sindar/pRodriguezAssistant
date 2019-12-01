@@ -1,130 +1,15 @@
-# !/usr/bin/env python
+# !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
-#!/usr/bin/env python3
 import subprocess
 import time
-import os
-import psutil
 from threading import Timer
-
-SLEEPING_TIME = 600.0
+import psutil
 
 fsmState = 1
-audio_lang = 'ru'
-recognize_lang ='ru'
-backlightEnabled = True
-sleepEnabled = True
 isSleeping = False
-micGain = 80
 musicIsPlaying = False
 
-audio_files = {}
-audio_files['shutdown'] = 'with_bjah'
-audio_files['start'] = 'lets_get_drunk'
-audio_files['exit'] = 'lets_get_drunk'
-audio_files['hey bender 0'] = 'bite'
-audio_files['hey bender 1'] = 'hello'
-audio_files['hey bender 2'] = 'hello_peasants'
-audio_files['birthplace'] = 'born_in_tijuana'
-audio_files['birthdate'] = 'birthdate'
-audio_files['who are you 0'] = 'im_bender'
-audio_files['who are you 1'] = 'bender_song'
-audio_files['animal'] = 'turtle'
-audio_files['sing'] = 'bender_song'
-audio_files['magnet 0'] = 'roads_song'
-audio_files['magnet 1'] = 'mountain_song'
-audio_files['new sweater'] = 'new_sweater'
-audio_files['kill all humans'] = 'kill_all_humans'
-audio_files['wake up'] = 'most_wonderful_dream'
-audio_files['enable'] = 'can_do'
-audio_files['disable'] = 'can_do'
-audio_files['set'] = 'can_do'
-audio_files['how are you'] = 'right_now_i_feel_sorry_for_you'
-audio_files['configuration'] = 'can_do'
-audio_files['player'] = 'can_do'
-audio_files['unrecognized'] = 'silence'
-audio_files['no audio'] = 'silence'
-
-tr_start_ru_en  = {
-    u'бендер': 'bender',
-    u'привет бендер': 'hi bender',
-    u'эй бендер': 'hi bender',
-    u'бендер стоп': 'bender stop',
-    u'привет бендер стоп': 'bender stop',
-    u'эй бендер стоп': 'bender stop'
-}
-
-tr_conversation_ru_en = {
-    u'включи музыкальный плеер': 'enable music player',
-    u'отключи музыкальный плеер': 'disable music player',
-    u'спой песню': 'sing song',
-    u'конфигурация': 'configure',
-    u'откуда ты': 'where are you from',
-    u'где ты родился': 'where were you born',
-    u'когда ты родился': 'when were you born',
-    u'дата рождения': 'when were you born',
-    u'какое твоё любимое животное': 'your favorite animal',
-    u'какой твой любимый зверь': 'your favorite animal',
-    u'кто ты': 'who are you',
-    u'как ты': 'how are you',
-    u'как поживаешь': 'how are you',
-    u'магнит': 'magnet',
-    u'хороший новый свитер': 'new sweater',
-    u'выключение': 'shutdown',
-    u'стоп': 'stop',
-    u'пока': 'stop'
-}
-
-tr_configuration_ru_en = {
-    u'сон': 'sleep',
-    u'засыпание': 'sleep',
-    u'выход': 'exit',
-    u'закрой': 'exit',
-    u'включи': 'enable',
-    u'выключи': 'disable',
-    u'в': 'to',
-    u'магнит': 'magnet'
-}
-
-tr_player_ru_en  = {
-    u'отключи музыкальный плеер': 'disable music player'
-}
-
-eyes_off = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "off"]
-eyes_on = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "on"]
-teeth_off = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "off"]
-teeth_on_ok = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on"]
-teeth_on_notok = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on", "-r", "255", "-g", "0"]
-
-eyes_music = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "music"]
-teeth_music = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "music"]
-
-teeth_talk = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "talk"]
-
-class PsLiveRecognizer:
-    global recognize_lang
-    lang = recognize_lang
-    def __init__(self, resources_dir, parameter_set):
-        self.resources_dir = resources_dir
-        self.parameter_set = parameter_set
-        self.generatePsCmdLine()
-
-    def generatePsCmdLine(self):
-        if self.lang == 'en':
-            self.cmd_line = '''pocketsphinx_continuous -adcdev plughw:1,0''' \
-                        + ' -lm ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.lm' \
-                        + ' -dict ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.dic' \
-                        + ' -dictcase yes -inmic yes ' \
-                        + ' -jsgf ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.jsgf'
-                        #+ ' -logfn /dev/null ' \
-        else:
-            self.cmd_line = '''pocketsphinx_continuous -adcdev plughw:1,0''' \
-                            + ' -hmm ' + self.resources_dir + self.lang + '/lm/zero_ru.cd_semi_4000/' \
-                            + ' -dict ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.dic' \
-                            + ' -dictcase yes -inmic yes ' \
-                            + ' -jsgf ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.jsgf'
-                            #+ ' -logfn /dev/null ' \
 def main():
     global fsmState
     global eyes_on
@@ -379,43 +264,5 @@ def configuration_mode(p):
         time.sleep(0.15)
         if (retcode is not None) or (fsmState != 2):
             break
-
-def mic_set(val):
-    exe = "amixer -q -c 1 sset 'Mic' " + str(val)
-    p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
-    code = p.wait()
-
-def play_answer(command):
-    global audio_files
-    global teeth_off
-    global audio_lang
-
-    answer = audio_files.get(command)
-    if answer != None:
-        if (command == 'unrecognized'):
-            backlight(teeth_on_notok)
-        else:
-            mic_set(0)
-
-            exe = 'play ' + './audio/' + audio_lang + '/' + answer + '.ogg'
-
-            bl_proc = backlight(teeth_talk)
-            time.sleep(0.5)
-
-            p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
-            code = p.wait()
-            bl_proc.kill()
-            mic_set(micGain)
-        backlight(teeth_off)
-    else:
-        print('No answer to this question!')
-
-def backlight(backlight_command):
-    global backlightEnabled
-    if backlightEnabled:
-        p = subprocess.Popen(backlight_command)
-        return p
-    else:
-        return None
 
 main()

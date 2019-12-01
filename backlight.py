@@ -1,3 +1,7 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# project: pRodriguezAssistant
+
 import board
 import neopixel
 import sys
