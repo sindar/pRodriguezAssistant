@@ -1,20 +1,23 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
+#!/usr/bin/env python3
 import subprocess
 import time
 import os
+import psutil
 from threading import Timer
 
 SLEEPING_TIME = 600.0
 
-fsmState = 0
+fsmState = 1
 audio_lang = 'ru'
 recognize_lang ='ru'
 backlightEnabled = True
 sleepEnabled = True
 isSleeping = False
 micGain = 80
+musicIsPlaying = False
 
 audio_files = {}
 audio_files['shutdown'] = 'with_bjah'
@@ -47,6 +50,9 @@ tr_start_ru_en  = {
     u'бендер': 'bender',
     u'привет бендер': 'hi bender',
     u'эй бендер': 'hi bender',
+    u'бендер стоп': 'bender stop',
+    u'привет бендер стоп': 'bender stop',
+    u'эй бендер стоп': 'bender stop'
 }
 
 tr_conversation_ru_en = {
@@ -133,6 +139,7 @@ def main():
 
     backlight(teeth_off)
     backlight(eyes_off)
+    time.sleep(0.15)
     backlight(eyes_on)
 
     mic_set(micGain)
@@ -143,18 +150,15 @@ def main():
     print(["%s" % ps.cmd_line])
 
     while True:
-        if (fsmState == 0):
-            start_mode(p)
-        elif (fsmState == 1):
-            conversation_mode(p)
-        elif (fsmState == 2):
-            configuration_mode(p)
-        elif (fsmState == 3):
-            player_mode(p)
+        if (fsmState == 1):
+            if find_keyphrase(p):
+                conversation_mode(p)
+            #elif (fsmState == 2):
+            #    configuration_mode(p)
         elif (fsmState == 4):
             break
         else:
-            fsmState = 0
+            continue
 
     kill_pocketsphinx()
     backlight(eyes_off)
@@ -164,11 +168,13 @@ def sleep_timeout():
     play_answer('kill all humans')
     isSleeping = True
 
-def start_mode(p):
+def find_keyphrase(p):
     global fsmState
     global sleepEnabled
+    global musicIsPlaying
 
     while True:
+        keyphrase_found = False
         print('Start mode:')
 
         current_milli_time = int(round(time.time() * 1000))
@@ -184,15 +190,21 @@ def start_mode(p):
                 #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
         if ('bender' in utt):
-            if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
-                command = 'hey bender ' + str(current_milli_time % 3)
-                play_answer(command)
+            music('status')
+            if musicIsPlaying:
+                if('stop' in utt):
+                    music('pause')
+                    keyphrase_found = True
             else:
-                fsmState = 1
+                if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
+                    command = 'hey bender ' + str(current_milli_time % 3)
+                    play_answer(command)
+                keyphrase_found = True
 
         time.sleep(0.15)
-        if (retcode is not None) or (fsmState != 0):
-            break
+        if keyphrase_found:
+            backlight(teeth_on_ok)
+            return keyphrase_found
 
 def conversation_mode(p):
     global fsmState
@@ -226,7 +238,6 @@ def conversation_mode(p):
                 utt = 'wake up'
                 isSleeping = False
 
-        fsmState = 0
         if 'shutdown' in utt:
             command = 'shutdown'
             fsmState = 4
@@ -257,15 +268,64 @@ def conversation_mode(p):
             command = 'configuration'
             #fsmState = 2
         elif ('enable music player' in utt):
-            command = 'player'
-            #fsmState = 3
+            command = 'no audio'
+            music('start')
+            time.sleep(1)
+        elif ('disable music player' in utt):
+            command = 'no audio'
+            music('stop')
         else:
             command = 'unrecognized'
-        play_answer(command)
+
+        if command != 'no audio':
+            play_answer(command)
+        else:
+            backlight(teeth_off)
+
+        music('status')
+        if musicIsPlaying:
+            music('resume')
 
         time.sleep(0.15)
-        if (retcode is not None) or (fsmState != 1):
-            break
+        break
+
+def music(command):
+    global musicIsPlaying
+
+    play_pids = [process.pid for process in psutil.process_iter() if 'play' in str(process.name) and 'music' in str(process.cmdline())]
+    if command == 'start':
+        if len(play_pids) > 0:
+            kill_player()
+
+        play_exe = 'play /home/pi/music/1.mp3'
+        player = subprocess.Popen(["%s" % play_exe], shell=True, stdout=subprocess.PIPE)
+        musicIsPlaying = True
+    elif command == 'stop':
+        if len(play_pids) > 0:
+            kill_player()
+            musicIsPlaying = False
+    elif command == 'pause':
+        if len(play_pids) > 0:
+            stop_exe = 'kill -STOP ' + str(play_pids[0])
+            p = subprocess.Popen(["%s" % stop_exe], shell=True, stdout=subprocess.PIPE)
+    elif command == 'resume':
+        if len(play_pids) > 0:
+            cont_exe = 'kill -CONT ' + str(play_pids[0])
+            p = subprocess.Popen(["%s" % cont_exe], shell=True, stdout=subprocess.PIPE)
+            musicIsPlaying = True
+    elif command == 'status':
+        if len(play_pids) < 1:
+            musicIsPlaying = False
+
+def kill_pocketsphinx():
+    kill_exe = 'killall -s SIGKILL pocketsphinx_co'
+    p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
+    code = p.wait()
+
+def kill_player():
+    kill_exe = 'killall -s SIGKILL play'
+    p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
+    code = p.wait()
 
 def configuration_mode(p):
     global fsmState
@@ -302,7 +362,7 @@ def configuration_mode(p):
             fsmState = 1
         if ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
             command = 'exit'
-            fsmState = 0
+            #fsmState = 0
         elif ('set' in utt):
             command = 'set'
             #TODO: implement set logic
@@ -320,49 +380,6 @@ def configuration_mode(p):
         if (retcode is not None) or (fsmState != 2):
             break
 
-def player_mode(p):
-    global fsmState
-
-    play_exe = 'find /home/pi/music -iname "*.mp3" | mpg123 -m -Z --list -'
-    player = subprocess.Popen(["%s" % play_exe], shell=True, stdout=subprocess.PIPE)
-
-    bl_proc = backlight(teeth_music)
-
-    while True:
-        print('Player mode:')
-        current_milli_time = int(round(time.time() * 1000))
-        retcode = p.returncode
-        utt = p.stdout.readline().decode('utf8').rstrip().lower()
-        print('utterance = ' + utt)
-
-        if PsLiveRecognizer.lang == 'ru':
-            try:
-                utt = tr_player_ru_en[utt]
-            except KeyError as e:
-                utt = 'unrecognized'
-                #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
-
-        if ('disable music player' in utt):
-            kill_player()
-            command = 'player'
-            play_answer(command)
-            fsmState = 1
-        time.sleep(0.15)
-        if (fsmState != 3):
-            if bl_proc:
-                bl_proc.kill()
-            break
-
-def kill_pocketsphinx():
-    kill_exe = 'killall pocketsphinx_co'
-    p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
-    code = p.wait()
-
-def kill_player():
-    kill_exe = 'killall mpg123'
-    p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
-    code = p.wait()
-
 def mic_set(val):
     exe = "amixer -q -c 1 sset 'Mic' " + str(val)
     p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
@@ -370,7 +387,6 @@ def mic_set(val):
 
 def play_answer(command):
     global audio_files
-    global teeth_on
     global teeth_off
     global audio_lang
 

@@ -16,7 +16,7 @@ grammar bender;
 
 <number> = <digit>+ [point <digit>+];
 
-<start_command> = [hey | hi | hello] (bender);
+<start_command> = [hey | hi | hello] (bender) [stop];
 
 <sing_request> = (sing) [a] [song];
 <configure_request> = (configure) | (configuration);

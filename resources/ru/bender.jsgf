@@ -15,7 +15,7 @@ grammar bender;
 
 <number> = <digit>+ [точка | запятая <digit>+];
 
-<start_command> = [привет | эй] (бендер);
+<start_command> = [привет | эй] (бендер) [стоп];
 <parameters> = (сон) | (засыпание);
 
 <shutdown_command> = (выключение);
