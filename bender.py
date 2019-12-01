@@ -4,7 +4,6 @@
 import subprocess
 import time
 from threading import Timer
-import psutil
 
 fsmState = 1
 isSleeping = False
@@ -75,10 +74,10 @@ def find_keyphrase(p):
                 #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
         if ('bender' in utt):
-            music('status')
+            music_player('status')
             if musicIsPlaying:
                 if('stop' in utt):
-                    music('pause')
+                    music_player('pause')
                     keyphrase_found = True
             else:
                 if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
@@ -154,11 +153,11 @@ def conversation_mode(p):
             #fsmState = 2
         elif ('enable music player' in utt):
             command = 'no audio'
-            music('start')
+            music_player('start')
             time.sleep(1)
         elif ('disable music player' in utt):
             command = 'no audio'
-            music('stop')
+            music_player('stop')
         else:
             command = 'unrecognized'
 
@@ -167,50 +166,12 @@ def conversation_mode(p):
         else:
             backlight(teeth_off)
 
-        music('status')
+        music_player('status')
         if musicIsPlaying:
-            music('resume')
+            music_player('resume')
 
         time.sleep(0.15)
         break
-
-def music(command):
-    global musicIsPlaying
-
-    play_pids = [process.pid for process in psutil.process_iter() if 'play' in str(process.name) and 'music' in str(process.cmdline())]
-    if command == 'start':
-        if len(play_pids) > 0:
-            kill_player()
-
-        play_exe = 'play /home/pi/music/1.mp3'
-        player = subprocess.Popen(["%s" % play_exe], shell=True, stdout=subprocess.PIPE)
-        musicIsPlaying = True
-    elif command == 'stop':
-        if len(play_pids) > 0:
-            kill_player()
-            musicIsPlaying = False
-    elif command == 'pause':
-        if len(play_pids) > 0:
-            stop_exe = 'kill -STOP ' + str(play_pids[0])
-            p = subprocess.Popen(["%s" % stop_exe], shell=True, stdout=subprocess.PIPE)
-    elif command == 'resume':
-        if len(play_pids) > 0:
-            cont_exe = 'kill -CONT ' + str(play_pids[0])
-            p = subprocess.Popen(["%s" % cont_exe], shell=True, stdout=subprocess.PIPE)
-            musicIsPlaying = True
-    elif command == 'status':
-        if len(play_pids) < 1:
-            musicIsPlaying = False
-
-def kill_pocketsphinx():
-    kill_exe = 'killall -s SIGKILL pocketsphinx_co'
-    p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
-    code = p.wait()
-
-def kill_player():
-    kill_exe = 'killall -s SIGKILL play'
-    p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
-    code = p.wait()
 
 def configuration_mode(p):
     global fsmState

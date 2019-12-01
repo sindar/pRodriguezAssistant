@@ -24,3 +24,9 @@ class PsLiveRecognizer:
                             + ' -dictcase yes -inmic yes ' \
                             + ' -jsgf ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.jsgf'
                             #+ ' -logfn /dev/null ' \
+
+
+def kill_pocketsphinx():
+    kill_exe = 'killall -s SIGKILL pocketsphinx_co'
+    p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
+    code = p.wait()
