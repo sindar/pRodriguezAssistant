@@ -4,41 +4,24 @@
 import subprocess
 import time
 from threading import Timer
-import os
 from speech_recognizer import PsLiveRecognizer
 from answer_player import AnswerPlayer
 from music_player import MusicPlayer
+from backlight_control import BacklightControl
+from backlight_control import BackLightCommands
+
+audio_lang = 'ru'
+recognize_lang ='ru'
+sleepEnabled = True
+
+BacklightControl.backlightEnabled = True
 
 fsmState = 1
 isSleeping = False
 m_player = MusicPlayer("playlist.txt")
-a_player = AnswerPlayer()
+a_player = AnswerPlayer(audio_lang)
 
 SLEEPING_TIME = 600.0
-
-audio_lang = 'ru'
-recognize_lang ='ru'
-backlightEnabled = True
-sleepEnabled = True
-
-eyes_off = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "off"]
-eyes_on = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "on"]
-teeth_off = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "off"]
-teeth_on_ok = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on"]
-teeth_on_notok = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on", "-r", "255", "-g", "0"]
-
-eyes_music = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "music"]
-teeth_music = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "music"]
-
-teeth_talk = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "talk"]
-
-def backlight(backlight_command):
-    global backlightEnabled
-    if backlightEnabled:
-        p = subprocess.Popen(backlight_command)
-        return p
-    else:
-        return None
 
 tr_start_ru_en  = {
     u'бендер': 'bender',
@@ -87,21 +70,15 @@ tr_player_ru_en  = {
 
 def main():
     global fsmState
-    global eyes_on
-    global eyes_off
-    global teeth_on
-    global teeth_off
-    global backlightEnabled
-    global micGain
     global m_player
 
     kill_pocketsphinx()
     m_player.kill_player()
 
-    backlight(teeth_off)
-    backlight(eyes_off)
+    BacklightControl.backlight(BackLightCommands.TEETH_OFF)
+    BacklightControl.backlight(BackLightCommands.EYES_OFF)
     time.sleep(0.15)
-    backlight(eyes_on)
+    BacklightControl.backlight(BackLightCommands.EYES_ON)
 
     ps = PsLiveRecognizer('./resources/', 'bender')
     p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
@@ -120,7 +97,7 @@ def main():
             continue
 
     kill_pocketsphinx()
-    backlight(eyes_off)
+    BacklightControl.backlight(BackLightCommands.EYES_OFF)
 
 def sleep_timeout():
     global isSleeping
@@ -163,7 +140,7 @@ def find_keyphrase(p):
 
         time.sleep(0.15)
         if keyphrase_found:
-            backlight(teeth_on_ok)
+            BacklightControl.backlight(BackLightCommands.TEETH_ON_OK)
             return keyphrase_found
 
 def conversation_mode(p):
@@ -241,7 +218,7 @@ def conversation_mode(p):
         if command != 'no audio':
             a_player.play_answer(command)
         else:
-            backlight(teeth_off)
+            BacklightControl.backlight(BackLightCommands.TEETH_OFF)
 
         m_player.send_command('status')
         if m_player.musicIsPlaying:

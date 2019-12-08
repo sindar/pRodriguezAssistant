@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
 import subprocess
-import os
 import time
-
-audio_lang = 'ru'
-recognize_lang ='ru'
-backlightEnabled = True
-sleepEnabled = True
-
+from backlight_control import BacklightControl
+from backlight_control import BackLightCommands
 
 audio_files = {}
 audio_files['shutdown'] = 'with_bjah'
@@ -38,32 +33,29 @@ audio_files['unrecognized'] = 'silence'
 audio_files['no audio'] = 'silence'
 
 class AnswerPlayer:
-    def __init__(self):
+    def __init__(self, lang):
         self.mic_gain = 80
         self.mic_set(self.mic_gain)
+        self.lang = lang
 
     def play_answer(self, command):
-        global audio_files
-        global teeth_off
-        global audio_lang
-
         answer = audio_files.get(command)
         if answer != None:
             if (command == 'unrecognized'):
-                backlight(teeth_on_notok)
+                BacklightControl.backlight(BackLightCommands.TEETH_ON_NOT_OK)
             else:
                 self.mic_set(0)
 
-                exe = 'play ' + './audio/' + audio_lang + '/' + answer + '.ogg'
+                exe = 'play ' + './audio/' + self.lang + '/' + answer + '.ogg'
 
-                bl_proc = backlight(teeth_talk)
+                bl_proc = BacklightControl.backlight(BackLightCommands.TEETH_TALK)
                 time.sleep(0.5)
 
                 p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
                 code = p.wait()
                 bl_proc.kill()
                 self.mic_set(self.mic_gain)
-            backlight(teeth_off)
+            BacklightControl.backlight(BackLightCommands.TEETH_OFF)
         else:
             print('No answer to this question!')
 
@@ -71,22 +63,3 @@ class AnswerPlayer:
         exe = "amixer -q -c 1 sset 'Mic' " + str(val)
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
-
-eyes_off = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "off"]
-eyes_on = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "on"]
-teeth_off = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "off"]
-teeth_on_ok = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on"]
-teeth_on_notok = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on", "-r", "255", "-g", "0"]
-
-eyes_music = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "music"]
-teeth_music = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "music"]
-
-teeth_talk = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "talk"]
-
-def backlight(backlight_command):
-    global backlightEnabled
-    if backlightEnabled:
-        p = subprocess.Popen(backlight_command)
-        return p
-    else:
-        return None
