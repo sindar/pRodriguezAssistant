@@ -33,10 +33,11 @@ audio_files['unrecognized'] = 'silence'
 audio_files['no audio'] = 'silence'
 
 class AnswerPlayer:
+    lang = 'en'
     def __init__(self, lang):
         self.mic_gain = 80
         self.mic_set(self.mic_gain)
-        self.lang = lang
+        AnswerPlayer.lang = lang
 
     def play_answer(self, command):
         answer = audio_files.get(command)
@@ -46,7 +47,7 @@ class AnswerPlayer:
             else:
                 self.mic_set(0)
 
-                exe = 'play ' + './audio/' + self.lang + '/' + answer + '.ogg'
+                exe = 'play ' + './audio/' + AnswerPlayer.lang + '/' + answer + '.ogg'
 
                 bl_proc = BacklightControl.backlight(BackLightCommands.TEETH_TALK)
                 time.sleep(0.5)

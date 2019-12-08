@@ -20,6 +20,7 @@ fsmState = 1
 isSleeping = False
 m_player = MusicPlayer("playlist.txt")
 a_player = AnswerPlayer(audio_lang)
+speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
 SLEEPING_TIME = 600.0
 
@@ -71,6 +72,7 @@ tr_player_ru_en  = {
 def main():
     global fsmState
     global m_player
+    global speech_recognizer
 
     kill_pocketsphinx()
     m_player.kill_player()
@@ -80,10 +82,8 @@ def main():
     time.sleep(0.15)
     BacklightControl.backlight(BackLightCommands.EYES_ON)
 
-    ps = PsLiveRecognizer('./resources/', 'bender')
-    p = subprocess.Popen(["%s" % ps.cmd_line], shell=True, stdout=subprocess.PIPE)
-
-    print(["%s" % ps.cmd_line])
+    p = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
+    print(["%s" % speech_recognizer.cmd_line])
 
     while True:
         if (fsmState == 1):
@@ -119,7 +119,7 @@ def find_keyphrase(p):
         utt = p.stdout.readline().decode('utf8').rstrip().lower()
         print('utterance = ' + utt)
 
-        if PsLiveRecognizer.lang == 'ru':
+        if speech_recognizer.lang == 'ru':
             try:
                 utt = tr_start_ru_en[utt]
             except KeyError as e:
@@ -162,7 +162,7 @@ def conversation_mode(p):
         utt = p.stdout.readline().decode('utf8').rstrip().lower()
         print('utterance = ' + utt)
 
-        if PsLiveRecognizer.lang == 'ru':
+        if speech_recognizer.lang == 'ru':
             try:
                 utt = tr_conversation_ru_en[utt]
             except KeyError as e:
@@ -243,7 +243,7 @@ def configuration_mode(p):
         utt = p.stdout.readline().decode('utf8').rstrip().lower()
         print('utterance = ' + utt)
 
-        if PsLiveRecognizer.lang == 'ru':
+        if speech_recognizer.lang == 'ru':
             try:
                 utt = tr_configuration_ru_en[utt]
             except KeyError as e:

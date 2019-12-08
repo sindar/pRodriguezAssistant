@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
 
-recognize_lang ='ru'
-
 class PsLiveRecognizer:
-    global recognize_lang
-    lang = recognize_lang
-
-    def __init__(self, resources_dir, parameter_set):
+    def __init__(self, resources_dir, lang, parameter_set):
         self.resources_dir = resources_dir
         self.parameter_set = parameter_set
+        self.lang = lang
         self.generatePsCmdLine()
 
     def generatePsCmdLine(self):
