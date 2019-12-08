@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
 
+recognize_lang ='ru'
+
 class PsLiveRecognizer:
     global recognize_lang
     lang = recognize_lang
+
     def __init__(self, resources_dir, parameter_set):
         self.resources_dir = resources_dir
         self.parameter_set = parameter_set
@@ -24,9 +27,3 @@ class PsLiveRecognizer:
                             + ' -dictcase yes -inmic yes ' \
                             + ' -jsgf ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.jsgf'
                             #+ ' -logfn /dev/null ' \
-
-
-def kill_pocketsphinx():
-    kill_exe = 'killall -s SIGKILL pocketsphinx_co'
-    p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
-    code = p.wait()
