@@ -64,16 +64,17 @@ class MusicPlayer:
         elif command == 'next':
             if len(play_pids) > 0:
                 self.kill_player()
-            self.musicIsPlaying = True
             self.play_next_track()
+            self.musicIsPlaying = True
         elif command == 'status':
             if len(play_pids) < 1:
                 self.musicIsPlaying = False
             else:
                 self.musicIsPlaying = True
         elif command == 'exit':
-            self.playing_timer.cancel()
-            self.playing_timer = None
+            if self.playing_timer:
+                self.playing_timer.cancel()
+                self.playing_timer = None
             self.musicIsPlaying = False
             self.kill_player()
 

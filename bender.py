@@ -36,7 +36,10 @@ tr_start_ru_en  = {
 tr_conversation_ru_en = {
     u'включи музыкальный плеер': 'enable music player',
     u'отключи музыкальный плеер': 'disable music player',
-    u'спой песню': 'sing song',
+    u'следующий трек': 'next song',
+    u'следующий трэк': 'next song',
+    u'следующая песня': 'next song',
+    u'спой песню': 'sing a song',
     u'конфигурация': 'configure',
     u'откуда ты': 'where are you from',
     u'где ты родился': 'where were you born',
@@ -63,10 +66,6 @@ tr_configuration_ru_en = {
     u'выключи': 'disable',
     u'в': 'to',
     u'магнит': 'magnet'
-}
-
-tr_player_ru_en  = {
-    u'отключи музыкальный плеер': 'disable music player'
 }
 
 def main():
@@ -183,7 +182,7 @@ def conversation_mode(p):
         #elif ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
         #    command = 'exit'
         #    fsmState = 0
-        elif ('sing' in utt) or ('song' in utt):
+        elif ('sing' in utt) and ('song' in utt):
             command = 'sing'
         elif 'who are you' in utt:
             command = 'who are you ' + str(current_milli_time % 2)
@@ -213,6 +212,9 @@ def conversation_mode(p):
         elif ('disable music player' in utt):
             command = 'no audio'
             m_player.send_command('stop')
+        elif ('next song' in utt):
+            command = 'no audio'
+            m_player.send_command('next')
         else:
             command = 'unrecognized'
 
