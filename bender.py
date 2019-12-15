@@ -18,7 +18,7 @@ BacklightControl.backlightEnabled = True
 
 fsmState = 1
 isSleeping = False
-m_player = MusicPlayer("playlist.txt")
+m_player = MusicPlayer()
 a_player = AnswerPlayer(audio_lang)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
@@ -97,6 +97,7 @@ def main():
             continue
 
     kill_pocketsphinx()
+    m_player.send_command("exit")
     BacklightControl.backlight(BackLightCommands.EYES_OFF)
 
 def sleep_timeout():
@@ -220,9 +221,10 @@ def conversation_mode(p):
         else:
             BacklightControl.backlight(BackLightCommands.TEETH_OFF)
 
-        m_player.send_command('status')
-        if m_player.musicIsPlaying:
-            m_player.send_command('resume')
+        if command != 'shutdown':
+            m_player.send_command('status')
+            if m_player.musicIsPlaying:
+                m_player.send_command('resume')
 
         time.sleep(0.15)
         break
