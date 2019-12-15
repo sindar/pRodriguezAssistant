@@ -2,6 +2,7 @@
 # project: pRodriguezAssistant
 import os
 import subprocess
+import psutil
 
 class BackLightCommands:
     EYES_OFF = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "off"]
@@ -21,8 +22,17 @@ class BacklightControl:
     @staticmethod
     def backlight(backlight_command):
         if BacklightControl.backlightEnabled:
+            backlight_pids = [process.pid for process in psutil.process_iter() if
+                         'python' in str(process.name) and 'backlight' in str(process.cmdline())]
+            BacklightControl.kill_backlight(backlight_pids)
             p = subprocess.Popen(backlight_command)
             return p
         else:
             return None
 
+    @staticmethod
+    def kill_backlight(backlight_pids):
+        for pid in backlight_pids:
+            kill_exe = 'killall -s SIGKILL ' + str(pid)
+            p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
+            code = p.wait()
