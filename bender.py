@@ -22,6 +22,8 @@ m_player = MusicPlayer()
 a_player = AnswerPlayer(audio_lang)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
+speaker_volume = 20
+
 SLEEPING_TIME = 600.0
 
 tr_start_ru_en  = {
@@ -34,6 +36,10 @@ tr_start_ru_en  = {
 }
 
 tr_conversation_ru_en = {
+    u'громче': 'increase volume',
+    u'погромче': 'increase volume',
+    u'тише': 'decrease volume',
+    u'потише': 'decrease volume',
     u'включи музыкальный плеер': 'enable music player',
     u'отключи музыкальный плеер': 'disable music player',
     u'следующий трек': 'next song',
@@ -72,6 +78,9 @@ def main():
     global fsmState
     global m_player
     global speech_recognizer
+    global speaker_volume
+
+    set_speaker_volume(speaker_volume)
 
     kill_pocketsphinx()
     m_player.kill_player()
@@ -182,6 +191,12 @@ def conversation_mode(p):
         #elif ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
         #    command = 'exit'
         #    fsmState = 0
+        elif ('volume' in utt):
+            command = 'no audio'
+            if ('increase' in utt):
+                change_speaker_volume(5)
+            elif ('decrease' in utt):
+                change_speaker_volume(-5)
         elif ('sing' in utt) and ('song' in utt):
             command = 'sing'
         elif 'who are you' in utt:
@@ -284,6 +299,21 @@ def configuration_mode(p):
         time.sleep(0.15)
         if (retcode is not None) or (fsmState != 2):
             break
+
+def change_speaker_volume(value):
+    global speaker_volume
+
+    speaker_volume += value
+    if speaker_volume < 0:
+        speaker_volume = 0
+    if speaker_volume > 40:
+        speaker_volume = 40
+    set_speaker_volume(speaker_volume)
+
+def set_speaker_volume(value):
+    amixer_exe = "amixer -q -c 1 sset 'Speaker' " + str(value)
+    p = subprocess.Popen(["%s" % amixer_exe], shell=True, stdout=subprocess.PIPE)
+    code = p.wait()
 
 def kill_pocketsphinx():
     kill_exe = 'killall -s SIGKILL pocketsphinx_co'

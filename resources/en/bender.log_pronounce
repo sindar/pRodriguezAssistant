@@ -11,6 +11,7 @@ BYE - Main
 CONFIGURATION - Main 
 CONFIGURE - Main 
 DATE - Main 
+DECREASE - Main 
 DISABLE - Main 
 EIGHT - Main 
 ENABLE - Main 
@@ -24,8 +25,12 @@ GREAT - Main
 HELLO - Main 
 HEY - Main 
 HI - Main 
+HIGHER - Main 
 HOW - Main 
+INCREASE - Main 
 IS - Main 
+LOUDER - Main 
+LOWER - Main 
 MAGNET - Main 
 MUSIC - Main 
 NEW - Main 
@@ -37,6 +42,7 @@ ONE - Main
 PLAYER - Main 
 POINT - Main 
 PROGRAM - Main 
+QUIETER - Main 
 QUIT - Main 
 RADIO - Main 
 SET - Main 
@@ -54,6 +60,7 @@ THREE - Main
 TO - Main 
 TRACK - Main 
 TWO - Main 
+VOLUME - Main 
 WERE - Main 
 WHAT - Main 
 WHEN - Main 

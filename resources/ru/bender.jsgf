@@ -35,6 +35,8 @@ grammar bender;
 <music_player_next> = (следующий (трек | трэк)) | (следующая песня);
 <music_player_commands> = <music_player_enable> | <music_player_disable> | <music_player_next>;
 
+<volume_command> = (потише | погромче) | (тише | громче);
+
 <birthplace_question> = (откуда ты) | (где ты родился);
 <birthdate_question> = (когда ты родился) | (дата рождения);
 <favorite_animal_question> = (какое твоё любимое животное) | (какой твой любимый зверь);
@@ -53,7 +55,7 @@ grammar bender;
 <commands> = <start_command> | <exit_command> | <shutdown_command>
                     | <enable_disable_command> | <set_command>
                     | <misc_phrases>
-                    | <music_player_commands>;
+                    | <music_player_commands> | <volume_command>;
 
 public <commands_and_questions> = <commands>
                             | <birthplace_question> | <birthdate_question>
