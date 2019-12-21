@@ -44,6 +44,8 @@ grammar bender;
 <favorite_animal_question> = [what [is]] (your favorite animal);
 <who_are_you_question> = (who are you);
 <how_are_you_question> = (how are you);
+<body_questions> = (how can you live without) (a | the | your) (body);
+<about_assistants_questions> = (what do you think about) (alexa | alice | cortana | siri);
 
 <misc_phrases> = (magnet) | [a] [great] (new sweater);
 
@@ -56,4 +58,5 @@ public <commands_and_questions> = <commands>
                             | <birthplace_question> | <birthdate_question>
                             | <favorite_animal_question>
                             | <who_are_you_question> | <how_are_you_question>
+                            | <body_questions> | <about_assistants_questions>
                             | <stop_phrase> | <misc_phrases>  | <requests>;

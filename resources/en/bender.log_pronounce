@@ -1,4 +1,6 @@
 A - Main 
+ABOUT - Main 
+ALEXA - Main 
 ALICE - Main 
 ANIMAL - Main 
 ARE - Main 
@@ -6,13 +8,17 @@ BENDER - Main
 BIRTH - Main 
 LtoS pronounce: verbosity is 1
 BIRTHDATE - Morpheme: BIRTH DATE 
+BODY - Main 
 BORN - Main 
 BYE - Main 
+CAN - Main 
 CONFIGURATION - Main 
 CONFIGURE - Main 
+CORTANA - By LtoS rules
 DATE - Main 
 DECREASE - Main 
 DISABLE - Main 
+DO - Main 
 EIGHT - Main 
 ENABLE - Main 
 EXIT - Main 
@@ -29,6 +35,7 @@ HIGHER - Main
 HOW - Main 
 INCREASE - Main 
 IS - Main 
+LIVE - Main 
 LOUDER - Main 
 LOWER - Main 
 MAGNET - Main 
@@ -49,6 +56,7 @@ SET - Main
 SEVEN - Main 
 SHUTDOWN - Main 
 SING - Main 
+SIRI - Main 
 SIX - Main 
 SLEEP - Main 
 SLEEPING - Main 
@@ -56,6 +64,7 @@ SONG - Main
 STOP - Main 
 SWEATER - Main 
 THE - Main 
+THINK - Main 
 THREE - Main 
 TO - Main 
 TRACK - Main 
@@ -66,6 +75,7 @@ WHAT - Main
 WHEN - Main 
 WHERE - Main 
 WHO - Main 
+WITHOUT - Main 
 YOU - Main 
 YOUR - Main 
 ZERO - Main 

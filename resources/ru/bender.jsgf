@@ -43,6 +43,9 @@ grammar bender;
 <who_are_you_question> = (кто ты);
 <how_are_you_question> = (как ты) | (как поживаешь);
 
+<body_questions> = (как ты живёшь без тела);
+<about_assistants_questions> = (что) [ты] (думаешь) (о | об) (алексе | алисе | кортане | сири);
+
 <misc_phrases> = (магнит) | (хороший новый свитер);
 
 <common_questions> = <birthplace_question> | <birthdate_question>
@@ -61,5 +64,6 @@ public <commands_and_questions> = <commands>
                             | <birthplace_question> | <birthdate_question>
                             | <favorite_animal_question>
                             | <who_are_you_question> | <how_are_you_question>
+                            | <body_questions> | <about_assistants_questions>
                             | <stop_commands> | <misc_phrases>  | <requests>;
 

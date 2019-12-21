@@ -57,6 +57,15 @@ tr_conversation_ru_en = {
     u'кто ты': 'who are you',
     u'как ты': 'how are you',
     u'как поживаешь': 'how are you',
+    u'как ты живёшь без тела': 'how can you live without a body',
+    u'что думаешь об алексе': 'what do you think about alexa',
+    u'что ты думаешь об алексе': 'what do you think about alexa',
+    u'что думаешь об алисе': 'what do you think about alice',
+    u'что ты думаешь об алисе': 'what do you think about alice',
+    u'что думаешь о кортане': 'what do you think about cortana',
+    u'что ты думаешь о кортане': 'what do you think about cortana',
+    u'что думаешь о сири': 'what do you think about siri',
+    u'что ты думаешь о сири': 'what do you think about siri',
     u'магнит': 'magnet',
     u'хороший новый свитер': 'new sweater',
     u'выключение': 'shutdown',
@@ -104,7 +113,7 @@ def main():
     BacklightControl.backlight(BackLightCommands.EYES_OFF)
     
     time.sleep(3)
-
+    
     if (fsmState == 4):
         shutdown()
 
@@ -210,6 +219,11 @@ def conversation_mode(p):
             command = 'birthdate'
         elif 'your favorite animal' in utt:
             command = 'animal'
+        elif 'how can you live' in utt and 'without' in utt and 'body' in utt:
+            command = 'body'
+        elif 'what do you think about' in utt:
+            if 'alexa' in utt or 'alice' in utt or 'cortana' in utt or 'siri' in utt:
+                command = 'bad girl'
         elif 'magnet' in utt:
             command = 'magnet ' + str(current_milli_time % 2)
         elif 'new sweater' in utt:
