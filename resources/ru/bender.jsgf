@@ -19,7 +19,7 @@ grammar bender;
 <parameters> = (сон) | (засыпание);
 
 <shutdown_command> = (выключение);
-<exit_command> = (выход | закрой);
+<exit_command> = (выход);
 <enable_disable_command> = (включи | отключи) [<parameters>];
 <set_command> = установи [<parameters>] [в] [<number>];
 

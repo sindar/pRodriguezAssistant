@@ -25,6 +25,7 @@ speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 speaker_volume = 20
 
 SLEEPING_TIME = 600.0
+VOLUME_STEP = 4
 
 tr_start_ru_en  = {
     u'бендер': 'bender',
@@ -60,18 +61,12 @@ tr_conversation_ru_en = {
     u'хороший новый свитер': 'new sweater',
     u'выключение': 'shutdown',
     u'стоп': 'stop',
-    u'пока': 'stop'
-}
-
-tr_configuration_ru_en = {
-    u'сон': 'sleep',
-    u'засыпание': 'sleep',
-    u'выход': 'exit',
-    u'закрой': 'exit',
-    u'включи': 'enable',
-    u'выключи': 'disable',
-    u'в': 'to',
-    u'магнит': 'magnet'
+    u'пока': 'stop',
+    u'включи сон': 'enable sleep',
+    u'отключи сон': 'disable sleep',
+    u'включи засыпание': 'enable sleep',
+    u'отключи засыпание': 'disable sleep',
+    u'выход': 'exit'
 }
 
 def main():
@@ -97,8 +92,8 @@ def main():
         if (fsmState == 1):
             if find_keyphrase(p):
                 conversation_mode(p)
-            #elif (fsmState == 2):
-            #    configuration_mode(p)
+        elif (fsmState == 2):
+            break
         elif (fsmState == 4):
             break
         else:
@@ -107,6 +102,11 @@ def main():
     kill_pocketsphinx()
     m_player.send_command("exit")
     BacklightControl.backlight(BackLightCommands.EYES_OFF)
+    
+    time.sleep(3)
+
+    if (fsmState == 4):
+        shutdown()
 
 def sleep_timeout():
     global isSleeping
@@ -118,6 +118,7 @@ def find_keyphrase(p):
     global fsmState
     global sleepEnabled
     global aplayer
+    global speaker_volume
 
     while True:
         keyphrase_found = False
@@ -138,7 +139,7 @@ def find_keyphrase(p):
         if ('bender' in utt):
             m_player.send_command('status')
             if m_player.musicIsPlaying:
-                if('stop' in utt):
+                if('stop' in utt or speaker_volume == 0):
                     m_player.send_command('pause')
                     keyphrase_found = True
             else:
@@ -188,15 +189,15 @@ def conversation_mode(p):
         if 'shutdown' in utt:
             command = 'shutdown'
             fsmState = 4
-        #elif ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
-        #    command = 'exit'
-        #    fsmState = 0
+        elif ('exit' in utt) or ('quit' in utt):
+            command = 'exit'
+            fsmState = 2
         elif ('volume' in utt):
             command = 'no audio'
             if ('increase' in utt):
-                change_speaker_volume(5)
+                change_speaker_volume(VOLUME_STEP)
             elif ('decrease' in utt):
-                change_speaker_volume(-5)
+                change_speaker_volume(-VOLUME_STEP)
         elif ('sing' in utt) and ('song' in utt):
             command = 'sing'
         elif 'who are you' in utt:
@@ -209,17 +210,12 @@ def conversation_mode(p):
             command = 'birthdate'
         elif 'your favorite animal' in utt:
             command = 'animal'
-        elif ('bender' in utt) and (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
-            command = 'hey bender ' + str(current_milli_time % 3)
         elif 'magnet' in utt:
             command = 'magnet ' + str(current_milli_time % 2)
         elif 'new sweater' in utt:
             command = 'new sweater'
         elif ('wake up' in utt) or ('awake' in utt):
             command = 'wake up'
-        elif ('configuration' in utt) or ('configure' in utt):
-            command = 'configuration'
-            #fsmState = 2
         elif ('enable music player' in utt):
             command = 'no audio'
             m_player.send_command('start')
@@ -230,6 +226,18 @@ def conversation_mode(p):
         elif ('next song' in utt):
             command = 'no audio'
             m_player.send_command('next')
+        elif ('enable' in utt):
+            if ('sleep' in utt):
+                command = 'configuration'
+                sleepEnabled = True
+            else:
+                command = 'unrecognized'
+        elif ('disable' in utt):
+            if ('sleep' in utt):
+                command = 'configuration'
+                sleepEnabled = False
+            else:
+                command = 'unrecognized'
         else:
             command = 'unrecognized'
 
@@ -245,60 +253,6 @@ def conversation_mode(p):
 
         time.sleep(0.15)
         break
-
-def configuration_mode(p):
-    global fsmState
-    global a_player
-
-    while True:
-        print('Configuration mode:')
-
-        if sleepEnabled:
-            sleepTimer = Timer(SLEEPING_TIME, sleep_timeout)
-            sleepTimer.start()
-
-        current_milli_time = int(round(time.time() * 1000))
-        retcode = p.returncode
-        utt = p.stdout.readline().decode('utf8').rstrip().lower()
-        print('utterance = ' + utt)
-
-        if speech_recognizer.lang == 'ru':
-            try:
-                utt = tr_configuration_ru_en[utt]
-            except KeyError as e:
-                utt = 'unrecognized'
-                #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
-
-        if sleepEnabled:
-            if utt != None and sleepTimer != None:
-                sleepTimer.cancel()
-            if utt != None and isSleeping:
-                utt = 'wake up'
-                isSleeping = False
-
-        if ('bender' in utt) and (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
-            command = 'hey bender ' + str(current_milli_time % 3)
-            a_player.play_answer(command)
-            fsmState = 1
-        if ('exit' in utt) or ('quit' in utt) or ('stop' in utt):
-            command = 'exit'
-            #fsmState = 0
-        elif ('set' in utt):
-            command = 'set'
-            #TODO: implement set logic
-        elif('enable' in utt):
-            command = 'enable'
-            #TODO: implement enable logic
-        elif('disable' in utt):
-            command = 'disable'
-            #TODO: implement disable logic
-        else:
-            command = 'unrecognized'
-
-        a_player.play_answer(command)
-        time.sleep(0.15)
-        if (retcode is not None) or (fsmState != 2):
-            break
 
 def change_speaker_volume(value):
     global speaker_volume
@@ -318,6 +272,11 @@ def set_speaker_volume(value):
 def kill_pocketsphinx():
     kill_exe = 'killall -s SIGKILL pocketsphinx_co'
     p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
+    code = p.wait()
+
+def shutdown():
+    shutdown = "shutdown -Ph now"
+    p = subprocess.Popen(["%s" % shutdown], shell=True, stdout=subprocess.PIPE)
     code = p.wait()
 
 main()
