@@ -22,7 +22,7 @@ m_player = MusicPlayer()
 a_player = AnswerPlayer(audio_lang)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
-speaker_volume = 20
+speaker_volume = 8
 
 SLEEPING_TIME = 600.0
 VOLUME_STEP = 4
@@ -75,7 +75,7 @@ tr_conversation_ru_en = {
     u'отключи сон': 'disable sleep',
     u'включи засыпание': 'enable sleep',
     u'отключи засыпание': 'disable sleep',
-    u'выход': 'exit'
+    u'программа выход': 'exit the program'
 }
 
 def main():
@@ -198,7 +198,7 @@ def conversation_mode(p):
         if 'shutdown' in utt:
             command = 'shutdown'
             fsmState = 4
-        elif ('exit' in utt) or ('quit' in utt):
+        elif (('exit' in utt) or ('quit' in utt)) and ('program' in utt):
             command = 'exit'
             fsmState = 2
         elif ('volume' in utt):
