@@ -37,7 +37,7 @@ audio_files['no audio'] = 'silence'
 class AnswerPlayer:
     lang = 'en'
     def __init__(self, lang):
-        self.mic_gain = 90
+        self.mic_gain = 13
         self.mic_set(self.mic_gain)
         AnswerPlayer.lang = lang
 

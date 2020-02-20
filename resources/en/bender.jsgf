@@ -32,8 +32,8 @@ grammar bender;
 <enable_disable_command> = (enable | disable) [<parameters>];
 <set_command> = (set) [<parameters>] [to] [<number>];
 
-<music_player_enable> = (enable music player);
-<music_player_disable> = (disable music player);
+<music_player_enable> = (start player);
+<music_player_disable> = (stop player);
 <music_player_next> = (next (track | song));
 <music_player_commands> = <music_player_enable> | <music_player_disable> | <music_player_next>;
 

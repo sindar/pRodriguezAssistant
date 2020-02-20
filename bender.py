@@ -22,7 +22,7 @@ m_player = MusicPlayer()
 a_player = AnswerPlayer(audio_lang)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
-speaker_volume = 8
+speaker_volume = 4
 
 SLEEPING_TIME = 600.0
 VOLUME_STEP = 4
@@ -36,13 +36,16 @@ tr_start_ru_en  = {
     u'эй бендер стоп': 'bender stop'
 }
 
-tr_conversation_ru_en = {
+tr_conversation_ru_en =  {
+    **tr_start_ru_en,
     u'громче': 'increase volume',
     u'погромче': 'increase volume',
     u'тише': 'decrease volume',
     u'потише': 'decrease volume',
-    u'включи музыкальный плеер': 'enable music player',
-    u'отключи музыкальный плеер': 'disable music player',
+    u'включи плеер': 'start player',
+    u'старт плеера': 'start player',
+    u'отключи плеер': 'stop player',
+    u'стоп плеера': 'stop player',
     u'следующий трек': 'next song',
     u'следующий трэк': 'next song',
     u'следующая песня': 'next song',
@@ -102,6 +105,8 @@ def main():
             if find_keyphrase(p):
                 conversation_mode(p)
         elif (fsmState == 2):
+            conversation_mode(p)
+        elif (fsmState == 3):
             break
         elif (fsmState == 4):
             break
@@ -148,9 +153,9 @@ def find_keyphrase(p):
         if ('bender' in utt):
             m_player.send_command('status')
             if m_player.musicIsPlaying:
-                if('stop' in utt or speaker_volume == 0):
-                    m_player.send_command('pause')
-                    keyphrase_found = True
+                #if('stop' in utt or speaker_volume == 0):
+                m_player.send_command('pause')
+                keyphrase_found = True
             else:
                 if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
                     command = 'hey bender ' + str(current_milli_time % 3)
@@ -169,6 +174,7 @@ def conversation_mode(p):
     global a_player
 
     while True:
+        fsmState = 1
         print ('Conversation mode:')
         sleepTimer = None
 
@@ -200,7 +206,7 @@ def conversation_mode(p):
             fsmState = 4
         elif (('exit' in utt) or ('quit' in utt)) and ('program' in utt):
             command = 'exit'
-            fsmState = 2
+            fsmState = 3
         elif ('volume' in utt):
             command = 'no audio'
             if ('increase' in utt):
@@ -230,12 +236,12 @@ def conversation_mode(p):
             command = 'new sweater'
         elif ('wake up' in utt) or ('awake' in utt):
             command = 'wake up'
-        elif ('enable music player' in utt):
-            command = 'no audio'
+        elif ('start' in utt and 'player' in utt):
+            command = 'player'
             m_player.send_command('start')
             time.sleep(1)
-        elif ('disable music player' in utt):
-            command = 'no audio'
+        elif ('stop' in utt and 'player' in utt):
+            command = 'player'
             m_player.send_command('stop')
         elif ('next song' in utt):
             command = 'no audio'
@@ -252,18 +258,22 @@ def conversation_mode(p):
                 sleepEnabled = False
             else:
                 command = 'unrecognized'
+        elif (utt == 'bender' or utt == 'hi bender'):
+            command = 'no audio'
+            fsmState = 2
         else:
             command = 'unrecognized'
 
-        if command != 'no audio':
-            a_player.play_answer(command)
-        else:
-            BacklightControl.backlight(BackLightCommands.TEETH_OFF)
+        if fsmState != 2:
+            if command != 'no audio':
+                a_player.play_answer(command)
+            else:
+                BacklightControl.backlight(BackLightCommands.TEETH_OFF)
 
-        if command != 'shutdown':
-            m_player.send_command('status')
-            if m_player.musicIsPlaying:
-                m_player.send_command('resume')
+            if command != 'shutdown':
+                m_player.send_command('status')
+                if m_player.musicIsPlaying:
+                    m_player.send_command('resume')
 
         time.sleep(0.15)
         break

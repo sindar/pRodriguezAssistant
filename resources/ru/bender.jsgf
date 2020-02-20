@@ -30,8 +30,8 @@ grammar bender;
 
 <stop_commands> = (стоп) | (пока);
 
-<music_player_enable> = (включи музыкальный плеер);
-<music_player_disable> = (отключи музыкальный плеер);
+<music_player_enable> = (включи плеер) | (старт плеера);
+<music_player_disable> = (выключи плеер) | (стоп плеера);
 <music_player_next> = (следующий (трек | трэк)) | (следующая песня);
 <music_player_commands> = <music_player_enable> | <music_player_disable> | <music_player_next>;
 
