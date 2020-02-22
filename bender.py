@@ -9,6 +9,7 @@ from answer_player import AnswerPlayer
 from music_player import MusicPlayer
 from backlight_control import BacklightControl
 from backlight_control import BackLightCommands
+from translation_ru import TranslatorRU
 
 audio_lang = 'ru'
 recognize_lang ='ru'
@@ -26,60 +27,6 @@ speaker_volume = 4
 
 SLEEPING_TIME = 600.0
 VOLUME_STEP = 4
-
-tr_start_ru_en  = {
-    u'бендер': 'bender',
-    u'привет бендер': 'hi bender',
-    u'эй бендер': 'hi bender',
-    u'бендер стоп': 'bender stop',
-    u'привет бендер стоп': 'bender stop',
-    u'эй бендер стоп': 'bender stop'
-}
-
-tr_conversation_ru_en =  {
-    **tr_start_ru_en,
-    u'громче': 'increase volume',
-    u'погромче': 'increase volume',
-    u'тише': 'decrease volume',
-    u'потише': 'decrease volume',
-    u'включи плеер': 'start player',
-    u'старт плеера': 'start player',
-    u'отключи плеер': 'stop player',
-    u'стоп плеера': 'stop player',
-    u'следующий трек': 'next song',
-    u'следующий трэк': 'next song',
-    u'следующая песня': 'next song',
-    u'спой песню': 'sing a song',
-    u'конфигурация': 'configure',
-    u'откуда ты': 'where are you from',
-    u'где ты родился': 'where were you born',
-    u'когда ты родился': 'when were you born',
-    u'дата рождения': 'when were you born',
-    u'какое твоё любимое животное': 'your favorite animal',
-    u'какой твой любимый зверь': 'your favorite animal',
-    u'кто ты': 'who are you',
-    u'как ты': 'how are you',
-    u'как поживаешь': 'how are you',
-    u'как ты живёшь без тела': 'how can you live without a body',
-    u'что думаешь об алексе': 'what do you think about alexa',
-    u'что ты думаешь об алексе': 'what do you think about alexa',
-    u'что думаешь об алисе': 'what do you think about alice',
-    u'что ты думаешь об алисе': 'what do you think about alice',
-    u'что думаешь о кортане': 'what do you think about cortana',
-    u'что ты думаешь о кортане': 'what do you think about cortana',
-    u'что думаешь о сири': 'what do you think about siri',
-    u'что ты думаешь о сири': 'what do you think about siri',
-    u'магнит': 'magnet',
-    u'хороший новый свитер': 'new sweater',
-    u'выключение': 'shutdown',
-    u'стоп': 'stop',
-    u'пока': 'stop',
-    u'включи сон': 'enable sleep',
-    u'отключи сон': 'disable sleep',
-    u'включи засыпание': 'enable sleep',
-    u'отключи засыпание': 'disable sleep',
-    u'программа выход': 'exit the program'
-}
 
 def main():
     global fsmState
@@ -145,7 +92,7 @@ def find_keyphrase(p):
 
         if speech_recognizer.lang == 'ru':
             try:
-                utt = tr_start_ru_en[utt]
+                utt = TranslatorRU.tr_start_ru_en[utt]
             except KeyError as e:
                 utt = 'unrecognized'
                 #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
@@ -153,9 +100,9 @@ def find_keyphrase(p):
         if ('bender' in utt):
             m_player.send_command('status')
             if m_player.musicIsPlaying:
-                #if('stop' in utt or speaker_volume == 0):
-                m_player.send_command('pause')
-                keyphrase_found = True
+                if('pause' in utt or speaker_volume == 0):
+                    m_player.send_command('pause')
+                    keyphrase_found = True
             else:
                 if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
                     command = 'hey bender ' + str(current_milli_time % 3)
@@ -189,7 +136,7 @@ def conversation_mode(p):
 
         if speech_recognizer.lang == 'ru':
             try:
-                utt = tr_conversation_ru_en[utt]
+                utt = TranslatorRU.tr_conversation_ru_en[utt]
             except KeyError as e:
                 utt = 'unrecognized'
                 #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
@@ -258,7 +205,7 @@ def conversation_mode(p):
                 sleepEnabled = False
             else:
                 command = 'unrecognized'
-        elif (utt == 'bender' or utt == 'hi bender'):
+        elif (utt == 'bender' or ('bender' in utt and ('hi' in utt or 'pause' in utt))):
             command = 'no audio'
             fsmState = 2
         else:
