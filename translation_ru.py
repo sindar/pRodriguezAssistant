@@ -54,5 +54,5 @@ class TranslatorRU:
         u'отключи сон': 'disable sleep',
         u'включи засыпание': 'enable sleep',
         u'отключи засыпание': 'disable sleep',
-        u'программа выход': 'exit the program'
+        u'выход из программы': 'exit the program'
     }

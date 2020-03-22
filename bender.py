@@ -23,7 +23,7 @@ m_player = MusicPlayer()
 a_player = AnswerPlayer(audio_lang)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
-speaker_volume = 4
+speaker_volume = 20
 
 SLEEPING_TIME = 600.0
 VOLUME_STEP = 4
