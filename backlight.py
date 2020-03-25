@@ -38,42 +38,22 @@ def music(pixels, num):
         time.sleep(0.1)
 
 def talk(pixels, num):
-    pixels[6] = default_color
-    pixels[7] = default_color
-    pixels[8] = default_color
-    pixels[9] = default_color
-    pixels[10] = default_color
-    pixels[11] = default_color
+    talk_phase_0 = {2: default_color, 3: default_color, 6: default_color, 7: default_color, 8: default_color,
+                    9: default_color, 10: default_color, 11: default_color, 13: no_color, 14: no_color, 15: no_color,
+                    16: no_color}
+
+    talk_phase_1 = {2: no_color, 3: no_color, 6: no_color, 7: default_color, 8: default_color, 9: default_color,
+                    10: default_color, 11: no_color, 13: default_color, 14: default_color, 15: default_color,
+                    16: default_color}
 
     while True:
-        #pixels[1] = default_color
-        pixels[2] = default_color
-        pixels[3] = default_color
-        #pixels[4] = default_color
-
-        pixels[6] = default_color
-        pixels[11] = default_color
-
-        pixels[13] = no_color
-        pixels[14] = no_color
-        pixels[15] = no_color
-        pixels[16] = no_color
-
+        for key in talk_phase_0.keys():
+            pixels[key] = talk_phase_0[key]
         pixels.show()
         time.sleep(0.25)
 
-        #pixels[1] = no_color
-        pixels[2] = no_color
-        pixels[3] = no_color
-        #pixels[4] = no_color
-        pixels[13] = default_color
-        pixels[14] = default_color
-        pixels[15] = default_color
-        pixels[16] = default_color
-
-        pixels[6] = no_color
-        pixels[11] = no_color
-
+        for key in talk_phase_1.keys():
+            pixels[key] = talk_phase_1[key]
         pixels.show()
         time.sleep(0.25)
 
