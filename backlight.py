@@ -8,6 +8,7 @@ import sys
 import getopt
 import time
 import random
+import math
 
 eyes_pin = board.D21
 teeth_pin = board.D18
@@ -19,6 +20,7 @@ ORDER = neopixel.GRB
 
 default_color = (243, 253, 0)
 no_color = (0, 0, 0)
+revert_row1 = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
 
 def switch_pixels(pixels, on, color):
     if on:
@@ -56,6 +58,46 @@ def talk(pixels, num):
             pixels[key] = talk_phase_1[key]
         pixels.show()
         time.sleep(0.25)
+
+def math_talk(pixels, num):
+    while True:
+        pixels.fill((0, 0, 0))
+        for i in range(6, 12):
+            pixels[i] = default_color
+        pixels.show()
+        time.sleep(0.25)
+
+        sin_cos_graph(pixels, math.cos)
+        time.sleep(0.25)
+
+        pixels.fill((0, 0, 0))
+        for i in range(6, 12):
+            pixels[i] = default_color
+        pixels.show()
+        time.sleep(0.25)
+
+        sin_cos_graph(pixels, math.sin)
+        time.sleep(0.25)
+
+def sin_cos_graph(pixels, func):
+    if func != math.sin and func != math.cos:
+        return
+    pixels.fill((0, 0, 0))
+    t = 0
+    for x in range(0, 6):
+        y = func(t)
+        j = x
+        if y >= -1 and y < -0.33:
+            i = 0
+        elif y >= -0.33 and y < 0.33:
+            i = 1
+            j = revert_row1[x]
+        else:
+            i = 2
+        c = i * 6 + j
+        pixels[c] = default_color
+        t += 1.57
+    pixels.show()
 
 def main(argv):
     #print ('Argument List:', str(sys.argv))
@@ -107,7 +149,7 @@ def main(argv):
         music(pixels, num)
 
     if (talk_on):
-        talk(pixels, num)
+        math_talk(pixels, num)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
