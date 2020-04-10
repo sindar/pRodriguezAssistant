@@ -3,6 +3,25 @@
 import os
 import subprocess
 import psutil
+import board
+import neopixel
+import sys
+import getopt
+import time
+import random
+import math
+
+eyes_pin = board.D21
+teeth_pin = board.D18
+
+eyes_num = 1 # two eyes in parallel
+teeth_num = 18
+
+ORDER = neopixel.GRB
+
+default_color = (243, 253, 0)
+no_color = (0, 0, 0)
+revert_row1 = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
 
 class BackLightCommands:
     EYES_OFF = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "off"]

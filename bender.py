@@ -105,13 +105,13 @@ def find_keyphrase(p):
                     keyphrase_found = True
             else:
                 if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
-                    command = 'hey bender ' + str(current_milli_time % 3)
+                    command = 'hey bender ' + str(current_milli_time % 2)
                     a_player.play_answer(command)
                 keyphrase_found = True
 
-        time.sleep(0.15)
+        # time.sleep(0.15)
         if keyphrase_found:
-            BacklightControl.backlight(BackLightCommands.TEETH_ON_OK)
+            # BacklightControl.backlight(BackLightCommands.TEETH_ON_OK)
             return keyphrase_found
 
 def conversation_mode(p):
@@ -214,15 +214,15 @@ def conversation_mode(p):
         if fsmState != 2:
             if command != 'no audio':
                 a_player.play_answer(command)
-            else:
-                BacklightControl.backlight(BackLightCommands.TEETH_OFF)
+            # else:
+            #     BacklightControl.backlight(BackLightCommands.TEETH_OFF)
 
             if command != 'shutdown':
                 m_player.send_command('status')
                 if m_player.musicIsPlaying:
                     m_player.send_command('resume')
 
-        time.sleep(0.15)
+        # time.sleep(0.15)
         break
 
 def change_speaker_volume(value):
