@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
-import os
-import subprocess
-import psutil
 import board
 import neopixel
-import sys
-import getopt
 import time
-import random
 import math
+from multiprocessing import Process
 
-eyes_pin = board.D21
-teeth_pin = board.D18
+eyes_leds = (board.D21, 1) # two eyes in parallel
+mouth_leds = (board.D18, 18)
 
-eyes_num = 1 # two eyes in parallel
-teeth_num = 18
+strips = {
+    'EYES': eyes_leds,
+    'MOUTH': mouth_leds
+}
+
+pin = None
+pixels = None
 
 ORDER = neopixel.GRB
 
@@ -23,35 +23,95 @@ default_color = (243, 253, 0)
 no_color = (0, 0, 0)
 revert_row1 = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
 
-class BackLightCommands:
-    EYES_OFF = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "off"]
-    EYES_ON = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "on"]
-    TEETH_OFF = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "off"]
-    TEETH_ON_OK = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on"]
-    TEETH_ON_NOT_OK = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "on", "-r", "255", "-g", "0"]
 
-    EYES_MUSIC = ["python3", os.getcwd() + "/backlight.py", "-l", "eyes", "-s", "music"]
-    TEETH_MUSIC = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "music"]
+is_talking = False
 
-    TEETH_TALK = ["python3", os.getcwd() + "/backlight.py", "-l", "teeth", "-s", "talk"]
+def fill_pixels(pixels, color):
+    pixels.fill(color)
+    pixels.show()
+
+def talk(pixels, pin):
+    if pin != board.D18:
+        print('Eyes do not support talk command!')
+        return
+    i = 0
+    while i < 30: # maximum answer length to prevent infinite loop
+        pixels.fill((0, 0, 0))
+        for i in range(6, 12):
+            pixels[i] = default_color
+        pixels.show()
+        time.sleep(0.25)
+
+        sin_cos_graph(pixels, pin, math.cos)
+        time.sleep(0.25)
+
+        pixels.fill((0, 0, 0))
+        for i in range(6, 12):
+            pixels[i] = default_color
+        pixels.show()
+        time.sleep(0.25)
+
+        sin_cos_graph(pixels, pin, math.sin)
+        time.sleep(0.25)
+
+def sin_cos_graph(pixels, pin, func):
+    if pin != board.D18:
+        print('Eyes do not support talk command!')
+        return
+    if func != math.sin and func != math.cos:
+        print('Only sin() and cos() are supported!')
+        return
+    pixels.fill((0, 0, 0))
+    t = 0
+    for x in range(0, 6):
+        y = func(t)
+        j = x
+        if y >= -1 and y < -0.33:
+            i = 0
+        elif y >= -0.33 and y < 0.33:
+            i = 1
+            j = revert_row1[x]
+        else:
+            i = 2
+        c = i * 6 + j
+        pixels[c] = default_color
+        t += 1.57
+    pixels.show()
 
 class BacklightControl:
-    backlightEnabled = True
+    backlight_enabled = True
 
-    @staticmethod
-    def backlight(backlight_command):
-        if BacklightControl.backlightEnabled:
-            backlight_pids = [process.pid for process in psutil.process_iter() if
-                         'python' in str(process.name) and 'backlight' in str(process.cmdline())]
-            BacklightControl.kill_backlight(backlight_pids)
-            p = subprocess.Popen(backlight_command)
-            return p
+    def __init__(self, strip):
+        self.pixels = None
+        if strip in strips:
+            self.__init_pixels(strips[strip])
         else:
-            return None
+            print("Strip not found!")
+        self.backlight_commands = {
+            'ON': lambda: fill_pixels(self.pixels, default_color),
+            'OFF': lambda: fill_pixels(self.pixels, no_color),
+            'TALK': lambda: talk(self.pixels, self.pin)
+        }
 
-    @staticmethod
-    def kill_backlight(backlight_pids):
-        for pid in backlight_pids:
-            kill_exe = 'killall -s SIGKILL ' + str(pid)
-            p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
-            code = p.wait()
+    def exec_cmd(self, command):
+        if command in self.backlight_commands:
+            func = self.backlight_commands[command]
+            p = Process(target=func, args=())
+            p.start()
+            return p
+
+    def __init_pixels(self, leds):
+        init_flag = True
+        if self.pixels:
+            if self.pin != leds[0]:
+                self.pixels.deinit_no_blank()
+            else:
+                self.init_flag = False
+
+        if init_flag:
+            self.pixels = neopixel.NeoPixel(leds[0], leds[1], brightness=1, auto_write=False,
+                                       pixel_order=ORDER)
+            self.pin = leds[0]
+
+        self.pixels = neopixel.NeoPixel(leds[0], leds[1], brightness=1, auto_write=False,
+                                   pixel_order=ORDER)

@@ -8,14 +8,14 @@ from speech_recognizer import PsLiveRecognizer
 from answer_player import AnswerPlayer
 from music_player import MusicPlayer
 from backlight_control import BacklightControl
-from backlight_control import BackLightCommands
 from translation_ru import TranslatorRU
 
 audio_lang = 'ru'
 recognize_lang ='ru'
 sleepEnabled = True
 
-BacklightControl.backlightEnabled = True
+BacklightControl.backlight_enabled = True
+eyes_bl = BacklightControl('EYES')
 
 fsmState = 1
 isSleeping = False
@@ -23,7 +23,7 @@ m_player = MusicPlayer()
 a_player = AnswerPlayer(audio_lang)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
-speaker_volume = 20
+speaker_volume = 10
 
 SLEEPING_TIME = 600.0
 VOLUME_STEP = 4
@@ -39,13 +39,13 @@ def main():
     kill_pocketsphinx()
     m_player.kill_player()
 
-    BacklightControl.backlight(BackLightCommands.TEETH_OFF)
-    BacklightControl.backlight(BackLightCommands.EYES_OFF)
+    eyes_bl.exec_cmd('OFF')
     time.sleep(0.15)
-    BacklightControl.backlight(BackLightCommands.EYES_ON)
 
     p = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
     print(["%s" % speech_recognizer.cmd_line])
+
+    eyes_bl.exec_cmd('ON')
 
     while True:
         if (fsmState == 1):
@@ -62,8 +62,9 @@ def main():
 
     kill_pocketsphinx()
     m_player.send_command("exit")
-    BacklightControl.backlight(BackLightCommands.EYES_OFF)
-    
+
+    eyes_bl.exec_cmd('OFF')
+
     time.sleep(3)
     
     if (fsmState == 4):
@@ -109,9 +110,7 @@ def find_keyphrase(p):
                     a_player.play_answer(command)
                 keyphrase_found = True
 
-        # time.sleep(0.15)
         if keyphrase_found:
-            # BacklightControl.backlight(BackLightCommands.TEETH_ON_OK)
             return keyphrase_found
 
 def conversation_mode(p):
@@ -214,15 +213,12 @@ def conversation_mode(p):
         if fsmState != 2:
             if command != 'no audio':
                 a_player.play_answer(command)
-            # else:
-            #     BacklightControl.backlight(BackLightCommands.TEETH_OFF)
 
             if command != 'shutdown':
                 m_player.send_command('status')
                 if m_player.musicIsPlaying:
                     m_player.send_command('resume')
 
-        # time.sleep(0.15)
         break
 
 def change_speaker_volume(value):

@@ -1,25 +1,10 @@
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
 import subprocess
-import time
-from backlight_control import BacklightControl
-from backlight_control import BackLightCommands
 import simpleaudio as sa
-
-import board
-import neopixel
-import math
 from concurrent.futures import ThreadPoolExecutor
-
-default_color = (243, 253, 0)
-no_color = (0, 0, 0)
-eyes_pin = board.D21
-teeth_pin = board.D18
-eyes_num = 1 # two eyes in parallel
-teeth_num = 18
-revert_row1 = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
-
-ORDER = neopixel.GRB
+from backlight_control import BacklightControl
+from multiprocessing import Process
 
 audio_files = {}
 audio_files['shutdown'] = 'with_bjah'
@@ -56,17 +41,16 @@ class AnswerPlayer:
     def __init__(self, lang):
         self.mic_gain = 40
         self.mic_set(self.mic_gain)
-        self.pixels = neopixel.NeoPixel(teeth_pin, teeth_num, brightness=0.5, auto_write=False,
-                                   pixel_order=ORDER)
-        self.is_playing = False
+        self.mouth_bl = BacklightControl('MOUTH')
+        self.mouth_bl.exec_cmd('OFF')
         AnswerPlayer.lang = lang
 
     def play_wav(self, path):
-        self.is_playing = True
         wave_obj = sa.WaveObject.from_wave_file(path)
         play_obj = wave_obj.play()
+        p = self.mouth_bl.exec_cmd('TALK')
         play_obj.wait_done()
-        self.is_playing = False
+        p.terminate()
 
     def play_answer(self, command):
         answer = audio_files.get(command)
@@ -76,29 +60,9 @@ class AnswerPlayer:
                 # BacklightControl.backlight(BackLightCommands.TEETH_ON_NOT_OK)
             else:
                 self.mic_set(0)
-
-                # self.switch_pixels(True)
-                # wave_obj = sa.WaveObject.from_wave_file('./audio/' + AnswerPlayer.lang + '/' + answer + '.wav')
-                # play_obj = wave_obj.play()
-                # play_obj.wait_done()  # Wait until sound has finished playing
-
-                with ThreadPoolExecutor(max_workers=2) as executor:
-                    executor.submit(self.play_wav, './audio/' + AnswerPlayer.lang + '/' + answer + '.wav')
-                    executor.submit(self.math_talk)
-
-
-                #exe = 'play ' + './audio/' + AnswerPlayer.lang + '/' + answer + '.ogg'
-
-                # BacklightControl.backlight(BackLightCommands.TEETH_ON_OK)
-                # bl_proc = BacklightControl.backlight(BackLightCommands.TEETH_TALK)
-                #time.sleep(0.5)
-
-                #p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
-                #code = p.wait()
-                # bl_proc.kill()
+                self.play_wav('./audio/' + AnswerPlayer.lang + '/' + answer + '.wav')
                 self.mic_set(self.mic_gain)
-            self.switch_pixels(False)
-            # BacklightControl.backlight(BackLightCommands.TEETH_OFF)
+            self.mouth_bl.exec_cmd('OFF')
         else:
             print('No answer to this question!')
 
@@ -106,50 +70,3 @@ class AnswerPlayer:
         exe = "amixer -q -c 1 sset 'Mic' " + str(val)
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()
-
-    def switch_pixels(self, on):
-        if on:
-            self.pixels.fill(default_color)
-        else:
-            self.pixels.fill((0, 0, 0))
-        self.pixels.show()
-
-    def math_talk(self):
-        while self.is_playing:
-            self.pixels.fill((0, 0, 0))
-            for i in range(6, 12):
-                self.pixels[i] = default_color
-            self.pixels.show()
-            time.sleep(0.25)
-
-            self.sin_cos_graph(math.cos)
-            time.sleep(0.25)
-
-            self.pixels.fill((0, 0, 0))
-            for i in range(6, 12):
-                self.pixels[i] = default_color
-            self.pixels.show()
-            time.sleep(0.25)
-
-            self.sin_cos_graph(math.sin)
-            time.sleep(0.25)
-
-    def sin_cos_graph(self, func):
-        if func != math.sin and func != math.cos:
-            return
-        self.pixels.fill((0, 0, 0))
-        t = 0
-        for x in range(0, 6):
-            y = func(t)
-            j = x
-            if y >= -1 and y < -0.33:
-                i = 0
-            elif y >= -0.33 and y < 0.33:
-                i = 1
-                j = revert_row1[x]
-            else:
-                i = 2
-            c = i * 6 + j
-            self.pixels[c] = default_color
-            t += 1.57
-        self.pixels.show()

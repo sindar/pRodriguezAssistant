@@ -24,5 +24,5 @@ class PsLiveRecognizer:
                             + ' -dictcase yes -inmic yes ' \
                             + ' -jsgf ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.jsgf' \
                             + ' -ds 3 -samprate 8000 ' \
-                            + ' -remove_noise no '
+                            # + ' -remove_noise no '
                             #+ ' -logfn /dev/null ' \
