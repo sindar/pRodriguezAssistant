@@ -11,11 +11,11 @@ class PsLiveRecognizer:
     def generatePsCmdLine(self):
         if self.lang == 'en':
             self.cmd_line = '''pocketsphinx_continuous -adcdev plughw:1,0''' \
-                        + ' -hmm ' + self.resources_dir + self.lang + '/cmusphinx-en-us-ptm-5.2/' \
+                        + ' -hmm ' + self.resources_dir + self.lang + '/cmusphinx-en-us-ptm-8khz-5.2' \
                         + ' -dict ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.dic' \
                         + ' -dictcase yes -inmic yes ' \
                         + ' -jsgf ' + self.resources_dir + self.lang + '/' + self.parameter_set + '.jsgf' \
-                        + ' -ds 3 '
+                        + ' -ds 3 -samprate 8000 '
                         #+ ' -logfn /dev/null ' \
         else:
             self.cmd_line = '''pocketsphinx_continuous -adcdev plughw:1,0''' \
