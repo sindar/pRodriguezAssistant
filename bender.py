@@ -10,8 +10,8 @@ from music_player import MusicPlayer
 from backlight_control import BacklightControl
 from translation_ru import TranslatorRU
 
-audio_lang = 'ru'
-recognize_lang ='ru'
+audio_lang = 'en'
+recognize_lang ='en'
 sleepEnabled = True
 
 BacklightControl.backlight_enabled = True
@@ -86,7 +86,6 @@ def find_keyphrase(p):
         keyphrase_found = False
         print('Start mode:')
 
-        current_milli_time = int(round(time.time() * 1000))
         retcode = p.returncode
         utt = p.stdout.readline().decode('utf8').rstrip().lower()
         print('utterance = ' + utt)
@@ -106,7 +105,7 @@ def find_keyphrase(p):
                     keyphrase_found = True
             else:
                 if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
-                    command = 'hey bender ' + str(current_milli_time % 2)
+                    command = 'hey bender'
                     a_player.play_answer(command)
                 keyphrase_found = True
 
@@ -128,7 +127,6 @@ def conversation_mode(p):
             sleepTimer = Timer(SLEEPING_TIME, sleep_timeout)
             sleepTimer.start()
 
-        current_milli_time = int(round(time.time() * 1000))
         retcode = p.returncode
         utt = p.stdout.readline().decode('utf8').rstrip().lower()
         print('utterance = ' + utt)
@@ -162,7 +160,7 @@ def conversation_mode(p):
         elif ('sing' in utt) and ('song' in utt):
             command = 'sing'
         elif 'who are you' in utt:
-            command = 'who are you ' + str(current_milli_time % 2)
+            command = 'who are you'
         elif 'how are you' in utt:
             command = 'how are you'
         elif ('where are you from' in utt) or ('where were you born' in utt):
@@ -177,7 +175,7 @@ def conversation_mode(p):
             if 'alexa' in utt or 'alice' in utt or 'cortana' in utt or 'siri' in utt:
                 command = 'bad girl'
         elif 'magnet' in utt:
-            command = 'magnet ' + str(current_milli_time % 2)
+            command = 'magnet'
         elif 'new sweater' in utt:
             command = 'new sweater'
         elif ('wake up' in utt) or ('awake' in utt):
