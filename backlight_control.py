@@ -24,7 +24,6 @@ default_color = (243, 253, 0)
 no_color = (0, 0, 0)
 revert_row1 = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
 
-
 is_talking = False
 
 def fill_pixels(pixels, color):
@@ -102,17 +101,6 @@ class BacklightControl:
             return p
 
     def __init_pixels(self, leds):
-        # init_flag = True
-        # if self.pixels:
-        #     if self.pin != leds[0]:
-        #         self.pixels.deinit_no_blank()
-        #     else:
-        #         self.init_flag = False
-        #
-        # if init_flag:
-        #     self.pixels = neopixel.NeoPixel(leds[0], leds[1], brightness=leds[2], auto_write=False,
-        #                                pixel_order=ORDER)
-        #     self.pin = leds[0]
         self.pin = leds[0]
         self.pixels = neopixel.NeoPixel(leds[0], leds[1], brightness=leds[2], auto_write=False,
                                    pixel_order=ORDER)
