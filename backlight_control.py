@@ -6,8 +6,9 @@ import time
 import math
 from multiprocessing import Process
 
-eyes_leds = (board.D21, 1) # two eyes in parallel
-mouth_leds = (board.D18, 18)
+#parameters list: pin, count, brightness
+eyes_leds = (board.D21, 1, 1) # two eyes in parallel
+mouth_leds = (board.D18, 18, 0.5)
 
 strips = {
     'EYES': eyes_leds,
@@ -101,17 +102,17 @@ class BacklightControl:
             return p
 
     def __init_pixels(self, leds):
-        init_flag = True
-        if self.pixels:
-            if self.pin != leds[0]:
-                self.pixels.deinit_no_blank()
-            else:
-                self.init_flag = False
-
-        if init_flag:
-            self.pixels = neopixel.NeoPixel(leds[0], leds[1], brightness=1, auto_write=False,
-                                       pixel_order=ORDER)
-            self.pin = leds[0]
-
-        self.pixels = neopixel.NeoPixel(leds[0], leds[1], brightness=1, auto_write=False,
+        # init_flag = True
+        # if self.pixels:
+        #     if self.pin != leds[0]:
+        #         self.pixels.deinit_no_blank()
+        #     else:
+        #         self.init_flag = False
+        #
+        # if init_flag:
+        #     self.pixels = neopixel.NeoPixel(leds[0], leds[1], brightness=leds[2], auto_write=False,
+        #                                pixel_order=ORDER)
+        #     self.pin = leds[0]
+        self.pin = leds[0]
+        self.pixels = neopixel.NeoPixel(leds[0], leds[1], brightness=leds[2], auto_write=False,
                                    pixel_order=ORDER)
