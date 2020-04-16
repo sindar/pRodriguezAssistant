@@ -27,6 +27,7 @@ audio_files['set'] = 'can_do'
 audio_files['how are you'] = 'right_now_i_feel_sorry_for_you'
 audio_files['configuration'] = 'can_do'
 audio_files['player'] = 'can_do'
+audio_files['electricity'] = 'plugged_in'
 audio_files['unrecognized'] = 'silence'
 audio_files['no audio'] = 'silence'
 
