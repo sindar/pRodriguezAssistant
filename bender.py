@@ -28,7 +28,7 @@ speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 speaker_volume = 10
 
 SLEEPING_TIME = 600.0
-BACKGROUND_TASKS_INTERVAL = 1
+UPS_TASK_INTERVAL = 1
 VOLUME_STEP = 4
 
 def main():
@@ -45,8 +45,8 @@ def main():
     eyes_bl.exec_cmd('OFF')
     time.sleep(0.15)
 
-    background_proc = Process(target=background_tasks, args=())
-    background_proc.start()
+    ups_proc = Process(target=ups_task, args=())
+    ups_proc.start()
 
     p = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
     print(["%s" % speech_recognizer.cmd_line])
@@ -70,17 +70,19 @@ def main():
     m_player.send_command("exit")
 
     eyes_bl.exec_cmd('OFF')
-    if background_proc != None:
-        background_proc.terminate()
+    if ups_proc != None:
+        ups_proc.terminate()
     time.sleep(3)
     
     if (fsmState == 4):
         shutdown()
 
-def background_tasks():
+def ups_task():
     power_plugged = True
-    prev_voltage = ups_lite.read_voltage()
-    prev_capacity = ups_lite.read_capacity()
+    prev_voltage = voltage = ups_lite.read_voltage()
+    prev_capacity = capacity = ups_lite.read_capacity()
+    if voltage < 4.20:
+        power_plugged = False
     while True:
         voltage = ups_lite.read_voltage()
         capacity = ups_lite.read_capacity()
@@ -91,10 +93,13 @@ def background_tasks():
             if not power_plugged:
                 power_plugged = True
                 a_player.play_answer('electricity')
-        # if sleepEnabled:
+        if not power_plugged and capacity < 20:
+            shutdown()
+        time.sleep(UPS_TASK_INTERVAL)
+
+# if sleepEnabled:
         #     sleepTimer = Timer(SLEEPING_TIME, sleep_timeout)
         #     sleepTimer.start()
-        time.sleep(BACKGROUND_TASKS_INTERVAL)
 
 def sleep_timeout():
     global isSleeping
