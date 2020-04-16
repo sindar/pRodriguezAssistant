@@ -28,7 +28,10 @@ speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 speaker_volume = 10
 
 SLEEPING_TIME = 600.0
-UPS_TASK_INTERVAL = 1
+
+UPS_TASK_ENABLED = True
+UPS_TASK_INTERVAL = 2
+
 VOLUME_STEP = 4
 
 def main():
@@ -45,8 +48,9 @@ def main():
     eyes_bl.exec_cmd('OFF')
     time.sleep(0.15)
 
-    ups_proc = Process(target=ups_task, args=())
-    ups_proc.start()
+    if UPS_TASK_ENABLED:
+        ups_proc = Process(target=ups_task, args=())
+        ups_proc.start()
 
     p = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
     print(["%s" % speech_recognizer.cmd_line])
@@ -78,23 +82,17 @@ def main():
         shutdown()
 
 def ups_task():
-    power_plugged = True
     prev_voltage = voltage = ups_lite.read_voltage()
-    prev_capacity = capacity = ups_lite.read_capacity()
-    if voltage < 4.20:
-        power_plugged = False
     while True:
         voltage = ups_lite.read_voltage()
-        capacity = ups_lite.read_capacity()
-        if voltage < prev_voltage or capacity < prev_capacity:
-            if power_plugged:
-                power_plugged = False
-        if voltage > prev_voltage or capacity > prev_capacity:
-            if not power_plugged:
-                power_plugged = True
+        if voltage >= 4.20:
+            if prev_voltage < 4.20:
                 a_player.play_answer('electricity')
-        if not power_plugged and capacity < 20:
-            shutdown()
+        else:
+            capacity = ups_lite.read_capacity()
+            if capacity < 20:
+                shutdown()
+        prev_voltage = voltage
         time.sleep(UPS_TASK_INTERVAL)
 
 # if sleepEnabled:
