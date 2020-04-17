@@ -3,7 +3,8 @@
 # project: pRodriguezAssistant
 import subprocess
 import time
-from threading import Timer
+import threading
+import sys
 from multiprocessing import Process
 from speech_recognizer import PsLiveRecognizer
 from answer_player import AnswerPlayer
@@ -14,20 +15,23 @@ import ups_lite
 
 audio_lang = 'en'
 recognize_lang ='en'
-sleepEnabled = True
 
 BacklightControl.backlight_enabled = True
 eyes_bl = BacklightControl('EYES')
 
-fsmState = 1
-isSleeping = False
+fsm_state = 1
+
 m_player = MusicPlayer()
 a_player = AnswerPlayer(audio_lang)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
 speaker_volume = 10
 
-SLEEPING_TIME = 600.0
+IDLE_TIME = 2 # in minutes, 2 - minimum
+sleep_enabled = True
+is_sleeping = False
+sleep_counter = 0
+sleep_counter_lock = threading.Lock()
 
 UPS_TASK_ENABLED = True
 UPS_TASK_INTERVAL = 2
@@ -35,7 +39,7 @@ UPS_TASK_INTERVAL = 2
 VOLUME_STEP = 4
 
 def main():
-    global fsmState
+    global fsm_state
     global m_player
     global speech_recognizer
     global speaker_volume
@@ -52,20 +56,24 @@ def main():
         ups_proc = Process(target=ups_task, args=())
         ups_proc.start()
 
+    sleep_thread = threading.Thread(target=sleep_task)
+    sleep_thread.daemon = True
+    sleep_thread.start()
+
     p = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
     print(["%s" % speech_recognizer.cmd_line])
 
     eyes_bl.exec_cmd('ON')
 
     while True:
-        if (fsmState == 1):
+        if (fsm_state == 1):
             if find_keyphrase(p):
                 conversation_mode(p)
-        elif (fsmState == 2):
+        elif (fsm_state == 2):
             conversation_mode(p)
-        elif (fsmState == 3):
+        elif (fsm_state == 3):
             break
-        elif (fsmState == 4):
+        elif (fsm_state == 4):
             break
         else:
             continue
@@ -78,15 +86,18 @@ def main():
         ups_proc.terminate()
     time.sleep(3)
     
-    if (fsmState == 4):
+    if (fsm_state == 4):
         shutdown()
+
+    sys.exit(0)
+
 
 def ups_task():
     prev_voltage = voltage = ups_lite.read_voltage()
     while True:
         voltage = ups_lite.read_voltage()
         if voltage >= 4.20:
-            if prev_voltage < 4.20:
+            if prev_voltage <= 4.15:
                 a_player.play_answer('electricity')
         else:
             capacity = ups_lite.read_capacity()
@@ -95,19 +106,44 @@ def ups_task():
         prev_voltage = voltage
         time.sleep(UPS_TASK_INTERVAL)
 
-# if sleepEnabled:
-        #     sleepTimer = Timer(SLEEPING_TIME, sleep_timeout)
-        #     sleepTimer.start()
+def sleep_task():
+    global is_sleeping
+    global sleep_enabled
+    global sleep_counter
 
-def sleep_timeout():
-    global isSleeping
-    global a_player
-    a_player.play_answer('kill all humans')
-    isSleeping = True
+    while True:
+        time.sleep(60)
+        if sleep_enabled:
+            sleep_counter_inc()
+            if sleep_counter >= IDLE_TIME:
+                if not is_sleeping:
+                    eyes_bl.exec_cmd('OFF')
+                    a_player.play_answer('kill all humans')
+                    is_sleeping = True
+
+def sleep_counter_inc():
+    global sleep_counter
+    sleep_counter_lock.acquire()
+    sleep_counter += 1
+    sleep_counter_lock.release()
+
+def sleep_counter_reset():
+    global sleep_counter
+    sleep_counter_lock.acquire()
+    sleep_counter = 0
+    sleep_counter_lock.release()
+
+def wake_up():
+    global is_sleeping
+    eyes_bl.exec_cmd('ON')
+    command = 'wake up'
+    a_player.play_answer(command)
+    is_sleeping = False
 
 def find_keyphrase(p):
-    global fsmState
-    global sleepEnabled
+    global fsm_state
+    global sleep_enabled
+    global is_sleeping
     global aplayer
     global speaker_volume
 
@@ -127,34 +163,31 @@ def find_keyphrase(p):
                 #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
         if ('bender' in utt):
+            sleep_counter_reset()
             m_player.send_command('status')
             if m_player.musicIsPlaying:
                 if('pause' in utt or speaker_volume == 0):
                     m_player.send_command('pause')
                     keyphrase_found = True
             else:
-                # if sleepEnabled:
-                #     if utt != None and sleepTimer != None:
-                #         sleepTimer.cancel()
-                #     if utt != None and isSleeping:
-                #         utt = 'wake up'
-                #         isSleeping = False
-                if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)):
+                if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)) and not is_sleeping:
                     command = 'hey bender'
                     a_player.play_answer(command)
+                if is_sleeping:
+                    wake_up()
                 keyphrase_found = True
 
         if keyphrase_found:
             return keyphrase_found
 
 def conversation_mode(p):
-    global fsmState
-    global sleepEnabled
-    global isSleeping
+    global fsm_state
+    global sleep_enabled
+    global is_sleeping
     global a_player
 
     while True:
-        fsmState = 1
+        fsm_state = 1
         print ('Conversation mode:')
 
         retcode = p.returncode
@@ -168,77 +201,81 @@ def conversation_mode(p):
                 utt = 'unrecognized'
                 #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
-        if 'shutdown' in utt:
-            command = 'shutdown'
-            fsmState = 4
-        elif (('exit' in utt) or ('quit' in utt)) and ('program' in utt):
-            command = 'exit'
-            fsmState = 3
-        elif ('volume' in utt):
-            command = 'no audio'
-            if ('increase' in utt):
-                change_speaker_volume(VOLUME_STEP)
-            elif ('decrease' in utt):
-                change_speaker_volume(-VOLUME_STEP)
-        elif ('sing' in utt) and ('song' in utt):
-            command = 'sing'
-        elif 'who are you' in utt:
-            command = 'who are you'
-        elif 'how are you' in utt:
-            command = 'how are you'
-        elif ('where are you from' in utt) or ('where were you born' in utt):
-            command = 'birthplace'
-        elif 'when were you born' in utt:
-            command = 'birthdate'
-        elif 'your favorite animal' in utt:
-            command = 'animal'
-        elif 'how can you live' in utt and 'without' in utt and 'body' in utt:
-            command = 'body'
-        elif 'what do you think about' in utt:
-            if 'alexa' in utt or 'alice' in utt or 'cortana' in utt or 'siri' in utt:
-                command = 'bad girl'
-        elif 'magnet' in utt:
-            command = 'magnet'
-        elif 'new sweater' in utt:
-            command = 'new sweater'
-        elif ('wake up' in utt) or ('awake' in utt):
-            command = 'wake up'
-        elif ('start' in utt and 'player' in utt):
-            command = 'player'
-            m_player.send_command('start')
-            time.sleep(1)
-        elif ('stop' in utt and 'player' in utt):
-            command = 'player'
-            m_player.send_command('stop')
-        elif ('next song' in utt):
-            command = 'no audio'
-            m_player.send_command('next')
-        elif ('enable' in utt):
-            if ('sleep' in utt):
-                command = 'configuration'
-                sleepEnabled = True
-            else:
-                command = 'unrecognized'
-        elif ('disable' in utt):
-            if ('sleep' in utt):
-                command = 'configuration'
-                sleepEnabled = False
-            else:
-                command = 'unrecognized'
-        elif (utt == 'bender' or ('bender' in utt and ('hi' in utt or 'pause' in utt))):
-            command = 'no audio'
-            fsmState = 2
+        if is_sleeping:
+            wake_up()
         else:
-            command = 'unrecognized'
+            if 'shutdown' in utt:
+                command = 'shutdown'
+                fsm_state = 4
+            elif (('exit' in utt) or ('quit' in utt)) and ('program' in utt):
+                command = 'exit'
+                fsm_state = 3
+            elif ('volume' in utt):
+                command = 'no audio'
+                if ('increase' in utt):
+                    change_speaker_volume(VOLUME_STEP)
+                elif ('decrease' in utt):
+                    change_speaker_volume(-VOLUME_STEP)
+            elif ('sing' in utt) and ('song' in utt):
+                command = 'sing'
+            elif 'who are you' in utt:
+                command = 'who are you'
+            elif 'how are you' in utt:
+                command = 'how are you'
+            elif ('where are you from' in utt) or ('where were you born' in utt):
+                command = 'birthplace'
+            elif 'when were you born' in utt:
+                command = 'birthdate'
+            elif 'your favorite animal' in utt:
+                command = 'animal'
+            elif 'how can you live' in utt and 'without' in utt and 'body' in utt:
+                command = 'body'
+            elif 'what do you think about' in utt:
+                if 'alexa' in utt or 'alice' in utt or 'cortana' in utt or 'siri' in utt:
+                    command = 'bad girl'
+            elif 'magnet' in utt:
+                command = 'magnet'
+            elif 'new sweater' in utt:
+                command = 'new sweater'
+            elif ('wake up' in utt) or ('awake' in utt):
+                command = 'wake up'
+            elif ('start' in utt and 'player' in utt):
+                command = 'player'
+                m_player.send_command('start')
+                time.sleep(1)
+            elif ('stop' in utt and 'player' in utt):
+                command = 'player'
+                m_player.send_command('stop')
+            elif ('next song' in utt):
+                command = 'no audio'
+                m_player.send_command('next')
+            elif ('enable' in utt):
+                if ('sleep' in utt):
+                    command = 'configuration'
+                    sleep_enabled = True
+                else:
+                    command = 'unrecognized'
+            elif ('disable' in utt):
+                if ('sleep' in utt):
+                    command = 'configuration'
+                    sleep_enabled = False
+                else:
+                    command = 'unrecognized'
+            elif (utt == 'bender' or ('bender' in utt and ('hi' in utt or 'pause' in utt))):
+                command = 'no audio'
+                fsm_state = 2
+            else:
+                command = 'unrecognized'
 
-        if fsmState != 2:
-            if command != 'no audio':
-                a_player.play_answer(command)
+            if fsm_state != 2:
+                if command != 'no audio':
+                    a_player.play_answer(command)
 
-            if command != 'shutdown':
-                m_player.send_command('status')
-                if m_player.musicIsPlaying:
-                    m_player.send_command('resume')
+                if command != 'shutdown':
+                    m_player.send_command('status')
+                    if m_player.musicIsPlaying:
+                        m_player.send_command('resume')
+        sleep_counter_reset()
 
         break
 
