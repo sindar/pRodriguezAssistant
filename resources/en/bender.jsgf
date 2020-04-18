@@ -37,7 +37,7 @@ grammar bender;
 <music_player_next> = (next (track | song));
 <music_player_commands> = <music_player_enable> | <music_player_disable> | <music_player_next>;
 
-<volume_command> = ((increase | decrease)(volume)) | (louder | quieter);
+<volume_command> = (increase | decrease)(volume) | (volume)(increase | decrease)  | (louder | quieter);
 
 <birthplace_question> = (where) ((are you from) | (were you born));
 <birthdate_question> = (when were you born) | (date of your birth);

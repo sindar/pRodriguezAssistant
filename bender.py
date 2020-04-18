@@ -210,11 +210,11 @@ def conversation_mode(p):
             elif (('exit' in utt) or ('quit' in utt)) and ('program' in utt):
                 command = 'exit'
                 fsm_state = 3
-            elif ('volume' in utt):
-                command = 'no audio'
-                if ('increase' in utt):
+            elif ('volume' in utt) or (utt == 'louder') or ('utt' == 'quieter'):
+                command = 'configuration'
+                if ('increase' in utt or utt == 'louder'):
                     change_speaker_volume(VOLUME_STEP)
-                elif ('decrease' in utt):
+                elif ('decrease' in utt or utt == 'quieter'):
                     change_speaker_volume(-VOLUME_STEP)
             elif ('sing' in utt) and ('song' in utt):
                 command = 'sing'
@@ -237,8 +237,6 @@ def conversation_mode(p):
                 command = 'magnet'
             elif 'new sweater' in utt:
                 command = 'new sweater'
-            elif ('wake up' in utt) or ('awake' in utt):
-                command = 'wake up'
             elif ('start' in utt and 'player' in utt):
                 command = 'player'
                 m_player.send_command('start')
