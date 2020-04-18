@@ -22,6 +22,9 @@ ORDER = neopixel.GRB
 
 default_color = (243, 253, 0)
 no_color = (0, 0, 0)
+orange = (255,165,0)
+darkorange = (255,140,0)
+blue = (0,0,255)
 revert_row1 = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
 
 is_talking = False
@@ -30,38 +33,48 @@ def fill_pixels(pixels, color):
     pixels.fill(color)
     pixels.show()
 
-def talk(pixels, pin):
+def talk(pixels, pin, mode):
     if pin != board.D18:
         print('Eyes do not support talk command!')
         return
+
+    if mode == 'plugged_in':
+        back_color = darkorange
+        front_color = blue
+        period = 0.1
+    else:
+        back_color = no_color
+        front_color = default_color
+        period = 0.25
+
     i = 0
     while i < 30: # maximum answer length to prevent infinite loop
-        pixels.fill((0, 0, 0))
+        pixels.fill(back_color)
         for i in range(6, 12):
-            pixels[i] = default_color
+            pixels[i] = front_color
         pixels.show()
-        time.sleep(0.25)
+        time.sleep(period)
 
-        sin_cos_graph(pixels, pin, math.cos)
-        time.sleep(0.25)
+        sin_cos_graph(pixels, pin, math.cos, back_color, front_color)
+        time.sleep(period)
 
-        pixels.fill((0, 0, 0))
+        pixels.fill(back_color)
         for i in range(6, 12):
-            pixels[i] = default_color
+            pixels[i] = front_color
         pixels.show()
-        time.sleep(0.25)
+        time.sleep(period)
 
-        sin_cos_graph(pixels, pin, math.sin)
-        time.sleep(0.25)
+        sin_cos_graph(pixels, pin, math.sin, back_color, front_color)
+        time.sleep(period)
 
-def sin_cos_graph(pixels, pin, func):
+def sin_cos_graph(pixels, pin, func, back_color, front_color):
     if pin != board.D18:
         print('Eyes do not support talk command!')
         return
     if func != math.sin and func != math.cos:
         print('Only sin() and cos() are supported!')
         return
-    pixels.fill((0, 0, 0))
+    pixels.fill(back_color)
     t = 0
     for x in range(0, 6):
         y = func(t)
@@ -74,7 +87,7 @@ def sin_cos_graph(pixels, pin, func):
         else:
             i = 2
         c = i * 6 + j
-        pixels[c] = default_color
+        pixels[c] = front_color
         t += 1.57
     pixels.show()
 
@@ -90,8 +103,12 @@ class BacklightControl:
         self.backlight_commands = {
             'ON': lambda: fill_pixels(self.pixels, default_color),
             'OFF': lambda: fill_pixels(self.pixels, no_color),
-            'TALK': lambda: talk(self.pixels, self.pin)
+            'TALK': lambda: talk(self.pixels, self.pin, 'normal'),
+            'PLUGGED_IN': lambda: talk(self.pixels, self.pin, 'plugged_in')
         }
+
+    def __del__(self):
+        self.pixels.deinit()
 
     def exec_cmd(self, command):
         if command in self.backlight_commands:

@@ -28,7 +28,7 @@ audio_files['how are you'] = 'right_now_i_feel_sorry_for_you'
 audio_files['configuration'] = 'can_do'
 audio_files['player'] = 'can_do'
 audio_files['electricity'] = 'plugged_in'
-audio_files['unrecognized'] = 'silence'
+audio_files['unrecognized'] = 'beat_children'
 audio_files['no audio'] = 'silence'
 
 class AnswerPlayer:
@@ -40,30 +40,31 @@ class AnswerPlayer:
         self.mouth_bl.exec_cmd('OFF')
         AnswerPlayer.lang = lang
 
-    def play_wav(self, path):
+    def play_wav(self, path, bl_commad):
         wave_obj = simpleaudio.WaveObject.from_wave_file(path)
         play_obj = wave_obj.play()
-        p = self.mouth_bl.exec_cmd('TALK')
+        p = self.mouth_bl.exec_cmd(bl_commad)
         play_obj.wait_done()
         p.terminate()
 
     def play_answer(self, command):
         answer = audio_files.get(command)
         if answer != None:
-            if (command == 'unrecognized'):
-                a = 1
-                # BacklightControl.backlight(BackLightCommands.TEETH_ON_NOT_OK)
+            if type(answer) is tuple:
+                a_count = len(answer)
+                if a_count > 1:
+                    answer = answer[int(round(time.time() * 1000)) % a_count]
             else:
-                if type(answer) is tuple:
-                    a_count = len(answer)
-                    if a_count > 1:
-                        answer = answer[int(round(time.time() * 1000)) % a_count]
-                else:
-                    answer = answer
+                answer = answer
 
-                self.mic_set(0)
-                self.play_wav('./audio/' + AnswerPlayer.lang + '/' + answer + '.wav')
-                self.mic_set(self.mic_gain)
+            if answer == 'plugged_in':
+                bl_command = 'PLUGGED_IN'
+            else:
+                bl_command = 'TALK'
+
+            self.mic_set(0)
+            self.play_wav('./audio/' + AnswerPlayer.lang + '/' + answer + '.wav', bl_command)
+            self.mic_set(self.mic_gain)
             self.mouth_bl.exec_cmd('OFF')
         else:
             print('No answer to this question!')

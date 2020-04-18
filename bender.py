@@ -27,7 +27,7 @@ speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
 speaker_volume = 10
 
-IDLE_TIME = 2 # in minutes, 2 - minimum
+IDLE_TIME = 60 # in minutes, 2 - minimum
 sleep_enabled = True
 is_sleeping = False
 sleep_counter = 0
