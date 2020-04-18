@@ -60,17 +60,17 @@ def main():
     sleep_thread.daemon = True
     sleep_thread.start()
 
-    p = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
+    sphinx_proc = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
     print(["%s" % speech_recognizer.cmd_line])
 
     eyes_bl.exec_cmd('ON')
 
     while True:
         if (fsm_state == 1):
-            if find_keyphrase(p):
-                conversation_mode(p)
+            if find_keyphrase(sphinx_proc):
+                conversation_mode(sphinx_proc)
         elif (fsm_state == 2):
-            conversation_mode(p)
+            conversation_mode(sphinx_proc)
         elif (fsm_state == 3):
             break
         elif (fsm_state == 4):
@@ -140,7 +140,13 @@ def wake_up():
     a_player.play_answer(command)
     is_sleeping = False
 
-def find_keyphrase(p):
+def get_utterance(sphinx_proc):
+    retcode = sphinx_proc.returncode
+    utt = sphinx_proc.stdout.readline().decode('utf8').rstrip().lower()
+    print('utterance = ' + utt)
+    return utt
+
+def find_keyphrase(sphinx_proc):
     global fsm_state
     global sleep_enabled
     global is_sleeping
@@ -151,9 +157,7 @@ def find_keyphrase(p):
         keyphrase_found = False
         print('Start mode:')
 
-        retcode = p.returncode
-        utt = p.stdout.readline().decode('utf8').rstrip().lower()
-        print('utterance = ' + utt)
+        utt = get_utterance(sphinx_proc)
 
         if speech_recognizer.lang == 'ru':
             try:
@@ -180,7 +184,7 @@ def find_keyphrase(p):
         if keyphrase_found:
             return keyphrase_found
 
-def conversation_mode(p):
+def conversation_mode(sphinx_proc):
     global fsm_state
     global sleep_enabled
     global is_sleeping
@@ -190,9 +194,7 @@ def conversation_mode(p):
         fsm_state = 1
         print ('Conversation mode:')
 
-        retcode = p.returncode
-        utt = p.stdout.readline().decode('utf8').rstrip().lower()
-        print('utterance = ' + utt)
+        utt = get_utterance(sphinx_proc)
 
         if speech_recognizer.lang == 'ru':
             try:
