@@ -27,7 +27,8 @@ grammar bender;
 
 <parameters> = (sleep) | (sleeping);
 
-<shutdown_command> = (shutdown);
+<reboot_command> = reboot;
+<shutdown_command> = shutdown;
 <exit_command> = (exit | quit) (the program);
 <enable_disable_command> = (enable | disable) [<parameters>];
 <set_command> = (set) [<parameters>] [to] [<number>];
@@ -49,7 +50,7 @@ grammar bender;
 
 <misc_phrases> = (magnet) | [a] [great] (new sweater);
 
-<commands> = <start_command> | <exit_command> | <shutdown_command>
+<commands> = <start_command> | <exit_command> | <reboot_command> | <shutdown_command>
                     | <enable_disable_command> | <set_command>
                     | <misc_phrases>
                     | <music_player_commands> | <volume_command>;

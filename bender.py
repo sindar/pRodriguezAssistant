@@ -75,6 +75,8 @@ def main():
             break
         elif (fsm_state == 4):
             break
+        elif (fsm_state == 5):
+            break
         else:
             continue
 
@@ -88,6 +90,9 @@ def main():
     
     if (fsm_state == 4):
         shutdown()
+
+    if (fsm_state == 5):
+        reboot()
 
     sys.exit(0)
 
@@ -209,6 +214,9 @@ def conversation_mode(sphinx_proc):
             if 'shutdown' in utt:
                 command = 'shutdown'
                 fsm_state = 4
+            if 'reboot' in utt:
+                command = 'reboot'
+                fsm_state = 5
             elif (('exit' in utt) or ('quit' in utt)) and ('program' in utt):
                 command = 'exit'
                 fsm_state = 3
@@ -271,7 +279,7 @@ def conversation_mode(sphinx_proc):
                 if command != 'no audio':
                     a_player.play_answer(command)
 
-                if command != 'shutdown':
+                if command != 'shutdown' or command != 'reboot':
                     m_player.send_command('status')
                     if m_player.musicIsPlaying:
                         m_player.send_command('resume')
@@ -302,6 +310,11 @@ def kill_pocketsphinx():
 def shutdown():
     shutdown = "shutdown -Ph now"
     p = subprocess.Popen(["%s" % shutdown], shell=True, stdout=subprocess.PIPE)
+    code = p.wait()
+
+def reboot():
+    reboot = "reboot"
+    p = subprocess.Popen(["%s" % reboot], shell=True, stdout=subprocess.PIPE)
     code = p.wait()
 
 main()

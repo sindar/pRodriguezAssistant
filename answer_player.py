@@ -6,6 +6,7 @@ import time
 from backlight_control import BacklightControl
 
 audio_files = {}
+audio_files['reboot'] = ('with_bjah1', 'with_bjah2')
 audio_files['shutdown'] = ('with_bjah1', 'with_bjah2')
 audio_files['start'] = 'lets_get_drunk'
 audio_files['exit'] = 'lets_get_drunk'
