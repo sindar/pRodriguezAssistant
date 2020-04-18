@@ -6,7 +6,7 @@ import time
 from backlight_control import BacklightControl
 
 audio_files = {}
-audio_files['shutdown'] = 'with_bjah'
+audio_files['shutdown'] = ('with_bjah1', 'with_bjah2')
 audio_files['start'] = 'lets_get_drunk'
 audio_files['exit'] = 'lets_get_drunk'
 audio_files['hey bender'] = ('bite', 'hello', 'hello_peasants')
@@ -24,11 +24,11 @@ audio_files['wake up'] = 'most_wonderful_dream'
 audio_files['enable'] = 'can_do'
 audio_files['disable'] = 'can_do'
 audio_files['set'] = 'can_do'
-audio_files['how are you'] = 'right_now_i_feel_sorry_for_you'
+audio_files['how are you'] = ('none_of_your_business', 'right_now_i_feel_sorry_for_you')
 audio_files['configuration'] = 'can_do'
 audio_files['player'] = 'can_do'
 audio_files['electricity'] = 'plugged_in'
-audio_files['unrecognized'] = 'beat_children'
+audio_files['unrecognized'] = ('beat_children', 'compare_your_lives_to_mine')
 audio_files['no audio'] = 'silence'
 
 class AnswerPlayer:
