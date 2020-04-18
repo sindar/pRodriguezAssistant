@@ -33,6 +33,30 @@ def fill_pixels(pixels, color):
     pixels.fill(color)
     pixels.show()
 
+def blink(pixels, pin, mode):
+    if pin != board.D21:
+        print('Teeth do not support talk command!')
+        return
+
+    if mode == 'plugged_in':
+        phase_1_color = darkorange
+        phase_2_color = blue
+        period = 0.1
+    else:
+        back_color = no_color
+        front_color = default_color
+        period = 0.25
+
+    t = 0
+    while t < 30:  # maximum answer length to prevent infinite loop
+        pixels.fill(phase_1_color)
+        pixels.show()
+        time.sleep(period)
+        pixels.fill(phase_2_color)
+        pixels.show()
+        time.sleep(period)
+    t += period * 4
+
 def talk(pixels, pin, mode):
     if pin != board.D18:
         print('Eyes do not support talk command!')
@@ -47,8 +71,8 @@ def talk(pixels, pin, mode):
         front_color = default_color
         period = 0.25
 
-    i = 0
-    while i < 30: # maximum answer length to prevent infinite loop
+    t = 0
+    while t < 30: # maximum answer length to prevent infinite loop
         pixels.fill(back_color)
         for i in range(6, 12):
             pixels[i] = front_color
@@ -66,6 +90,7 @@ def talk(pixels, pin, mode):
 
         sin_cos_graph(pixels, pin, math.sin, back_color, front_color)
         time.sleep(period)
+        t += period * 4
 
 def sin_cos_graph(pixels, pin, func, back_color, front_color):
     if pin != board.D18:
@@ -104,7 +129,9 @@ class BacklightControl:
             'ON': lambda: fill_pixels(self.pixels, default_color),
             'OFF': lambda: fill_pixels(self.pixels, no_color),
             'TALK': lambda: talk(self.pixels, self.pin, 'normal'),
-            'PLUGGED_IN': lambda: talk(self.pixels, self.pin, 'plugged_in')
+            'PLUGGED_IN': lambda: talk(self.pixels, self.pin, 'plugged_in'),
+            'BLINK_NORMAL': lambda: blink(self.pixels, self.pin, 'normal'),
+            'BLINK_PLUGGED_IN': lambda: blink(self.pixels, self.pin, 'plugged_in')
         }
 
     def __del__(self):

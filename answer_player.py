@@ -37,15 +37,23 @@ class AnswerPlayer:
         self.mic_gain = 40
         self.mic_set(self.mic_gain)
         self.mouth_bl = BacklightControl('MOUTH')
+        self.eyes_bl = BacklightControl('EYES')
         self.mouth_bl.exec_cmd('OFF')
         AnswerPlayer.lang = lang
 
-    def play_wav(self, path, bl_commad):
+    def play_wav(self, path, bl_command):
         wave_obj = simpleaudio.WaveObject.from_wave_file(path)
         play_obj = wave_obj.play()
-        p = self.mouth_bl.exec_cmd(bl_commad)
+        mouth_bl_proc = self.mouth_bl.exec_cmd(bl_command)
+        eyes_bl_proc = None
+        if bl_command == 'PLUGGED_IN':
+            eyes_bl_proc = self.eyes_bl.exec_cmd('BLINK_PLUGGED_IN')
         play_obj.wait_done()
-        p.terminate()
+
+        mouth_bl_proc.terminate()
+        if eyes_bl_proc != None:
+            eyes_bl_proc.terminate()
+            self.eyes_bl.exec_cmd('ON')
 
     def play_answer(self, command):
         answer = audio_files.get(command)
