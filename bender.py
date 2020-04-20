@@ -211,6 +211,7 @@ def conversation_mode(sphinx_proc):
         if is_sleeping:
             wake_up()
         else:
+            command = 'unrecognized'
             if 'shutdown' in utt:
                 command = 'shutdown'
                 fsm_state = 4
@@ -261,19 +262,13 @@ def conversation_mode(sphinx_proc):
                 if ('sleep' in utt):
                     command = 'configuration'
                     sleep_enabled = True
-                else:
-                    command = 'unrecognized'
             elif ('disable' in utt):
                 if ('sleep' in utt):
                     command = 'configuration'
                     sleep_enabled = False
-                else:
-                    command = 'unrecognized'
             elif (utt == 'bender' or ('bender' in utt and ('hi' in utt or 'pause' in utt))):
                 command = 'no audio'
                 fsm_state = 2
-            else:
-                command = 'unrecognized'
 
             if fsm_state != 2:
                 if command != 'no audio':
