@@ -122,9 +122,11 @@ def sleep_task():
             sleep_counter_inc()
             if sleep_counter >= IDLE_TIME:
                 if not is_sleeping:
-                    eyes_bl.exec_cmd('OFF')
-                    a_player.play_answer('kill all humans')
-                    is_sleeping = True
+                    m_player.send_command('status')
+                    if not m_player.musicIsPlaying:
+                        eyes_bl.exec_cmd('OFF')
+                        a_player.play_answer('kill all humans')
+                        is_sleeping = True
 
 def sleep_counter_inc():
     global sleep_counter
