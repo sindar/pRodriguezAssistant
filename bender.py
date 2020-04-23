@@ -96,20 +96,21 @@ def main():
 
     sys.exit(0)
 
-
 def ups_task():
-    prev_voltage = voltage = ups_lite.read_voltage()
+    prev_voltage = ups_lite.read_voltage()
+    prev_capacity = ups_lite.read_capacity()
     while True:
+        time.sleep(UPS_TASK_INTERVAL)
         voltage = ups_lite.read_voltage()
+        capacity = ups_lite.read_capacity()
         if voltage >= 4.20:
             if prev_voltage <= 4.15:
                 a_player.play_answer('electricity')
         else:
-            capacity = ups_lite.read_capacity()
-            if capacity < 20:
+            if capacity < 20 and (prev_capacity > capacity):
                 shutdown()
         prev_voltage = voltage
-        time.sleep(UPS_TASK_INTERVAL)
+        prev_capacity = capacity
 
 def sleep_task():
     global is_sleeping
