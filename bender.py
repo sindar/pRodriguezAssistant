@@ -5,7 +5,6 @@ import subprocess
 import time
 import threading
 import sys
-from multiprocessing import Process
 from speech_recognizer import PsLiveRecognizer
 from answer_player import AnswerPlayer
 from music_player import MusicPlayer
@@ -32,6 +31,7 @@ sleep_enabled = True
 is_sleeping = False
 sleep_counter = 0
 sleep_counter_lock = threading.Lock()
+main_thread_is_running = True
 
 UPS_TASK_ENABLED = True
 UPS_TASK_INTERVAL = 2
@@ -43,6 +43,7 @@ def main():
     global m_player
     global speech_recognizer
     global speaker_volume
+    global main_thread_is_running
 
     set_speaker_volume(speaker_volume)
 
@@ -53,8 +54,8 @@ def main():
     time.sleep(0.15)
 
     if UPS_TASK_ENABLED:
-        ups_proc = Process(target=ups_task, args=())
-        ups_proc.start()
+        ups_thread = threading.Thread(target=ups_task)
+        ups_thread.start()
 
     sleep_thread = threading.Thread(target=sleep_task)
     sleep_thread.daemon = True
@@ -80,12 +81,11 @@ def main():
         else:
             continue
 
+    main_thread_is_running = False
     kill_pocketsphinx()
     m_player.send_command("exit")
 
     eyes_bl.exec_cmd('OFF')
-    if ups_proc != None:
-        ups_proc.terminate()
     time.sleep(3)
     
     if (fsm_state == 4):
@@ -97,9 +97,10 @@ def main():
     sys.exit(0)
 
 def ups_task():
+    global main_thread_is_running
     prev_voltage = ups_lite.read_voltage()
     prev_capacity = ups_lite.read_capacity()
-    while True:
+    while main_thread_is_running:
         time.sleep(UPS_TASK_INTERVAL)
         voltage = ups_lite.read_voltage()
         capacity = ups_lite.read_capacity()
@@ -117,7 +118,7 @@ def sleep_task():
     global sleep_enabled
     global sleep_counter
 
-    while True:
+    while main_thread_is_running:
         time.sleep(60)
         if sleep_enabled:
             sleep_counter_inc()
