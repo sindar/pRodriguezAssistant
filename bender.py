@@ -24,7 +24,10 @@ m_player = MusicPlayer()
 a_player = AnswerPlayer(audio_lang)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
-speaker_volume = 10
+QUIET_VOLUME = 8
+NORMAL_VOLUME = 20
+LOUD_VOLUME = 32
+speaker_volume = NORMAL_VOLUME
 
 IDLE_TIME = 60 # in minutes, 2 - minimum
 sleep_enabled = True
@@ -225,6 +228,19 @@ def conversation_mode(sphinx_proc):
             elif (('exit' in utt) or ('quit' in utt)) and ('program' in utt):
                 command = 'exit'
                 fsm_state = 3
+            elif (utt.endswith('mode')):
+                mode_ok = False
+                if 'quiet' in utt:
+                    set_speaker_volume(QUIET_VOLUME)
+                    mode_ok = True
+                elif 'normal' in utt:
+                    set_speaker_volume(NORMAL_VOLUME)
+                    mode_ok = True
+                elif 'loud' in utt:
+                    set_speaker_volume(LOUD_VOLUME)
+                    mode_ok = True
+                if mode_ok:
+                    command = 'configuration'
             elif ('volume' in utt) or (utt == 'louder') or ('utt' == 'quieter'):
                 command = 'configuration'
                 if ('increase' in utt or utt == 'louder'):

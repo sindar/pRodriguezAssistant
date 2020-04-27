@@ -31,7 +31,8 @@ grammar bender;
 <shutdown_command> = shutdown;
 <exit_command> = (exit | quit) (the program);
 <enable_disable_command> = (enable | disable) [<parameters>];
-<set_command> = (set) [<parameters>] [to] [<number>];
+<set_command> = (set) (<parameters>) [to] [<number>];
+<mode_command> = (quiet | normal | loud) (mode);
 
 <music_player_enable> = (start player);
 <music_player_disable> = (stop player);
@@ -51,13 +52,14 @@ grammar bender;
 <misc_phrases> = (magnet) | [a] [great] (new sweater);
 
 <commands> = <start_command> | <exit_command> | <reboot_command> | <shutdown_command>
-                    | <enable_disable_command> | <set_command>
-                    | <misc_phrases>
-                    | <music_player_commands> | <volume_command>;
+                | <enable_disable_command> | <set_command> | <mode_command>
+                | <misc_phrases>
+                | <music_player_commands> | <volume_command>;
 
-public <commands_and_questions> = <commands>
-                            | <birthplace_question> | <birthdate_question>
-                            | <favorite_animal_question>
-                            | <who_are_you_question> | <how_are_you_question>
-                            | <body_questions> | <about_assistants_questions>
-                            | <stop_phrase> | <misc_phrases>  | <requests>;
+<questions> = <birthplace_question> | <birthdate_question>
+                | <favorite_animal_question>
+                | <who_are_you_question> | <how_are_you_question>
+                | <body_questions> | <about_assistants_questions>;
+
+public <commands_and_questions> = <commands> | <questions>
+                                    | <stop_phrase> | <misc_phrases>  | <requests>;
