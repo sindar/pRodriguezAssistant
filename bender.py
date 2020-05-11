@@ -51,7 +51,7 @@ def main():
     set_speaker_volume(speaker_volume)
 
     kill_pocketsphinx()
-    m_player.kill_player()
+    m_player.send_command('stop')
 
     eyes_bl.exec_cmd('OFF')
     time.sleep(0.15)
@@ -86,7 +86,7 @@ def main():
 
     main_thread_is_running = False
     kill_pocketsphinx()
-    m_player.send_command("exit")
+    m_player.send_command('stop')
 
     eyes_bl.exec_cmd('OFF')
     time.sleep(3)
@@ -127,7 +127,6 @@ def sleep_task():
             sleep_counter_inc()
             if sleep_counter >= IDLE_TIME:
                 if not is_sleeping:
-                    m_player.send_command('status')
                     if not m_player.musicIsPlaying:
                         eyes_bl.exec_cmd('OFF')
                         a_player.play_answer('kill all humans')
@@ -180,9 +179,8 @@ def find_keyphrase(sphinx_proc):
 
         if ('bender' in utt):
             sleep_counter_reset()
-            m_player.send_command('status')
             if m_player.musicIsPlaying:
-                if('pause' in utt or speaker_volume == 0):
+                if('pause' in utt or 'stop' in utt or speaker_volume == 0):
                     m_player.send_command('pause')
                     keyphrase_found = True
             else:
@@ -269,13 +267,13 @@ def conversation_mode(sphinx_proc):
             elif 'new sweater' in utt:
                 command = 'new sweater'
             elif ('start' in utt and 'player' in utt):
-                command = 'player'
+                command = 'no audio'
                 m_player.send_command('start')
                 time.sleep(1)
             elif ('stop' in utt and 'player' in utt):
-                command = 'player'
+                command = 'no audio'
                 m_player.send_command('stop')
-            elif ('next song' in utt):
+            elif ('next song' in utt or 'next track'):
                 command = 'no audio'
                 m_player.send_command('next')
             elif ('enable' in utt):
@@ -295,7 +293,6 @@ def conversation_mode(sphinx_proc):
                     a_player.play_answer(command)
 
                 if command != 'shutdown' or command != 'reboot':
-                    m_player.send_command('status')
                     if m_player.musicIsPlaying:
                         m_player.send_command('resume')
         sleep_counter_reset()
