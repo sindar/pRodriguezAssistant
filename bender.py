@@ -273,7 +273,7 @@ def conversation_mode(sphinx_proc):
             elif ('stop' in utt and 'player' in utt):
                 command = 'no audio'
                 m_player.send_command('stop')
-            elif ('next song' in utt or 'next track'):
+            elif (utt == 'next song' or utt == 'next track'):
                 command = 'no audio'
                 m_player.send_command('next')
             elif ('enable' in utt):
@@ -287,6 +287,8 @@ def conversation_mode(sphinx_proc):
             elif (utt == 'bender' or ('bender' in utt and ('hi' in utt or 'pause' in utt))):
                 command = 'no audio'
                 fsm_state = 2
+
+            print ("command = " + command)
 
             if fsm_state != 2:
                 if command != 'no audio':
