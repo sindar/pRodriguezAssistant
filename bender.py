@@ -11,6 +11,7 @@ from music_player import MusicPlayer
 from backlight_control import BacklightControl
 from translation_ru import TranslatorRU
 import ups_lite
+import power
 
 audio_lang = 'en'
 recognize_lang ='en'
@@ -92,10 +93,10 @@ def main():
     time.sleep(3)
     
     if (fsm_state == 4):
-        shutdown()
+        power.shutdown()
 
     if (fsm_state == 5):
-        reboot()
+        power.reboot()
 
     sys.exit(0)
 
@@ -112,7 +113,7 @@ def ups_task():
                 a_player.play_answer('electricity')
         else:
             if capacity < 20 and (prev_capacity > capacity):
-                shutdown()
+                power.shutdown()
         prev_voltage = voltage
         prev_capacity = capacity
 
@@ -319,16 +320,6 @@ def set_speaker_volume(value):
 def kill_pocketsphinx():
     kill_exe = 'killall -s SIGKILL pocketsphinx_co'
     p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
-    code = p.wait()
-
-def shutdown():
-    shutdown = "shutdown -Ph now"
-    p = subprocess.Popen(["%s" % shutdown], shell=True, stdout=subprocess.PIPE)
-    code = p.wait()
-
-def reboot():
-    reboot = "reboot"
-    p = subprocess.Popen(["%s" % reboot], shell=True, stdout=subprocess.PIPE)
     code = p.wait()
 
 main()
