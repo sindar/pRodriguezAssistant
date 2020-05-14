@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
 import subprocess
-import simpleaudio
 import time
 from backlight_control import BacklightControl
 
@@ -43,13 +42,14 @@ class AnswerPlayer:
         AnswerPlayer.lang = lang
 
     def play_wav(self, path, bl_command):
-        wave_obj = simpleaudio.WaveObject.from_wave_file(path)
-        play_obj = wave_obj.play()
+        aplay_exe = 'aplay -Dplug:default ' + str(path)
+        aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
         mouth_bl_proc = self.mouth_bl.exec_cmd(bl_command)
+
         eyes_bl_proc = None
         if bl_command == 'PLUGGED_IN':
             eyes_bl_proc = self.eyes_bl.exec_cmd('BLINK_PLUGGED_IN')
-        play_obj.wait_done()
+        code = aplay_proc.wait()
 
         mouth_bl_proc.terminate()
         if eyes_bl_proc != None:
