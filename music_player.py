@@ -6,6 +6,8 @@ class MusicPlayer:
 
     def __init__(self):
         self.musicIsPlaying = False
+        self.__mpc_command('clear')
+        self.__mpc_command('load internal')
 
     def __mpc_command(self, command):
         p = subprocess.Popen(["%s" % 'mpc ' + command], shell=True, stdout=subprocess.PIPE)
