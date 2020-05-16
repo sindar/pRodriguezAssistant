@@ -25,10 +25,12 @@ m_player = MusicPlayer()
 a_player = AnswerPlayer(audio_lang)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
-QUIET_VOLUME = 8
-NORMAL_VOLUME = 20
-LOUD_VOLUME = 32
-speaker_volume = NORMAL_VOLUME
+volume_modes = {
+    'quiet': 8,
+    'normal': 20,
+    'loud': 32
+}
+speaker_volume = 20
 
 IDLE_TIME = 60 # in minutes, 2 - minimum
 sleep_enabled = True
@@ -200,6 +202,7 @@ def conversation_mode(sphinx_proc):
     global sleep_enabled
     global is_sleeping
     global a_player
+    global volume_modes
 
     while True:
         fsm_state = 1
@@ -217,6 +220,10 @@ def conversation_mode(sphinx_proc):
         if is_sleeping:
             wake_up()
         else:
+            before_action = None
+            before_parameter = None
+            after_action = None
+            after_parameter = None
             answer = 'unrecognized'
             if 'shutdown' in utt:
                 answer = 'shutdown'
@@ -228,24 +235,19 @@ def conversation_mode(sphinx_proc):
                 answer = 'exit'
                 fsm_state = 3
             elif (utt.endswith('mode')):
-                mode_ok = False
-                if 'quiet' in utt:
-                    set_speaker_volume(QUIET_VOLUME)
-                    mode_ok = True
-                elif 'normal' in utt:
-                    set_speaker_volume(NORMAL_VOLUME)
-                    mode_ok = True
-                elif 'loud' in utt:
-                    set_speaker_volume(LOUD_VOLUME)
-                    mode_ok = True
-                if mode_ok:
+                if utt.startswith('quiet') or utt.startswith('normal') or utt.startswith('loud'):
+                    (mode, *_) = utt.split(maxsplit=1)
+                    before_action = set_speaker_volume
+                    before_parameter = volume_modes[mode]
                     answer = 'configuration'
-            elif ('volume' in utt) or (utt == 'louder') or ('utt' == 'quieter'):
+            elif ('volume' in utt) or (utt == 'louder') or (utt == 'quieter'):
                 answer = 'configuration'
                 if ('increase' in utt or utt == 'louder'):
-                    change_speaker_volume(VOLUME_STEP)
+                    before_action = change_speaker_volume
+                    before_parameter = VOLUME_STEP
                 elif ('decrease' in utt or utt == 'quieter'):
-                    change_speaker_volume(-VOLUME_STEP)
+                    before_action = change_speaker_volume
+                    before_parameter = -VOLUME_STEP
             elif ('sing' in utt) and ('song' in utt):
                 answer = 'sing'
             elif 'who are you' in utt:
@@ -268,15 +270,17 @@ def conversation_mode(sphinx_proc):
             elif 'new sweater' in utt:
                 answer = 'new sweater'
             elif ('start' in utt and 'player' in utt):
-                answer = 'no audio'
-                m_player.send_command('start')
-                time.sleep(1)
+                answer = 'player'
+                after_action = m_player.send_command
+                after_parameter = 'start'
             elif ('stop' in utt and 'player' in utt):
-                answer = 'no audio'
-                m_player.send_command('stop')
+                answer = 'player'
+                after_action = m_player.send_command
+                after_parameter = 'stop'
             elif (utt == 'next song' or utt == 'next track'):
                 answer = 'no audio'
-                m_player.send_command('next')
+                after_action = m_player.send_command
+                after_parameter = 'next'
             elif ('enable' in utt):
                 if ('sleep' in utt):
                     answer = 'configuration'
@@ -292,8 +296,12 @@ def conversation_mode(sphinx_proc):
             print ("answer = " + answer)
 
             if fsm_state != 2:
+                run_action(before_action, before_parameter)
+
                 if answer != 'no audio':
                     a_player.play_answer(answer)
+
+                run_action(after_action, after_parameter)
 
                 if answer != 'shutdown' or answer != 'reboot':
                     if m_player.musicIsPlaying:
@@ -302,7 +310,12 @@ def conversation_mode(sphinx_proc):
 
         break
 
-def parse_utt()
+def run_action(action, parameter):
+    if action:
+        if parameter:
+            action(parameter)
+        else:
+            action()
 
 def change_speaker_volume(value):
     global speaker_volume
