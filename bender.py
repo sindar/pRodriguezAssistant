@@ -148,8 +148,8 @@ def sleep_counter_reset():
 def wake_up():
     global is_sleeping
     eyes_bl.exec_cmd('ON')
-    command = 'wake up'
-    a_player.play_answer(command)
+    answer = 'wake up'
+    a_player.play_answer(answer)
     is_sleeping = False
 
 def get_utterance(sphinx_proc):
@@ -186,8 +186,8 @@ def find_keyphrase(sphinx_proc):
                     keyphrase_found = True
             else:
                 if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)) and not is_sleeping:
-                    command = 'hey bender'
-                    a_player.play_answer(command)
+                    answer = 'hey bender'
+                    a_player.play_answer(answer)
                 if is_sleeping:
                     wake_up()
                 keyphrase_found = True
@@ -217,15 +217,15 @@ def conversation_mode(sphinx_proc):
         if is_sleeping:
             wake_up()
         else:
-            command = 'unrecognized'
+            answer = 'unrecognized'
             if 'shutdown' in utt:
-                command = 'shutdown'
+                answer = 'shutdown'
                 fsm_state = 4
             if 'reboot' in utt:
-                command = 'reboot'
+                answer = 'reboot'
                 fsm_state = 5
             elif (('exit' in utt) or ('quit' in utt)) and ('program' in utt):
-                command = 'exit'
+                answer = 'exit'
                 fsm_state = 3
             elif (utt.endswith('mode')):
                 mode_ok = False
@@ -239,68 +239,70 @@ def conversation_mode(sphinx_proc):
                     set_speaker_volume(LOUD_VOLUME)
                     mode_ok = True
                 if mode_ok:
-                    command = 'configuration'
+                    answer = 'configuration'
             elif ('volume' in utt) or (utt == 'louder') or ('utt' == 'quieter'):
-                command = 'configuration'
+                answer = 'configuration'
                 if ('increase' in utt or utt == 'louder'):
                     change_speaker_volume(VOLUME_STEP)
                 elif ('decrease' in utt or utt == 'quieter'):
                     change_speaker_volume(-VOLUME_STEP)
             elif ('sing' in utt) and ('song' in utt):
-                command = 'sing'
+                answer = 'sing'
             elif 'who are you' in utt:
-                command = 'who are you'
+                answer = 'who are you'
             elif 'how are you' in utt:
-                command = 'how are you'
+                answer = 'how are you'
             elif ('where are you from' in utt) or ('where were you born' in utt):
-                command = 'birthplace'
+                answer = 'birthplace'
             elif 'when were you born' in utt:
-                command = 'birthdate'
+                answer = 'birthdate'
             elif 'your favorite animal' in utt:
-                command = 'animal'
+                answer = 'animal'
             elif 'how can you live' in utt and 'without' in utt and 'body' in utt:
-                command = 'body'
+                answer = 'body'
             elif 'what do you think about' in utt:
                 if 'alexa' in utt or 'alice' in utt or 'cortana' in utt or 'siri' in utt:
-                    command = 'bad girl'
+                    answer = 'bad girl'
             elif 'magnet' in utt:
-                command = 'magnet'
+                answer = 'magnet'
             elif 'new sweater' in utt:
-                command = 'new sweater'
+                answer = 'new sweater'
             elif ('start' in utt and 'player' in utt):
-                command = 'no audio'
+                answer = 'no audio'
                 m_player.send_command('start')
                 time.sleep(1)
             elif ('stop' in utt and 'player' in utt):
-                command = 'no audio'
+                answer = 'no audio'
                 m_player.send_command('stop')
             elif (utt == 'next song' or utt == 'next track'):
-                command = 'no audio'
+                answer = 'no audio'
                 m_player.send_command('next')
             elif ('enable' in utt):
                 if ('sleep' in utt):
-                    command = 'configuration'
+                    answer = 'configuration'
                     sleep_enabled = True
             elif ('disable' in utt):
                 if ('sleep' in utt):
-                    command = 'configuration'
+                    answer = 'configuration'
                     sleep_enabled = False
             elif (utt == 'bender' or ('bender' in utt and ('hi' in utt or 'pause' in utt))):
-                command = 'no audio'
+                answer = 'no audio'
                 fsm_state = 2
 
-            print ("command = " + command)
+            print ("answer = " + answer)
 
             if fsm_state != 2:
-                if command != 'no audio':
-                    a_player.play_answer(command)
+                if answer != 'no audio':
+                    a_player.play_answer(answer)
 
-                if command != 'shutdown' or command != 'reboot':
+                if answer != 'shutdown' or answer != 'reboot':
                     if m_player.musicIsPlaying:
                         m_player.send_command('resume')
         sleep_counter_reset()
 
         break
+
+def parse_utt()
 
 def change_speaker_volume(value):
     global speaker_volume
