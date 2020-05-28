@@ -1,9 +1,18 @@
-Your rude personal ASSistant:)<br>
+## Your rude personal ASSistant:)<br>
 A Python version using pocketsphix.<br>
-Work in progress...<br>
+Work in progress(planned for release in 2096)...<br>
 
-The latest 3D-model can be found here: https://www.thingiverse.com/thing:4384974
+### 3D-model 
+https://www.thingiverse.com/thing:4384974
 
-Videos how it works:<br>
-https://youtu.be/jB6eqvVFAuU<br>
-https://youtu.be/hk_zi0FvA-Q<br>
+### Videos how it works
+- https://youtu.be/jB6eqvVFAuU<br>
+- https://youtu.be/hk_zi0FvA-Q<br>
+- https://youtu.be/VRdHTHkP-H8<br>
+
+### Software requirements
+- **2019-07-10-raspbian-buster-lite** is used as OS Linux distribution. I assume it should work on any newer(abd previous as well) versions, but haven't tested it.<br>
+- **ALSA** is used for sound subsystem.<br>
+- **[Pocketsphinx](https://github.com/cmusphinx/pocketsphinx)** is the core of the speech recognition. **[Sphinxbase](https://github.com/cmusphinx/sphinxbase)** must be installed for pocketsphinx to work. I compiled both from the sources.<br>
+- To control the backlight **[NeoPixel library](https://github.com/adafruit/Adafruit_CircuitPython_NeoPixel)** must be installed(with all its dependencies).<br>
+- **[Music Player Daemon (MPD)](https://www.musicpd.org/)** is the underlying music player(only to play the music, Bender's answers are playing with **aplay** utility from the ALSA package).
