@@ -11,7 +11,7 @@ https://www.thingiverse.com/thing:4384974
 - https://youtu.be/VRdHTHkP-H8<br>
 
 ### Software requirements
-- **2019-07-10-raspbian-buster-lite** is used as OS Linux distribution. I assume it should work on any newer(abd previous as well) versions, but haven't tested it.<br>
+- **2019-07-10-raspbian-buster-lite** is used as OS Linux distribution. I assume it should work on any newer(and previous as well) versions, but haven't tested it.<br>
 - **ALSA** is used for sound subsystem.<br>
 - **[Pocketsphinx](https://github.com/cmusphinx/pocketsphinx)** is the core of the speech recognition. **[Sphinxbase](https://github.com/cmusphinx/sphinxbase)** must be installed for pocketsphinx to work. I compiled both from the sources.<br>
 - To control the backlight **[NeoPixel library](https://github.com/adafruit/Adafruit_CircuitPython_NeoPixel)** must be installed(with all its dependencies).<br>
