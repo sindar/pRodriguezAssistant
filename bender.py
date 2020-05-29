@@ -12,6 +12,7 @@ from backlight_control import BacklightControl
 from translation_ru import TranslatorRU
 import ups_lite
 import power
+import volume_control
 
 audio_lang = 'en'
 recognize_lang ='en'
@@ -25,13 +26,6 @@ m_player = MusicPlayer()
 a_player = AnswerPlayer(audio_lang)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
-volume_modes = {
-    'quiet': 8,
-    'normal': 20,
-    'loud': 32
-}
-speaker_volume = 20
-
 IDLE_TIME = 60 # in minutes, 2 - minimum
 sleep_enabled = True
 is_sleeping = False
@@ -42,16 +36,13 @@ main_thread_is_running = True
 UPS_TASK_ENABLED = True
 UPS_TASK_INTERVAL = 2
 
-VOLUME_STEP = 4
-
 def main():
     global fsm_state
     global m_player
     global speech_recognizer
-    global speaker_volume
     global main_thread_is_running
 
-    set_speaker_volume(speaker_volume)
+    volume_control.set_speaker_volume(volume_control.speaker_volume)
 
     kill_pocketsphinx()
     m_player.send_command('stop')
@@ -165,7 +156,6 @@ def find_keyphrase(sphinx_proc):
     global sleep_enabled
     global is_sleeping
     global aplayer
-    global speaker_volume
 
     while True:
         keyphrase_found = False
@@ -183,7 +173,7 @@ def find_keyphrase(sphinx_proc):
         if ('bender' in utt):
             sleep_counter_reset()
             if m_player.musicIsPlaying:
-                if('pause' in utt or 'stop' in utt or speaker_volume == 0):
+                if('pause' in utt or 'stop' in utt or volume_control.speaker_volume == 0):
                     m_player.send_command('pause')
                     keyphrase_found = True
             else:
@@ -202,7 +192,6 @@ def conversation_mode(sphinx_proc):
     global sleep_enabled
     global is_sleeping
     global a_player
-    global volume_modes
 
     while True:
         fsm_state = 1
@@ -237,17 +226,17 @@ def conversation_mode(sphinx_proc):
             elif (utt.endswith('mode')):
                 if utt.startswith('quiet') or utt.startswith('normal') or utt.startswith('loud'):
                     (mode, *_) = utt.split(maxsplit=1)
-                    before_action = set_speaker_volume
-                    before_parameter = volume_modes[mode]
+                    before_action = volume_control.set_speaker_volume
+                    before_parameter = volume_control.volume_modes[mode]
                     answer = 'configuration'
             elif ('volume' in utt) or (utt == 'louder') or (utt == 'quieter'):
                 answer = 'configuration'
                 if ('increase' in utt or utt == 'louder'):
-                    before_action = change_speaker_volume
-                    before_parameter = VOLUME_STEP
+                    before_action = volume_control.change_speaker_volume
+                    before_parameter = volume_control.VOLUME_STEP
                 elif ('decrease' in utt or utt == 'quieter'):
-                    before_action = change_speaker_volume
-                    before_parameter = -VOLUME_STEP
+                    before_action = volume_control.change_speaker_volume
+                    before_parameter = -volume_control.VOLUME_STEP
             elif ('sing' in utt) and ('song' in utt):
                 answer = 'sing'
             elif 'who are you' in utt:
@@ -316,21 +305,6 @@ def run_action(action, parameter):
             action(parameter)
         else:
             action()
-
-def change_speaker_volume(value):
-    global speaker_volume
-
-    speaker_volume += value
-    if speaker_volume < 0:
-        speaker_volume = 0
-    if speaker_volume > 40:
-        speaker_volume = 40
-    set_speaker_volume(speaker_volume)
-
-def set_speaker_volume(value):
-    amixer_exe = "amixer -q -c 1 sset 'Speaker' " + str(value)
-    p = subprocess.Popen(["%s" % amixer_exe], shell=True, stdout=subprocess.PIPE)
-    code = p.wait()
 
 def kill_pocketsphinx():
     kill_exe = 'killall -s SIGKILL pocketsphinx_co'
