@@ -41,7 +41,7 @@ grammar bender;
 
 <volume_command> = (increase | decrease)(volume) | (volume)(increase | decrease)  | (louder | quieter);
 
-<birthplace_question> = (where) ((are you from) | (were you born));
+<birthplace_question> = (where are you from);
 <birthdate_question> = (when were you born) | (date of your birth);
 <favorite_animal_question> = [what [is]] (your favorite animal);
 <who_are_you_question> = (who are you);

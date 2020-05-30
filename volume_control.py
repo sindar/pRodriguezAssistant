@@ -2,7 +2,7 @@
 # project: pRodriguezAssistant
 import subprocess
 
-volume_modes = {
+modes = {
     'quiet': 8,
     'normal': 20,
     'loud': 32
