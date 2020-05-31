@@ -7,11 +7,11 @@ import threading
 import sys
 from speech_recognizer import PsLiveRecognizer
 from answer_player import AnswerPlayer
-from music_player import MusicPlayer
 from backlight_control import BacklightControl
 from translation_ru import TranslatorRU
 import ups_lite
 import power
+import profile
 import volume_control as vol_ctrl
 
 audio_lang = 'en'
@@ -20,9 +20,6 @@ recognize_lang ='en'
 BacklightControl.backlight_enabled = True
 eyes_bl = BacklightControl('EYES')
 
-fsm_state = 1
-
-m_player = MusicPlayer()
 a_player = AnswerPlayer(audio_lang)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
 
@@ -36,101 +33,18 @@ main_thread_is_running = True
 UPS_TASK_ENABLED = True
 UPS_TASK_INTERVAL = 2
 
-exit_utts1 = [exit_utts + ' program' for exit_utts in ['quit', 'exit']]
-exit_utts2 = [exit_utts + ' the program' for exit_utts in ['quit', 'exit']]
-exit_actions = {
-    **dict.fromkeys(exit_utts1, ['exit', lambda: update_fsm(3), None]),
-    **dict.fromkeys(exit_utts2, ['exit', lambda: update_fsm(3), None])
-}
-
-mode_actions = {
-    'quiet mode': ['configuration',
-                   lambda: vol_ctrl.set_speaker_volume(vol_ctrl.modes['quiet']), None],
-    'normal mode': ['configuration',
-                    lambda: vol_ctrl.set_speaker_volume(vol_ctrl.modes['normal']), None],
-    'loud mode': ['configuration',
-                  lambda: vol_ctrl.set_speaker_volume(vol_ctrl.modes['loud']), None]
-}
-
-volume_actions = {
-    **dict.fromkeys(['louder', 'increase volume'], ['configuration',
-               lambda: vol_ctrl.change_speaker_volume(vol_ctrl.VOLUME_STEP), None]),
-    **dict.fromkeys(['quieter', 'decrease volume'], ['configuration',
-               lambda: vol_ctrl.change_speaker_volume(-vol_ctrl.VOLUME_STEP), None])
-}
-
-power_actions = {
-    'shutdown': ['shutdown', lambda: update_fsm(4), None],
-    'reboot': ['reboot', lambda: update_fsm(5), None],
-}
-
-only_answer_actions = {
-    **dict.fromkeys(['sing song', 'sing a song'], ['sing', None, None]),
-    **dict.fromkeys(['what do you think about ' + name
-                     for name in ['alexa', 'alice', 'cortana', 'siri']],
-                    ['bad girl', None, None]),
-    'who are you': ['who are you', None, None],
-    'how are you': ['how are you', None, None],
-    'where are you from': ['birthplace', None, None],
-    'when were you born': ['birthdate', None, None],
-    'what is your favorite animal': ['animal', None, None],
-    'how can you live without a body': ['body', None, None],
-    'magnet': ['magnet', None, None],
-    'a great new sweater': ['new sweater', None, None],
-}
-
-player_actions = {
-    **dict.fromkeys(['start player', 'start the player'],
-                    ['player', None, lambda: m_player.send_command('start')]),
-    **dict.fromkeys(['stop player', 'stop the player'],
-                    ['player', None, lambda: m_player.send_command('stop')]),
-    **dict.fromkeys(['next song', 'next track'],
-                    ['no audio', None, lambda: m_player.send_command('next')])
-}
-
-sleep_actions = {
-    'enable sleep': ['configuration', None, lambda: sleep_enable_set(True)],
-    'disable sleep': ['configuration', None, lambda: sleep_enable_set(False)]
-}
-
-repeated_keyphrase_actions = {
-    **dict.fromkeys([prefix + ' bender'
-                    for prefix in ['hi','hey','hello','stop','pause']],
-                    ['no audio', lambda: update_fsm(2), None]),
-    **dict.fromkeys(['bender ' + suffix
-                    for suffix in ['hi', 'hey', 'hello', 'stop', 'pause']],
-                    ['no audio', lambda: update_fsm(2), None])
-}
-
-actions = {
-    **exit_actions,
-    **mode_actions,
-    **volume_actions,
-    **power_actions,
-    **only_answer_actions,
-    **player_actions,
-    **sleep_actions,
-    **repeated_keyphrase_actions
-}
-
 def sleep_enable_set(val):
     global sleep_enabled
     sleep_enabled = val
 
-def update_fsm(new_state):
-    global fsm_state
-    fsm_state = new_state
-
 def main():
-    global fsm_state
-    global m_player
     global speech_recognizer
     global main_thread_is_running
 
     vol_ctrl.set_speaker_volume(vol_ctrl.speaker_volume)
 
     kill_pocketsphinx()
-    m_player.send_command('stop')
+    profile.m_player.send_command('stop')
 
     eyes_bl.exec_cmd('OFF')
     time.sleep(0.15)
@@ -149,31 +63,31 @@ def main():
     eyes_bl.exec_cmd('ON')
 
     while True:
-        if (fsm_state == 1):
+        if (profile.fsm_state == 1):
             if find_keyphrase(sphinx_proc):
                 conversation_mode(sphinx_proc)
-        elif (fsm_state == 2):
+        elif (profile.fsm_state == 2):
             conversation_mode(sphinx_proc)
-        elif (fsm_state == 3):
+        elif (profile.fsm_state == 3):
             break
-        elif (fsm_state == 4):
+        elif (profile.fsm_state == 4):
             break
-        elif (fsm_state == 5):
+        elif (profile.fsm_state == 5):
             break
         else:
             continue
 
     main_thread_is_running = False
     kill_pocketsphinx()
-    m_player.send_command('stop')
+    profile.m_player.send_command('stop')
 
     eyes_bl.exec_cmd('OFF')
     time.sleep(3)
     
-    if (fsm_state == 4):
+    if (profile.fsm_state == 4):
         power.shutdown()
 
-    if (fsm_state == 5):
+    if (profile.fsm_state == 5):
         power.reboot()
 
     sys.exit(0)
@@ -206,7 +120,7 @@ def sleep_task():
             sleep_counter_inc()
             if sleep_counter >= IDLE_TIME:
                 if not is_sleeping:
-                    if not m_player.musicIsPlaying:
+                    if not profile.m_player.musicIsPlaying:
                         eyes_bl.exec_cmd('OFF')
                         a_player.play_answer('kill all humans')
                         is_sleeping = True
@@ -237,7 +151,6 @@ def get_utterance(sphinx_proc):
     return utt
 
 def find_keyphrase(sphinx_proc):
-    global fsm_state
     global sleep_enabled
     global is_sleeping
     global aplayer
@@ -256,9 +169,9 @@ def find_keyphrase(sphinx_proc):
 
     if ('bender' in utt):
         sleep_counter_reset()
-        if m_player.musicIsPlaying:
+        if profile.m_player.musicIsPlaying:
             if('pause' in utt or 'stop' in utt or vol_ctrl.speaker_volume == 0):
-                m_player.send_command('pause')
+                profile.m_player.send_command('pause')
                 keyphrase_found = True
         else:
             if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)) and not is_sleeping:
@@ -271,12 +184,11 @@ def find_keyphrase(sphinx_proc):
     return keyphrase_found
 
 def conversation_mode(sphinx_proc):
-    global fsm_state
     global sleep_enabled
     global is_sleeping
     global a_player
 
-    fsm_state = 1
+    profile.fsm_state = 1
     print ('Conversation mode:')
 
     utt = get_utterance(sphinx_proc)
@@ -295,7 +207,7 @@ def conversation_mode(sphinx_proc):
         after_action = None
 
         try:
-            action = actions[utt]
+            action = profile.actions[utt]
             answer = action[0]
             before_action = action[1]
             after_action = action[2]
@@ -306,15 +218,15 @@ def conversation_mode(sphinx_proc):
 
         if before_action:
             before_action()
-        if fsm_state != 2:
+        if profile.fsm_state != 2:
             if answer != 'no audio':
                 a_player.play_answer(answer)
 
             if after_action:
                 after_action()
             if answer != 'shutdown' or answer != 'reboot':
-                if m_player.musicIsPlaying:
-                    m_player.send_command('resume')
+                if profile.m_player.musicIsPlaying:
+                    profile.m_player.send_command('resume')
     sleep_counter_reset()
 
 def kill_pocketsphinx():
