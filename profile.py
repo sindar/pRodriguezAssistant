@@ -4,8 +4,8 @@
 import volume_control as vol_ctrl
 from music_player import MusicPlayer
 
+name = 'bender'
 m_player = MusicPlayer()
-
 fsm_state = 1
 
 def update_fsm(new_state):

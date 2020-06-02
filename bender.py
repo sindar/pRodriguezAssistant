@@ -167,7 +167,7 @@ def find_keyphrase(sphinx_proc):
             utt = 'unrecognized'
             #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
-    if ('bender' in utt):
+    if (profile.name in utt):
         sleep_counter_reset()
         if profile.m_player.musicIsPlaying:
             if('pause' in utt or 'stop' in utt or vol_ctrl.speaker_volume == 0):
@@ -175,7 +175,7 @@ def find_keyphrase(sphinx_proc):
                 keyphrase_found = True
         else:
             if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)) and not is_sleeping:
-                answer = 'hey bender'
+                answer = 'hey ' + profile.name
                 a_player.play_answer(answer)
             if is_sleeping:
                 wake_up()
