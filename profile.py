@@ -7,6 +7,38 @@ from music_player import MusicPlayer
 name = 'bender'
 m_player = MusicPlayer()
 
+audio_lang = 'en'
+recognize_lang ='en'
+
+audio_files = {
+    'reboot': ('with_bjah1', 'with_bjah2'),
+    'shutdown': ('with_bjah1', 'with_bjah2'),
+    'start': 'lets_get_drunk',
+    'exit': 'lets_get_drunk',
+    'hey bender': ('bite', 'hello', 'hello_peasants'),
+    'birthplace': 'born_in_tijuana',
+    'birthdate': 'birthdate',
+    'who are you': ('im_bender', 'bender_song'),
+    'animal': 'turtle',
+    'body': 'bodies',
+    'bad girl': 'bad_girl',
+    'sing': 'bender_song',
+    'magnet': ('roads_song', 'mountain_song'),
+    'new sweater': 'new_sweater',
+    'kill all humans': ('kill_all_humans_1', 'kill_all_humans_2'),
+    'wake up': 'most_wonderful_dream',
+    'enable': 'can_do',
+    'disable': 'can_do',
+    'set': 'can_do',
+    'how are you': ('none_of_your_business', 'right_now_i_feel_sorry_for_you', 'so_embarrassed'),
+    'configuration': 'can_do',
+    'player': 'can_do',
+    'electricity': 'plugged_in',
+    'unrecognized': ('beat_children', 'compare_your_lives_to_mine'),
+    'keyphrase': 'silence',
+    'no audio': 'silence'
+}
+
 exit_actions = {
     **dict.fromkeys([exit_utts + ' program' for exit_utts in ['quit', 'exit', 'quit the', 'exit the']],
                     ['exit', None, None]),

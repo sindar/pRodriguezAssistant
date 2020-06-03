@@ -14,14 +14,11 @@ import power
 import profile
 import volume_control as vol_ctrl
 
-audio_lang = 'en'
-recognize_lang ='en'
-
 BacklightControl.backlight_enabled = True
 eyes_bl = BacklightControl('EYES')
 
-a_player = AnswerPlayer(audio_lang)
-speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
+a_player = AnswerPlayer(profile.audio_lang, profile.audio_files)
+speech_recognizer = PsLiveRecognizer('./resources/', profile.recognize_lang, 'bender')
 
 IDLE_TIME = 60 # in minutes, 2 - minimum
 sleep_enabled = True
