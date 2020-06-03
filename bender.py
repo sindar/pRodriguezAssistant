@@ -33,6 +33,14 @@ main_thread_is_running = True
 UPS_TASK_ENABLED = True
 UPS_TASK_INTERVAL = 2
 
+fsm_state = 1
+fsm_transition = {
+    'keyphrase': 2,
+    'exit': 3,
+    'reboot': 4,
+    'shutdown': 5
+}
+
 def sleep_enable_set(val):
     global sleep_enabled
     sleep_enabled = val
@@ -40,6 +48,7 @@ def sleep_enable_set(val):
 def main():
     global speech_recognizer
     global main_thread_is_running
+    global fsm_state
 
     vol_ctrl.set_speaker_volume(vol_ctrl.speaker_volume)
 
@@ -63,16 +72,16 @@ def main():
     eyes_bl.exec_cmd('ON')
 
     while True:
-        if (profile.fsm_state == 1):
+        if (fsm_state == 1):
             if find_keyphrase(sphinx_proc):
                 conversation_mode(sphinx_proc)
-        elif (profile.fsm_state == 2):
+        elif (fsm_state == 2):
             conversation_mode(sphinx_proc)
-        elif (profile.fsm_state == 3):
+        elif (fsm_state == 3):
             break
-        elif (profile.fsm_state == 4):
+        elif (fsm_state == 4):
             break
-        elif (profile.fsm_state == 5):
+        elif (fsm_state == 5):
             break
         else:
             continue
@@ -83,12 +92,12 @@ def main():
 
     eyes_bl.exec_cmd('OFF')
     time.sleep(3)
-    
-    if (profile.fsm_state == 4):
-        power.shutdown()
 
-    if (profile.fsm_state == 5):
+    if (fsm_state == 4):
         power.reboot()
+
+    if (fsm_state == 5):
+        power.shutdown()
 
     sys.exit(0)
 
@@ -154,6 +163,7 @@ def find_keyphrase(sphinx_proc):
     global sleep_enabled
     global is_sleeping
     global aplayer
+    global fsm_state
 
     keyphrase_found = False
     print('Start mode:')
@@ -187,8 +197,8 @@ def conversation_mode(sphinx_proc):
     global sleep_enabled
     global is_sleeping
     global a_player
+    global fsm_state
 
-    profile.fsm_state = 1
     print ('Conversation mode:')
 
     utt = get_utterance(sphinx_proc)
@@ -216,9 +226,14 @@ def conversation_mode(sphinx_proc):
 
         print ("answer = " + answer)
 
+        try:
+            fsm_state = fsm_transition[answer]
+        except:
+            fsm_state = 1
+
         if before_action:
             before_action()
-        if profile.fsm_state != 2:
+        if fsm_state != 2:
             if answer != 'no audio':
                 a_player.play_answer(answer)
 

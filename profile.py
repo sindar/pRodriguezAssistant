@@ -6,17 +6,10 @@ from music_player import MusicPlayer
 
 name = 'bender'
 m_player = MusicPlayer()
-fsm_state = 1
-
-def update_fsm(new_state):
-    global fsm_state
-    fsm_state = new_state
 
 exit_actions = {
-    **dict.fromkeys([exit_utts + ' program' for exit_utts in ['quit', 'exit']],
-                    ['exit', lambda: update_fsm(3), None]),
-    **dict.fromkeys([exit_utts + ' the program' for exit_utts in ['quit', 'exit']],
-                    ['exit', lambda: update_fsm(3), None])
+    **dict.fromkeys([exit_utts + ' program' for exit_utts in ['quit', 'exit', 'quit the', 'exit the']],
+                    ['exit', None, None]),
 }
 
 mode_actions = {
@@ -36,8 +29,8 @@ volume_actions = {
 }
 
 power_actions = {
-    'shutdown': ['shutdown', lambda: update_fsm(4), None],
-    'reboot': ['reboot', lambda: update_fsm(5), None],
+    'shutdown': ['shutdown', None, None],
+    'reboot': ['reboot', None, None],
 }
 
 only_answer_actions = {
@@ -70,12 +63,13 @@ sleep_actions = {
 }
 
 repeated_keyphrase_actions = {
+    'bender': ['keyphrase', None, None],
     **dict.fromkeys([prefix + ' bender'
                     for prefix in ['hi','hey','hello','stop','pause']],
-                    ['no audio', lambda: update_fsm(2), None]),
+                    ['keyphrase', None, None]),
     **dict.fromkeys(['bender ' + suffix
                     for suffix in ['hi', 'hey', 'hello', 'stop', 'pause']],
-                    ['no audio', lambda: update_fsm(2), None])
+                    ['keyphrase', None, None])
 }
 
 actions = {

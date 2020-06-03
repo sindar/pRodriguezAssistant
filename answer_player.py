@@ -29,6 +29,7 @@ audio_files['configuration'] = 'can_do'
 audio_files['player'] = 'can_do'
 audio_files['electricity'] = 'plugged_in'
 audio_files['unrecognized'] = ('beat_children', 'compare_your_lives_to_mine')
+audio_files['keyphrase'] = 'silence'
 audio_files['no audio'] = 'silence'
 
 class AnswerPlayer:
