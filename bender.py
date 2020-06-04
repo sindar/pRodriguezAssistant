@@ -5,20 +5,9 @@ import subprocess
 import time
 import threading
 import sys
-from speech_recognizer import PsLiveRecognizer
-from answer_player import AnswerPlayer
-from backlight_control import BacklightControl
-from translation_ru import TranslatorRU
 import ups_lite
 import power
 import profile
-import volume_control as vol_ctrl
-
-BacklightControl.backlight_enabled = True
-eyes_bl = BacklightControl('EYES')
-
-a_player = AnswerPlayer(profile.audio_lang, profile.audio_files)
-speech_recognizer = PsLiveRecognizer('./resources/', profile.recognize_lang, 'bender')
 
 IDLE_TIME = 60 # in minutes, 2 - minimum
 sleep_enabled = True
@@ -43,16 +32,15 @@ def sleep_enable_set(val):
     sleep_enabled = val
 
 def main():
-    global speech_recognizer
     global main_thread_is_running
     global fsm_state
 
-    vol_ctrl.set_speaker_volume(vol_ctrl.speaker_volume)
+    profile.vol_ctrl.set_speaker_volume(profile.vol_ctrl.speaker_volume)
 
     kill_pocketsphinx()
     profile.m_player.send_command('stop')
 
-    eyes_bl.exec_cmd('OFF')
+    profile.eyes_bl.exec_cmd('OFF')
     time.sleep(0.15)
 
     if UPS_TASK_ENABLED:
@@ -63,10 +51,10 @@ def main():
     sleep_thread.daemon = True
     sleep_thread.start()
 
-    sphinx_proc = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
-    print(["%s" % speech_recognizer.cmd_line])
+    sphinx_proc = subprocess.Popen(["%s" % profile.speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
+    print(["%s" % profile.speech_recognizer.cmd_line])
 
-    eyes_bl.exec_cmd('ON')
+    profile.eyes_bl.exec_cmd('ON')
 
     while True:
         if (fsm_state == 1):
@@ -87,7 +75,7 @@ def main():
     kill_pocketsphinx()
     profile.m_player.send_command('stop')
 
-    eyes_bl.exec_cmd('OFF')
+    profile.eyes_bl.exec_cmd('OFF')
     time.sleep(3)
 
     if (fsm_state == 4):
@@ -108,7 +96,7 @@ def ups_task():
         capacity = ups_lite.read_capacity()
         if voltage >= 4.20:
             if prev_voltage <= 4.15:
-                a_player.play_answer('electricity')
+                profile.a_player.play_answer('electricity')
         else:
             if capacity < 20 and (prev_capacity > capacity):
                 power.shutdown()
@@ -127,8 +115,8 @@ def sleep_task():
             if sleep_counter >= IDLE_TIME:
                 if not is_sleeping:
                     if not profile.m_player.musicIsPlaying:
-                        eyes_bl.exec_cmd('OFF')
-                        a_player.play_answer('kill all humans')
+                        profile.eyes_bl.exec_cmd('OFF')
+                        profile.a_player.play_answer('fall asleep')
                         is_sleeping = True
 
 def sleep_counter_inc():
@@ -145,9 +133,8 @@ def sleep_counter_reset():
 
 def wake_up():
     global is_sleeping
-    eyes_bl.exec_cmd('ON')
-    answer = 'wake up'
-    a_player.play_answer(answer)
+    profile.eyes_bl.exec_cmd('ON')
+    profile.a_player.play_answer('wake up')
     is_sleeping = False
 
 def get_utterance(sphinx_proc):
@@ -167,9 +154,9 @@ def find_keyphrase(sphinx_proc):
 
     utt = get_utterance(sphinx_proc)
 
-    if speech_recognizer.lang == 'ru':
+    if profile.speech_recognizer.lang == 'ru':
         try:
-            utt = TranslatorRU.tr_start_ru_en[utt]
+            utt = profile.TranslatorRU.tr_start_ru_en[utt]
         except KeyError as e:
             utt = 'unrecognized'
             #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
@@ -177,13 +164,13 @@ def find_keyphrase(sphinx_proc):
     if (profile.name in utt):
         sleep_counter_reset()
         if profile.m_player.musicIsPlaying:
-            if('pause' in utt or 'stop' in utt or vol_ctrl.speaker_volume == 0):
+            if('pause' in utt or 'stop' in utt or profile.vol_ctrl.speaker_volume == 0):
                 profile.m_player.send_command('pause')
                 keyphrase_found = True
         else:
             if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)) and not is_sleeping:
                 answer = 'hey ' + profile.name
-                a_player.play_answer(answer)
+                profile.a_player.play_answer(answer)
             if is_sleeping:
                 wake_up()
             keyphrase_found = True
@@ -193,16 +180,15 @@ def find_keyphrase(sphinx_proc):
 def conversation_mode(sphinx_proc):
     global sleep_enabled
     global is_sleeping
-    global a_player
     global fsm_state
 
     print ('Conversation mode:')
 
     utt = get_utterance(sphinx_proc)
 
-    if speech_recognizer.lang == 'ru':
+    if profile.speech_recognizer.lang == 'ru':
         try:
-            utt = TranslatorRU.tr_conversation_ru_en[utt]
+            utt = profile.TranslatorRU.tr_conversation_ru_en[utt]
         except KeyError as e:
             utt = 'unrecognized'
             #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
@@ -232,7 +218,7 @@ def conversation_mode(sphinx_proc):
             before_action()
         if fsm_state != 2:
             if answer != 'no audio':
-                a_player.play_answer(answer)
+                profile.a_player.play_answer(answer)
 
             if after_action:
                 after_action()

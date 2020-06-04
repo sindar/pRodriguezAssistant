@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
 import volume_control as vol_ctrl
-from music_player import MusicPlayer
+import threading
 
 name = 'bender'
-m_player = MusicPlayer()
 
 audio_lang = 'en'
 recognize_lang ='en'
@@ -25,7 +24,7 @@ audio_files = {
     'sing': 'bender_song',
     'magnet': ('roads_song', 'mountain_song'),
     'new sweater': 'new_sweater',
-    'kill all humans': ('kill_all_humans_1', 'kill_all_humans_2'),
+    'fall asleep': ('kill_all_humans_1', 'kill_all_humans_2'),
     'wake up': 'most_wonderful_dream',
     'enable': 'can_do',
     'disable': 'can_do',
@@ -114,3 +113,17 @@ actions = {
     **sleep_actions,
     **repeated_keyphrase_actions
 }
+
+from music_player import MusicPlayer
+from answer_player import AnswerPlayer
+from speech_recognizer import PsLiveRecognizer
+
+if recognize_lang == 'ru': from translation_ru import TranslatorRU
+
+from backlight_control import BacklightControl
+BacklightControl.backlight_enabled = True
+eyes_bl = BacklightControl('EYES')
+
+m_player = MusicPlayer()
+a_player = AnswerPlayer(audio_lang, audio_files)
+speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
