@@ -5,8 +5,8 @@ import subprocess
 import time
 import threading
 import sys
-import power
-import profile
+from common import power, ups_lite
+from profiles.bender import bender as profile
 
 main_thread_is_running = True
 
@@ -19,7 +19,7 @@ sleep_counter_lock = threading.Lock()
 
 UPS_TASK_ENABLED = True
 UPS_TASK_INTERVAL = 2
-if UPS_TASK_ENABLED: import ups_lite
+if UPS_TASK_ENABLED: pass
 
 fsm_state = 1
 fsm_transition = {

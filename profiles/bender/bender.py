@@ -1,8 +1,8 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
-import volume_control as vol_ctrl
-import threading
+from common import volume_control as vol_ctrl
+import pathlib
 
 name = 'bender'
 audio_lang = 'en'
@@ -114,20 +114,24 @@ actions = {
     **repeated_keyphrase_actions
 }
 
-from music_player import MusicPlayer
-from answer_player import AnswerPlayer
-from speech_recognizer import PsLiveRecognizer
+from common.music_player import MusicPlayer
+from common.answer_player import AnswerPlayer
+from common.speech_recognizer import PsLiveRecognizer
 
-if recognize_lang == 'ru': from translation_ru import TranslatorRU
+if recognize_lang == 'ru':
+    from profiles.bender.translation_ru import TranslatorRU
 
 if backlight_enabled:
-    from backlight_control import BacklightControl
+    from profiles.bender.bender_backlight import BacklightControl
     eyes_bl = BacklightControl('EYES')
     mouth_bl = BacklightControl('MOUTH')
 else:
     eyes_bl = None
     mouth_bl = None
 
-a_player = AnswerPlayer(audio_lang, audio_files, eyes_bl=eyes_bl, mouth_bl=mouth_bl)
+a_player = AnswerPlayer(str(pathlib.Path(__file__).parent.absolute()) + '/audio/',
+                        audio_lang, audio_files, eyes_bl=eyes_bl, mouth_bl=mouth_bl)
 m_player = MusicPlayer()
-speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
+speech_recognizer = PsLiveRecognizer(str(pathlib.Path().absolute()) + '/common/resources/',
+                                     str(pathlib.Path(__file__).parent.absolute()) + '/resources/',
+                                     recognize_lang, 'bender')

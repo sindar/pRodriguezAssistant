@@ -5,9 +5,10 @@ import time
 
 class AnswerPlayer:
     lang = 'en'
-    def __init__(self, lang, audio_files, mouth_bl, eyes_bl):
+    def __init__(self, audio_path, lang, audio_files, mouth_bl, eyes_bl):
         self.mic_gain = 40
         self.mic_set(self.mic_gain)
+        self.audio_path = audio_path
         self.eyes_bl = eyes_bl
         self.mouth_bl = mouth_bl
         if self.mouth_bl:
@@ -51,7 +52,7 @@ class AnswerPlayer:
                 bl_command = 'TALK'
 
             self.mic_set(0)
-            self.play_wav('./audio/' + AnswerPlayer.lang + '/' + answer + '.wav', bl_command)
+            self.play_wav(self.audio_path + AnswerPlayer.lang + '/' + answer + '.wav', bl_command)
             self.mic_set(self.mic_gain)
             if self.mouth_bl:
                 self.mouth_bl.exec_cmd('OFF')

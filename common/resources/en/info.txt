@@ -1,0 +1,1 @@
+Put an English HMM for the pocketsphinx here.
