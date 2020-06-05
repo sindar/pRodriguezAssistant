@@ -5,19 +5,21 @@ import subprocess
 import time
 import threading
 import sys
-import ups_lite
 import power
 import profile
 
+main_thread_is_running = True
+
+SLEEP_TASK_ENABLED = True
 IDLE_TIME = 60 # in minutes, 2 - minimum
-sleep_enabled = True
+sleep_enabled = False
 is_sleeping = False
 sleep_counter = 0
 sleep_counter_lock = threading.Lock()
-main_thread_is_running = True
 
 UPS_TASK_ENABLED = True
 UPS_TASK_INTERVAL = 2
+if UPS_TASK_ENABLED: import ups_lite
 
 fsm_state = 1
 fsm_transition = {
@@ -34,27 +36,32 @@ def sleep_enable_set(val):
 def main():
     global main_thread_is_running
     global fsm_state
+    global sleep_enabled
 
     profile.vol_ctrl.set_speaker_volume(profile.vol_ctrl.speaker_volume)
 
     kill_pocketsphinx()
     profile.m_player.send_command('stop')
 
-    profile.eyes_bl.exec_cmd('OFF')
+    if profile.eyes_bl:
+        profile.eyes_bl.exec_cmd('OFF')
     time.sleep(0.15)
 
     if UPS_TASK_ENABLED:
         ups_thread = threading.Thread(target=ups_task)
         ups_thread.start()
+        sleep_enabled = True
 
-    sleep_thread = threading.Thread(target=sleep_task)
-    sleep_thread.daemon = True
-    sleep_thread.start()
+    if SLEEP_TASK_ENABLED:
+        sleep_thread = threading.Thread(target=sleep_task)
+        sleep_thread.daemon = True
+        sleep_thread.start()
 
     sphinx_proc = subprocess.Popen(["%s" % profile.speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
     print(["%s" % profile.speech_recognizer.cmd_line])
 
-    profile.eyes_bl.exec_cmd('ON')
+    if profile.eyes_bl:
+        profile.eyes_bl.exec_cmd('ON')
 
     while True:
         if (fsm_state == 1):
@@ -75,7 +82,8 @@ def main():
     kill_pocketsphinx()
     profile.m_player.send_command('stop')
 
-    profile.eyes_bl.exec_cmd('OFF')
+    if profile.eyes_bl:
+        profile.eyes_bl.exec_cmd('OFF')
     time.sleep(3)
 
     if (fsm_state == 4):
@@ -115,7 +123,8 @@ def sleep_task():
             if sleep_counter >= IDLE_TIME:
                 if not is_sleeping:
                     if not profile.m_player.musicIsPlaying:
-                        profile.eyes_bl.exec_cmd('OFF')
+                        if profile.eyes_bl:
+                            profile.eyes_bl.exec_cmd('OFF')
                         profile.a_player.play_answer('fall asleep')
                         is_sleeping = True
 
@@ -133,7 +142,8 @@ def sleep_counter_reset():
 
 def wake_up():
     global is_sleeping
-    profile.eyes_bl.exec_cmd('ON')
+    if profile.eyes_bl:
+        profile.eyes_bl.exec_cmd('ON')
     profile.a_player.play_answer('wake up')
     is_sleeping = False
 
@@ -162,7 +172,8 @@ def find_keyphrase(sphinx_proc):
             #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
 
     if (profile.name in utt):
-        sleep_counter_reset()
+        if sleep_enabled:
+            sleep_counter_reset()
         if profile.m_player.musicIsPlaying:
             if('pause' in utt or 'stop' in utt or profile.vol_ctrl.speaker_volume == 0):
                 profile.m_player.send_command('pause')
@@ -225,7 +236,8 @@ def conversation_mode(sphinx_proc):
             if answer != 'shutdown' or answer != 'reboot':
                 if profile.m_player.musicIsPlaying:
                     profile.m_player.send_command('resume')
-    sleep_counter_reset()
+    if sleep_enabled:
+        sleep_counter_reset()
 
 def kill_pocketsphinx():
     kill_exe = 'killall -s SIGKILL pocketsphinx_co'

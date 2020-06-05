@@ -117,8 +117,6 @@ def sin_cos_graph(pixels, pin, func, back_color, front_color):
     pixels.show()
 
 class BacklightControl:
-    backlight_enabled = True
-
     def __init__(self, strip):
         self.pixels = None
         if strip in strips:

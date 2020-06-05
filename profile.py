@@ -5,9 +5,9 @@ import volume_control as vol_ctrl
 import threading
 
 name = 'bender'
-
 audio_lang = 'en'
 recognize_lang ='en'
+backlight_enabled = True
 
 audio_files = {
     'reboot': ('with_bjah1', 'with_bjah2'),
@@ -120,10 +120,14 @@ from speech_recognizer import PsLiveRecognizer
 
 if recognize_lang == 'ru': from translation_ru import TranslatorRU
 
-from backlight_control import BacklightControl
-BacklightControl.backlight_enabled = True
-eyes_bl = BacklightControl('EYES')
+if backlight_enabled:
+    from backlight_control import BacklightControl
+    eyes_bl = BacklightControl('EYES')
+    mouth_bl = BacklightControl('MOUTH')
+else:
+    eyes_bl = None
+    mouth_bl = None
 
+a_player = AnswerPlayer(audio_lang, audio_files, eyes_bl=eyes_bl, mouth_bl=mouth_bl)
 m_player = MusicPlayer()
-a_player = AnswerPlayer(audio_lang, audio_files)
 speech_recognizer = PsLiveRecognizer('./resources/', recognize_lang, 'bender')
