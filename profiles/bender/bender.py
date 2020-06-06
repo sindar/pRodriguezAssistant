@@ -35,12 +35,13 @@ audio_files = {
     'electricity': 'plugged_in',
     'unrecognized': ('beat_children', 'compare_your_lives_to_mine'),
     'repeated keyphrase': 'im_in_a_hurry',
+    'wait you are serious': 'ow_wait_youre_serious',
     'no audio': 'silence'
 }
 
 exit_actions = {
     **dict.fromkeys([exit_utts + ' program' for exit_utts in ['quit', 'exit', 'quit the', 'exit the']],
-                    ['exit', None, None]),
+                    ['exit', None, None])
 }
 
 mode_actions = {
@@ -77,6 +78,8 @@ only_answer_actions = {
     'how can you live without a body': ['body', None, None],
     'magnet': ['magnet', None, None],
     'a great new sweater': ['new sweater', None, None],
+    **dict.fromkeys(['i am sad', 'i am very sad', "i'm sad", "i'm very sad"],
+                    ['wait you are serious', None, None])
 }
 
 player_actions = {

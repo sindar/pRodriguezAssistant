@@ -49,7 +49,7 @@ grammar bender;
 <body_questions> = (how can you live without) (a | the | your) (body);
 <about_assistants_questions> = (what do you think about) (alexa | alice | cortana | siri);
 
-<misc_phrases> = (magnet) | [a] [great] (new sweater);
+<misc_phrases> = (magnet) | [a] [great] (new sweater) | (i am | i'm) [very] (sad);
 
 <commands> = <start_command> | <exit_command> | <reboot_command> | <shutdown_command>
                 | <enable_disable_command> | <set_command> | <mode_command>
