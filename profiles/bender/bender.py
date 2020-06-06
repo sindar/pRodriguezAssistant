@@ -34,7 +34,7 @@ audio_files = {
     'player': 'can_do',
     'electricity': 'plugged_in',
     'unrecognized': ('beat_children', 'compare_your_lives_to_mine'),
-    'keyphrase': 'silence',
+    'repeated keyphrase': 'im_in_a_hurry',
     'no audio': 'silence'
 }
 
@@ -94,13 +94,13 @@ sleep_actions = {
 }
 
 repeated_keyphrase_actions = {
-    'bender': ['keyphrase', None, None],
+    'bender': ['repeated keyphrase', None, None],
     **dict.fromkeys([prefix + ' bender'
                     for prefix in ['hi','hey','hello','stop','pause']],
-                    ['keyphrase', None, None]),
+                    ['repeated keyphrase', None, None]),
     **dict.fromkeys(['bender ' + suffix
                     for suffix in ['hi', 'hey', 'hello', 'stop', 'pause']],
-                    ['keyphrase', None, None])
+                    ['repeated keyphrase', None, None])
 }
 
 actions = {

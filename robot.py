@@ -23,7 +23,7 @@ if UPS_TASK_ENABLED: from common import ups_lite
 
 fsm_state = 1
 fsm_transition = {
-    'keyphrase': 2,
+    'repeated keyphrase': 2,
     'exit': 3,
     'reboot': 4,
     'shutdown': 5
@@ -227,15 +227,17 @@ def conversation_mode(sphinx_proc):
 
         if before_action:
             before_action()
-        if fsm_state != 2:
-            if answer != 'no audio':
-                profile.a_player.play_answer(answer)
 
-            if after_action:
-                after_action()
-            if answer != 'shutdown' or answer != 'reboot':
-                if profile.m_player.musicIsPlaying:
-                    profile.m_player.send_command('resume')
+        if answer != 'no audio':
+            profile.a_player.play_answer(answer)
+
+        if after_action:
+            after_action()
+
+        if answer != 'shutdown' or answer != 'reboot':
+            if profile.m_player.musicIsPlaying:
+                profile.m_player.send_command('resume')
+
     if sleep_enabled:
         sleep_counter_reset()
 
