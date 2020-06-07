@@ -228,10 +228,10 @@ def conversation_mode(sphinx_proc):
         if before_action:
             before_action()
 
-        stop_pocketsphinx()
+        # stop_pocketsphinx()
         if answer != 'no audio':
             profile.a_player.play_answer(answer)
-        cont_pocketsphinx()
+        # cont_pocketsphinx()
 
         if after_action:
             after_action()
