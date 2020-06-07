@@ -228,8 +228,10 @@ def conversation_mode(sphinx_proc):
         if before_action:
             before_action()
 
+        stop_pocketsphinx()
         if answer != 'no audio':
             profile.a_player.play_answer(answer)
+        cont_pocketsphinx()
 
         if after_action:
             after_action()
@@ -240,6 +242,16 @@ def conversation_mode(sphinx_proc):
 
     if sleep_enabled:
         sleep_counter_reset()
+
+def stop_pocketsphinx():
+    stop_exe = 'killall -s STOP pocketsphinx_co'
+    p = subprocess.Popen(["%s" % stop_exe], shell=True, stdout=subprocess.PIPE)
+    code = p.wait()
+
+def cont_pocketsphinx():
+    cont_exe = 'killall -s CONT pocketsphinx_co'
+    p = subprocess.Popen(["%s" % cont_exe], shell=True, stdout=subprocess.PIPE)
+    code = p.wait()
 
 def kill_pocketsphinx():
     kill_exe = 'killall -s SIGKILL pocketsphinx_co'
