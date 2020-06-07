@@ -49,7 +49,11 @@ grammar bender;
 <body_questions> = (how can you live without) (a | the | your) (body);
 <about_assistants_questions> = (what do you think about) (alexa | alice | cortana | siri);
 
-<misc_phrases> = (magnet) | [a] [great] (new sweater) | (i am | i'm) [very] (sad);
+<misc_phrases> = (magnet) | [a] [great] (new sweater);
+<bad_phrase> =  (you are | you're) [very | so] (bad | cruel | evil);
+<sad_phrase> =  (i am | i'm) [very | so] (sad);
+
+<conversation_phrases> = <sad_phrase> | <bad_phrase> | <misc_phrases>;
 
 <commands> = <start_command> | <exit_command> | <reboot_command> | <shutdown_command>
                 | <enable_disable_command> | <set_command> | <mode_command>
@@ -62,4 +66,4 @@ grammar bender;
                 | <body_questions> | <about_assistants_questions>;
 
 public <commands_and_questions> = <commands> | <questions>
-                                    | <stop_phrase> | <misc_phrases>  | <requests>;
+                                    | <stop_phrase> | <conversation_phrases>  | <requests>;

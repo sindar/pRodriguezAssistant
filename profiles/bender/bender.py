@@ -36,6 +36,7 @@ audio_files = {
     'unrecognized': ('beat_children', 'compare_your_lives_to_mine'),
     'repeated keyphrase': 'im_in_a_hurry',
     'wait you are serious': 'ow_wait_youre_serious',
+    'laugh': 'laugh',
     'no audio': 'silence'
 }
 
@@ -78,8 +79,12 @@ only_answer_actions = {
     'how can you live without a body': ['body', None, None],
     'magnet': ['magnet', None, None],
     'a great new sweater': ['new sweater', None, None],
-    **dict.fromkeys(['i am sad', 'i am very sad', "i'm sad", "i'm very sad"],
-                    ['wait you are serious', None, None])
+    **dict.fromkeys(['i am sad',"i'm sad", 'i am very sad', "i'm very sad", 'i am so sad', "i'm so sad"],
+                    ['wait you are serious', None, None]),
+    **dict.fromkeys(['you are bad',"you're bad", 'you are very bad', "you're very bad", 'you are so bad',
+                     "you're so bad", 'you are cruel', "you're cruel", 'you are so cruel', "you're so cruel",
+                     'you are evil', "you're evil", 'you are so evil', "you're so evil"],
+                    ['laugh', None, None])
 }
 
 player_actions = {
