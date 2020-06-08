@@ -12,7 +12,7 @@ main_thread_is_running = True
 
 SLEEP_TASK_ENABLED = True
 IDLE_TIME = 60 # in minutes, 2 - minimum
-sleep_enabled = False
+sleep_enabled = True
 is_sleeping = False
 sleep_counter = 0
 sleep_counter_lock = threading.Lock()
@@ -50,9 +50,9 @@ def main():
     if UPS_TASK_ENABLED:
         ups_thread = threading.Thread(target=ups_task)
         ups_thread.start()
-        sleep_enabled = True
 
     if SLEEP_TASK_ENABLED:
+        profile.sleep_enable_set = sleep_enable_set
         sleep_thread = threading.Thread(target=sleep_task)
         sleep_thread.daemon = True
         sleep_thread.start()
@@ -228,10 +228,8 @@ def conversation_mode(sphinx_proc):
         if before_action:
             before_action()
 
-        # stop_pocketsphinx()
         if answer != 'no audio':
             profile.a_player.play_answer(answer)
-        # cont_pocketsphinx()
 
         if after_action:
             after_action()

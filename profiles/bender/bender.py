@@ -8,6 +8,7 @@ name = 'bender'
 audio_lang = 'en'
 recognize_lang ='en'
 backlight_enabled = True
+sleep_enable_set = None
 
 audio_files = {
     'reboot': ('with_bjah1', 'with_bjah2'),
