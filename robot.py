@@ -10,14 +10,14 @@ from profiles.bender import bender as profile
 
 main_thread_is_running = True
 
-SLEEP_TASK_ENABLED = True
+SLEEP_TASK_ENABLED = profile.SLEEP_TASK_ENABLED
 IDLE_TIME = 60 # in minutes, 2 - minimum
 sleep_enabled = True
 is_sleeping = False
 sleep_counter = 0
 sleep_counter_lock = threading.Lock()
 
-UPS_TASK_ENABLED = True
+UPS_TASK_ENABLED = profile.UPS_TASK_ENABLED
 UPS_TASK_INTERVAL = 2
 if UPS_TASK_ENABLED: from common import ups_lite
 

@@ -10,6 +10,9 @@ recognize_lang ='en'
 backlight_enabled = True
 sleep_enable_set = None
 
+SLEEP_TASK_ENABLED = True
+UPS_TASK_ENABLED = True
+
 audio_files = {
     **dict.fromkeys(['reboot', 'shutdown'], ('with_bjah1', 'with_bjah2')),
     'exit': 'lets_get_drunk',
