@@ -7,9 +7,9 @@ import pathlib
 name = 'bender'
 audio_lang = 'en'
 recognize_lang ='en'
-backlight_enabled = True
 sleep_enable_set = None
 
+BACKLIGHT_ENABLED = True
 SLEEP_TASK_ENABLED = True
 UPS_TASK_ENABLED = True
 
@@ -127,7 +127,7 @@ from common.speech_recognizer import PsLiveRecognizer
 if recognize_lang == 'ru':
     from profiles.bender.translation_ru import TranslatorRU
 
-if backlight_enabled:
+if BACKLIGHT_ENABLED:
     from profiles.bender.bender_backlight import BacklightControl
     eyes_bl = BacklightControl('EYES')
     mouth_bl = BacklightControl('MOUTH')
