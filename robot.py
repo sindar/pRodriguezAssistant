@@ -5,14 +5,17 @@ import subprocess
 import time
 import threading
 import sys
+import getopt
+import pathlib
 from common import power
+from common.speech_recognizer import PsLiveRecognizer
 from profiles.bender import bender as profile
 
 main_thread_is_running = True
 
 SLEEP_TASK_ENABLED = profile.SLEEP_TASK_ENABLED
 IDLE_TIME = 60 # in minutes, 2 - minimum
-sleep_enabled = True
+sleep_enabled = False
 is_sleeping = False
 sleep_counter = 0
 sleep_counter_lock = threading.Lock()
@@ -29,14 +32,33 @@ fsm_transition = {
     'shutdown': 5
 }
 
+speech_recognizer = None
+
 def sleep_enable_set(val):
     global sleep_enabled
     sleep_enabled = val
 
-def main():
+def main(argv):
     global main_thread_is_running
     global fsm_state
     global sleep_enabled
+    global speech_recognizer
+
+    if len(argv) > 0:
+        try:
+            opts, args = getopt.getopt(argv, "hr:", ["help","rec_device="])
+        except getopt.GetoptError:
+            print ('robot.py [-h|--help] [-r|--rec_device <device>]')
+            sys.exit(2)
+
+        for opt, arg in opts:
+            if  opt in ('-h', '--help'):
+                print ('robot.py [-h|--help] [-r|--rec_device <device>]')
+                sys.exit(0)
+            if opt in ('-r', '--rec_device'):
+                rec_device = arg
+            else:
+                rec_device = None
 
     profile.vol_ctrl.set_speaker_volume(profile.vol_ctrl.speaker_volume)
 
@@ -52,13 +74,17 @@ def main():
         ups_thread.start()
 
     if SLEEP_TASK_ENABLED:
+        sleep_enabled = True
         profile.sleep_enable_set = sleep_enable_set
         sleep_thread = threading.Thread(target=sleep_task)
         sleep_thread.daemon = True
         sleep_thread.start()
 
-    sphinx_proc = subprocess.Popen(["%s" % profile.speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
-    print(["%s" % profile.speech_recognizer.cmd_line])
+    speech_recognizer = PsLiveRecognizer(str(pathlib.Path().absolute()) + '/common/resources/',
+                                         str(pathlib.Path().absolute()) + '/profiles/' + profile.name + '/resources/',
+                                         profile.recognize_lang, profile.name, rec_device)
+    sphinx_proc = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
+    print(["%s" % speech_recognizer.cmd_line])
 
     if profile.eyes_bl:
         profile.eyes_bl.exec_cmd('ON')
@@ -115,6 +141,7 @@ def sleep_task():
     global is_sleeping
     global sleep_enabled
     global sleep_counter
+    global speech_recognizer
 
     while main_thread_is_running:
         time.sleep(60)
@@ -164,7 +191,7 @@ def find_keyphrase(sphinx_proc):
 
     utt = get_utterance(sphinx_proc)
 
-    if profile.speech_recognizer.lang == 'ru':
+    if speech_recognizer.lang == 'ru':
         try:
             utt = profile.TranslatorRU.tr_start_ru_en[utt]
         except KeyError as e:
@@ -192,12 +219,13 @@ def conversation_mode(sphinx_proc):
     global sleep_enabled
     global is_sleeping
     global fsm_state
+    global speech_recognizer
 
     print ('Conversation mode:')
 
     utt = get_utterance(sphinx_proc)
 
-    if profile.speech_recognizer.lang == 'ru':
+    if speech_recognizer.lang == 'ru':
         try:
             utt = profile.TranslatorRU.tr_conversation_ru_en[utt]
         except KeyError as e:
@@ -256,4 +284,5 @@ def kill_pocketsphinx():
     p = subprocess.Popen(["%s" % kill_exe], shell=True, stdout=subprocess.PIPE)
     code = p.wait()
 
-main()
+if __name__ == "__main__":
+   main(sys.argv[1:])

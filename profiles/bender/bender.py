@@ -138,6 +138,6 @@ else:
 a_player = AnswerPlayer(str(pathlib.Path(__file__).parent.absolute()) + '/audio/',
                         audio_lang, audio_files, eyes_bl=eyes_bl, mouth_bl=mouth_bl)
 m_player = MusicPlayer()
-speech_recognizer = PsLiveRecognizer(str(pathlib.Path().absolute()) + '/common/resources/',
-                                     str(pathlib.Path(__file__).parent.absolute()) + '/resources/',
-                                     recognize_lang, 'bender')
+#speech_recognizer = PsLiveRecognizer(str(pathlib.Path().absolute()) + '/common/resources/',
+#                                     str(pathlib.Path(__file__).parent.absolute()) + '/resources/',
+#                                     recognize_lang, 'bender')
