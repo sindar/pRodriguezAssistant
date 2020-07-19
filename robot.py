@@ -7,6 +7,7 @@ import threading
 import sys
 import getopt
 import pathlib
+import psutil
 from common import power
 from common.speech_recognizer import PsLiveRecognizer
 from profiles.bender import bender as profile
@@ -69,6 +70,23 @@ def main(argv):
                                          profile.recognize_lang, profile.name)
     sphinx_proc = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
     print(["%s" % speech_recognizer.cmd_line])
+   
+    time.sleep(1)
+
+    expected_sphinx_pid = sphinx_proc.pid + 1
+    if psutil.pid_exists(expected_sphinx_pid) == True:
+        sphinx_pids = [process.pid for process in psutil.process_iter() if 'pocketsphinx_co' in str(process.name)]
+        if sphinx_pids == None:
+            print('No pocketsphinx_continuous processes!')
+            sys.exit(1)
+        if len(sphinx_pids) > 1:
+            print('More than one pocketsphinx_continuous processes!')
+            sys.exit(1)
+        if len(sphinx_pids) == 1 and (expected_sphinx_pid in sphinx_pids):
+            print('pocketsphinx_continuous successfully started')
+    else:
+        print('Error while starting pocketsphinx_continuous!')
+        sys.exit(1)
 
     if profile.eyes_bl:
         profile.eyes_bl.exec_cmd('ON')
