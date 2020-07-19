@@ -2,6 +2,7 @@
 # project: pRodriguezAssistant
 import subprocess
 import time
+import system_settings as sys_set
 
 class AnswerPlayer:
     lang = 'en'
@@ -60,6 +61,6 @@ class AnswerPlayer:
             print('No answer to this question!')
 
     def mic_set(self, val):
-        exe = "amixer -q -c 1 sset 'Mic' " + str(val)
+        exe = 'amixer -q -c 1 sset ' + sys_set.RECORD_MIXER + ' ' + str(val)
         p = subprocess.Popen(["%s" % exe], shell=True, stdout=subprocess.PIPE)
         code = p.wait()

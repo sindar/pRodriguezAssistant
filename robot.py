@@ -44,22 +44,6 @@ def main(argv):
     global sleep_enabled
     global speech_recognizer
 
-    if len(argv) > 0:
-        try:
-            opts, args = getopt.getopt(argv, "hr:", ["help","rec_device="])
-        except getopt.GetoptError:
-            print ('robot.py [-h|--help] [-r|--rec_device <device>]')
-            sys.exit(2)
-
-        for opt, arg in opts:
-            if  opt in ('-h', '--help'):
-                print ('robot.py [-h|--help] [-r|--rec_device <device>]')
-                sys.exit(0)
-            if opt in ('-r', '--rec_device'):
-                rec_device = arg
-            else:
-                rec_device = None
-
     profile.vol_ctrl.set_speaker_volume(profile.vol_ctrl.speaker_volume)
 
     kill_pocketsphinx()
@@ -82,7 +66,7 @@ def main(argv):
 
     speech_recognizer = PsLiveRecognizer(str(pathlib.Path().absolute()) + '/common/resources/',
                                          str(pathlib.Path().absolute()) + '/profiles/' + profile.name + '/resources/',
-                                         profile.recognize_lang, profile.name, rec_device)
+                                         profile.recognize_lang, profile.name)
     sphinx_proc = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
     print(["%s" % speech_recognizer.cmd_line])
 
