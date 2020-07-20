@@ -6,7 +6,6 @@ RECORD_MIXER = 'Mic'
 RECORD_DEVICE = None #example: plughw:1,0
 
 SPEAKER_MIXER = 'Speaker'
-
 #The scale of the speaker voulme modes and step depends on device
 SPEAKER_MODES = {
     'min': 0,
