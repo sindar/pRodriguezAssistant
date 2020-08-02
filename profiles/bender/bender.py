@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
 from common import volume_control as vol_ctrl
+from common import mbtcp_light
 import pathlib
 
 name = 'bender'
@@ -109,6 +110,13 @@ repeated_keyphrase_actions = {
                     ['repeated keyphrase', None, None])
 }
 
+mbtcp_light_actions = {
+    **dict.fromkeys(['turn on lights', 'turn on the lights'],
+                    ['configuration', None, lambda: mbtcp_light.send_command('on')]),
+    **dict.fromkeys(['turn off lights', 'turn off the lights'],
+                    ['configuration', None, lambda: mbtcp_light.send_command('off')])
+}
+
 actions = {
     **exit_actions,
     **mode_actions,
@@ -117,7 +125,8 @@ actions = {
     **only_answer_actions,
     **player_actions,
     **sleep_actions,
-    **repeated_keyphrase_actions
+    **repeated_keyphrase_actions,
+    **mbtcp_light_actions
 }
 
 from common.music_player import MusicPlayer

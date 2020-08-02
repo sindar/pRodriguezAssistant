@@ -41,6 +41,8 @@ grammar bender;
 
 <volume_command> = (increase | decrease)(volume) | (volume)(increase | decrease)  | (louder | quieter);
 
+<light_commands> = (turn) (on | off) [the] (lights);
+
 <birthplace_question> = (where are you from);
 <birthdate_question> = (when were you born) | (date of your birth);
 <favorite_animal_question> = [what [is]] (your favorite animal);
@@ -57,8 +59,9 @@ grammar bender;
 
 <commands> = <start_command> | <exit_command> | <reboot_command> | <shutdown_command>
                 | <enable_disable_command> | <set_command> | <mode_command>
-                | <misc_phrases>
-                | <music_player_commands> | <volume_command>;
+                | <misc_phrases> 
+                | <music_player_commands> | <volume_command>
+                | <light_commands>;
 
 <questions> = <birthplace_question> | <birthdate_question>
                 | <favorite_animal_question>
