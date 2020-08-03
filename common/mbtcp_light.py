@@ -14,5 +14,5 @@ def send_command(switch):
     if switch == 'on':
         mb_connection.write_single_register(10, 1)
     if switch == 'off':
-        mb_connection.write_single_register(10, 0)
+        mb_connection.write_single_register(10, 2)
     
