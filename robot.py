@@ -71,7 +71,7 @@ def main(argv):
     sphinx_proc = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
     print(["%s" % speech_recognizer.cmd_line])
    
-    time.sleep(1)
+    time.sleep(10)
 
     expected_sphinx_pid = sphinx_proc.pid + 1
     if psutil.pid_exists(expected_sphinx_pid) == True:

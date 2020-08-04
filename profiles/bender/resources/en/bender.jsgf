@@ -41,7 +41,9 @@ grammar bender;
 
 <volume_command> = (increase | decrease)(volume) | (volume)(increase | decrease)  | (louder | quieter);
 
-<light_commands> = (turn) (on | off) [the] (lights);
+<turn_light_commands> = (turn) (on | off) (the) [red | green | blue] (light);
+<set_light_commands> = (set the light to)(red | green | blue | default);
+<light_commands> = <turn_light_commands> | <set_light_commands>;
 
 <birthplace_question> = (where are you from);
 <birthdate_question> = (when were you born) | (date of your birth);

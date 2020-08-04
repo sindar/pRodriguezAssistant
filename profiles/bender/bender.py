@@ -111,10 +111,15 @@ repeated_keyphrase_actions = {
 }
 
 mbtcp_light_actions = {
-    **dict.fromkeys(['turn on lights', 'turn on the lights'],
-                    ['configuration', None, lambda: mbtcp_light.send_command('on')]),
-    **dict.fromkeys(['turn off lights', 'turn off the lights'],
-                    ['configuration', None, lambda: mbtcp_light.send_command('off')])
+    'turn on the light': ['configuration', None, lambda: mbtcp_light.send_command('on')],
+    'turn off the light': ['configuration', None, lambda: mbtcp_light.send_command('off')],
+    **dict.fromkeys(['turn on the red light', 'set the light to red'],
+                    ['configuration', None, lambda: mbtcp_light.send_command('red')]),
+    **dict.fromkeys(['turn on the green light', 'set the light to green'], 
+                    ['configuration', None, lambda: mbtcp_light.send_command('green')]),
+    **dict.fromkeys(['turn on the blue light', 'set the light to blue'],
+                    ['configuration', None, lambda: mbtcp_light.send_command('blue')]),
+    'set the light to default': ['configuration', None, lambda: mbtcp_light.send_command('on')]
 }
 
 actions = {
