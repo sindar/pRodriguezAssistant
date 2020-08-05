@@ -4,19 +4,27 @@
 from common import volume_control as vol_ctrl
 from common import mbtcp_light
 import pathlib
+import time
 
 name = 'bender'
 audio_lang = 'en'
 recognize_lang ='en'
 sleep_enable_set = None
+confirmation_phrase = 'please'
 
 BACKLIGHT_ENABLED = True
 SLEEP_TASK_ENABLED = True
 UPS_TASK_ENABLED = True
 
+def calc_confirmation():
+    if (time.monotonic_ns() % 3) == 0:
+        return True
+
 audio_files = {
     **dict.fromkeys(['reboot', 'shutdown'], ('with_bjah1', 'with_bjah2')),
     'exit': 'lets_get_drunk',
+    'confirmation': 'dream_on_skintube',
+    'confirmed': 'allright',
     'hey bender': ('bite', 'hello', 'hello_peasants'),
     'birthplace': 'born_in_tijuana',
     'birthdate': 'birthdate',
@@ -111,15 +119,15 @@ repeated_keyphrase_actions = {
 }
 
 mbtcp_light_actions = {
-    'turn on the light': ['configuration', None, lambda: mbtcp_light.send_command('on')],
-    'turn off the light': ['configuration', None, lambda: mbtcp_light.send_command('off')],
+    'turn on the light': ['configuration', lambda: calc_confirmation(), lambda: mbtcp_light.send_command('on')],
+    'turn off the light': ['configuration', lambda: calc_confirmation(), lambda: mbtcp_light.send_command('off')],
     **dict.fromkeys(['turn on the red light', 'set the light to red'],
-                    ['configuration', None, lambda: mbtcp_light.send_command('red')]),
+                    ['configuration', lambda: calc_confirmation(), lambda: mbtcp_light.send_command('red')]),
     **dict.fromkeys(['turn on the green light', 'set the light to green'], 
-                    ['configuration', None, lambda: mbtcp_light.send_command('green')]),
+                    ['configuration', lambda: calc_confirmation(), lambda: mbtcp_light.send_command('green')]),
     **dict.fromkeys(['turn on the blue light', 'set the light to blue'],
-                    ['configuration', None, lambda: mbtcp_light.send_command('blue')]),
-    'set the light to default': ['configuration', None, lambda: mbtcp_light.send_command('on')]
+                    ['configuration', lambda: calc_confirmation(), lambda: mbtcp_light.send_command('blue')]),
+    'set the light to default': ['configuration', lambda: calc_confirmation(), lambda: mbtcp_light.send_command('on')]
 }
 
 actions = {

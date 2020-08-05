@@ -56,8 +56,9 @@ grammar bender;
 <misc_phrases> = (magnet) | [a] [great] (new sweater);
 <bad_phrase> =  (you are | you're) [very | so] (bad | cruel | evil);
 <sad_phrase> =  (i am | i'm) [very | so] (sad);
+<please_phrase> = please;
 
-<conversation_phrases> = <sad_phrase> | <bad_phrase> | <misc_phrases>;
+<conversation_phrases> = <sad_phrase> | <bad_phrase> | <misc_phrases> | <please_phrase>;
 
 <commands> = <start_command> | <exit_command> | <reboot_command> | <shutdown_command>
                 | <enable_disable_command> | <set_command> | <mode_command>

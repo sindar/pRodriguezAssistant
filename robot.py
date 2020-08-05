@@ -255,8 +255,18 @@ def conversation_mode(sphinx_proc):
         except:
             fsm_state = 1
 
+        confirmation_needed = None
+
         if before_action:
-            before_action()
+            confirmation_needed = before_action()
+
+        if confirmation_needed:
+            profile.a_player.play_answer('confirmation')
+            if not get_confirmation(sphinx_proc):
+                answer = 'no audio'
+                after_action = None
+            else:
+                answer = 'confirmed'
 
         if answer != 'no audio':
             profile.a_player.play_answer(answer)
@@ -270,6 +280,22 @@ def conversation_mode(sphinx_proc):
 
     if sleep_enabled:
         sleep_counter_reset()
+
+def get_confirmation(sphinx_proc):
+    print ('Get confirmation mode:')
+
+    utt = get_utterance(sphinx_proc)
+
+    if speech_recognizer.lang == 'ru':
+        try:
+            utt = profile.TranslatorRU.tr_conversation_ru_en[utt]
+        except KeyError as e:
+            utt = 'unrecognized'
+            #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
+    if utt == profile.confirmation_phrase:
+        return True
+    else:
+        return False
 
 def stop_pocketsphinx():
     stop_exe = 'killall -s STOP pocketsphinx_co'
