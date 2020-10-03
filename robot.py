@@ -38,6 +38,16 @@ speech_recognizer = None
 def sleep_enable_set(val):
     global sleep_enabled
     sleep_enabled = val
+def temperature(city):
+	api_add = f'http://api.openweathermap.org/data/2.5/weather?appid=1ff1ec03072dc3e27d75e920aebd67a9&q={city}&units=metric'
+	
+	json_data = requests.get(api_add).json()
+	temp = json_data["main"]["temp"]
+	cond = json_data["weather"][0]["description"]
+	name = json_data["name"]
+	speak(f"temperature of {name} is {temp} degree celcius and the condition is {cond}")
+	print(f"temperature of {name} is {temp} degree celcius and the condition is {cond}")
+    
 
 def main(argv):
     global main_thread_is_running
@@ -314,3 +324,8 @@ def kill_pocketsphinx():
 
 if __name__ == "__main__":
    main(sys.argv[1:])
+    if "temperature of" in query:
+				speak("please wait")
+				idx = query.index("f")+ 2
+				city = query[idx:]
+				temperature(city)
