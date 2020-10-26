@@ -139,3 +139,4 @@ profiles/bender/resources/ru/lm/
 .DS_Store
 .AppleDouble
 .LSOverride
+.vscode/settings.json

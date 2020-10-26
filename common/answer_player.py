@@ -7,7 +7,7 @@ import system_settings as sys_set
 class AnswerPlayer:
     lang = 'en'
     def __init__(self, audio_path, lang, audio_files, mouth_bl, eyes_bl):
-        self.mic_gain = 40
+        self.mic_gain = 30
         self.mic_set(self.mic_gain)
         self.audio_path = audio_path
         self.eyes_bl = eyes_bl

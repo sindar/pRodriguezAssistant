@@ -1,7 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
-from common import volume_control as vol_ctrl
+from common import volume_control
 from common import mbtcp_light
 import pathlib
 import time
@@ -11,6 +11,7 @@ audio_lang = 'en'
 recognize_lang ='en'
 sleep_enable_set = None
 confirmation_phrase = 'please'
+vol_ctrl = volume_control.VolumeControl()
 
 BACKLIGHT_ENABLED = True
 SLEEP_TASK_ENABLED = True
