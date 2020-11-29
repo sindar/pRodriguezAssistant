@@ -135,7 +135,9 @@ class BacklightControl:
     def __del__(self):
         self.pixels.deinit()
 
-    def exec_cmd(self, command):
+    def exec_cmd(self, command, delay = None):
+        if delay:
+            time.sleep(delay)
         if command in self.backlight_commands:
             func = self.backlight_commands[command]
             p = Process(target=func, args=())

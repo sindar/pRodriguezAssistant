@@ -3,31 +3,65 @@
 import subprocess
 import time
 import system_settings as sys_set
+import os
 
 class AnswerPlayer:
     lang = 'en'
-    def __init__(self, audio_path, lang, audio_files, mouth_bl, eyes_bl):
+    def __init__(self, profile_path, lang, answers, mouth_bl, eyes_bl):
         self.mic_gain = 30
         self.mic_set(self.mic_gain)
-        self.audio_path = audio_path
+        self.profile_path = profile_path
+        self.audio_path = profile_path + '/audio/'
         self.eyes_bl = eyes_bl
         self.mouth_bl = mouth_bl
         if self.mouth_bl:
             self.mouth_bl.exec_cmd('OFF')
-        self.audio_files = audio_files
+        self.answers = answers
         AnswerPlayer.lang = lang
 
-    def play_wav(self, path, bl_command):
-        aplay_exe = 'aplay -Dplug:default ' + str(path)
-        aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
+    def calc_answer(self, answers):
+        if answers != None:
+            if type(answers) is tuple:
+                r_count = len(answers)
+                if r_count > 1:
+                    answer = answers[int(round(time.time() * 1000)) % r_count]
+            else:
+                answer = answers
+        return answer
+
+    def play_answer(self, command):
+
+        if command == 'electricity':
+            bl_command = 'PLUGGED_IN'
+        else:
+            bl_command = 'TALK'
+
+        answers = self.answers.get(command)
+
+        # Look for a wav-file first
+        answer_wav = self.calc_answer(answers[0])
+        wav_path = self.audio_path + AnswerPlayer.lang + '/' + answer_wav + '.wav'
+        self.mic_set(0)
+        
+        if os.path.exists(wav_path):
+            # self.play_wav(self.audio_path + AnswerPlayer.lang + '/' + answer + '.wav', bl_command)
+            aplay_exe = 'aplay -Dplug:default ' + str(wav_path)
+            aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
+            delay = None
+        else:
+            answer_tts = self.calc_answer(answers[1])
+            aplay_exe = 'flite -voice ' + self.profile_path + '/resources/' + AnswerPlayer.lang + '/' + 'zk_us_bender.flitevox '\
+                + '"' + answer_tts + '"' 
+            aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
+            delay = 0.5
 
         eyes_bl_proc = None
         mouth_bl_proc = None
         if self.mouth_bl:
-            mouth_bl_proc = self.mouth_bl.exec_cmd(bl_command)
+            mouth_bl_proc = self.mouth_bl.exec_cmd(bl_command, delay)
         if self.eyes_bl:
             if bl_command == 'PLUGGED_IN':
-                eyes_bl_proc = self.eyes_bl.exec_cmd('BLINK_PLUGGED_IN')
+                eyes_bl_proc = self.eyes_bl.exec_cmd('BLINK_PLUGGED_IN', delay)
 
         code = aplay_proc.wait()
 
@@ -37,28 +71,9 @@ class AnswerPlayer:
             eyes_bl_proc.terminate()
             self.eyes_bl.exec_cmd('ON')
 
-    def play_answer(self, command):
-        answer = self.audio_files.get(command)
-        if answer != None:
-            if type(answer) is tuple:
-                a_count = len(answer)
-                if a_count > 1:
-                    answer = answer[int(round(time.time() * 1000)) % a_count]
-            else:
-                answer = answer
-
-            if answer == 'plugged_in':
-                bl_command = 'PLUGGED_IN'
-            else:
-                bl_command = 'TALK'
-
-            self.mic_set(0)
-            self.play_wav(self.audio_path + AnswerPlayer.lang + '/' + answer + '.wav', bl_command)
-            self.mic_set(self.mic_gain)
-            if self.mouth_bl:
-                self.mouth_bl.exec_cmd('OFF')
-        else:
-            print('No answer to this question!')
+        self.mic_set(self.mic_gain)
+        if self.mouth_bl:
+            self.mouth_bl.exec_cmd('OFF')
 
     def mic_set(self, val):
         exe = 'amixer -q -c 1 sset ' + sys_set.RECORD_MIXER + ' ' + str(val)
