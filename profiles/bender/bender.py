@@ -8,7 +8,7 @@ import time
 
 name = 'bender'
 audio_lang = 'en'
-recognize_lang ='ru'
+recognize_lang ='en'
 sleep_enable_set = None
 confirmation_phrase = 'please'
 vol_ctrl = volume_control.VolumeControl()
