@@ -33,9 +33,9 @@ def fill_pixels(pixels, color):
     pixels.fill(color)
     pixels.show()
 
-def blink(pixels, pin, mode):
+def blink(pixels, pin, mode, timeout = 30):
     if pin != board.D21:
-        print('Teeth do not support talk command!')
+        print('Teeth do not support blink command!')
         return
 
     if mode == 'plugged_in':
@@ -48,7 +48,7 @@ def blink(pixels, pin, mode):
         period = 0.25
 
     t = 0
-    while t < 30:  # maximum answer length to prevent infinite loop
+    while t < timeout:  # maximum answer length to prevent infinite loop
         pixels.fill(phase_1_color)
         pixels.show()
         time.sleep(period)
@@ -57,7 +57,7 @@ def blink(pixels, pin, mode):
         time.sleep(period)
     t += period * 4
 
-def talk(pixels, pin, mode):
+def talk(pixels, pin, mode, timeout = 30):
     if pin != board.D18:
         print('Eyes do not support talk command!')
         return
@@ -72,27 +72,38 @@ def talk(pixels, pin, mode):
         period = 0.25
 
     t = 0
-    while t < 30: # maximum answer length to prevent infinite loop
-        pixels.fill(back_color)
-        for i in range(6, 12):
-            pixels[i] = front_color
-        pixels.show()
+    while t < timeout: # maximum answer length to prevent infinite loop
+        fill_range(pixels, pin, 6, 12, front_color, back_color)
         time.sleep(period)
 
-        sin_cos_graph(pixels, pin, math.cos, back_color, front_color)
+        fill_range(pixels, pin, 2, 4, front_color, back_color)
+        fill_range(pixels, pin, 6, 8, front_color)
+        fill_range(pixels, pin, 10, 12, front_color)
+        fill_range(pixels, pin, 14, 16, front_color)
         time.sleep(period)
 
-        pixels.fill(back_color)
-        for i in range(6, 12):
-            pixels[i] = front_color
-        pixels.show()
+        fill_range(pixels, pin, 6, 12, front_color, back_color)
         time.sleep(period)
 
-        sin_cos_graph(pixels, pin, math.sin, back_color, front_color)
+        fill_range(pixels, pin, 1, 5, front_color, back_color)
+        fill_range(pixels, pin, 6, 7, front_color)
+        fill_range(pixels, pin, 11, 12, front_color)
+        fill_range(pixels, pin, 13, 17, front_color)
         time.sleep(period)
         t += period * 4
 
-def sin_cos_graph(pixels, pin, func, back_color, front_color):
+def fill_range(pixels, pin, start, end, front_color, back_color = None):
+    if pin != board.D18:
+        print('Eyes do not support talk command!')
+        return
+
+    if back_color:
+        pixels.fill(back_color)
+    for i in range(start, end):
+        pixels[i] = front_color
+    pixels.show()
+
+def sin_cos_graph(pixels, pin, func, front_color, back_color):
     if pin != board.D18:
         print('Eyes do not support talk command!')
         return
