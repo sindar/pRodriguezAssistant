@@ -195,7 +195,7 @@ def find_keyphrase(sphinx_proc):
 
     if speech_recognizer.lang == 'ru':
         try:
-            utt = profile.TranslatorRU.tr_start_ru_en[utt]
+            utt = profile.STTTranslatorRU.tr_start_ru_en[utt]
         except KeyError as e:
             utt = 'unrecognized'
             #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
@@ -229,7 +229,7 @@ def conversation_mode(sphinx_proc):
 
     if speech_recognizer.lang == 'ru':
         try:
-            utt = profile.TranslatorRU.tr_conversation_ru_en[utt]
+            utt = profile.STTTranslatorRU.tr_conversation_ru_en[utt]
         except KeyError as e:
             utt = 'unrecognized'
             #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
@@ -288,7 +288,7 @@ def get_confirmation(sphinx_proc):
 
     if speech_recognizer.lang == 'ru':
         try:
-            utt = profile.TranslatorRU.tr_conversation_ru_en[utt]
+            utt = profile.STTTranslatorRU.tr_conversation_ru_en[utt]
         except KeyError as e:
             utt = 'unrecognized'
             #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))

@@ -7,11 +7,12 @@ import os
 
 class AnswerPlayer:
     lang = 'en'
-    def __init__(self, profile_path, lang, answers, mouth_bl, eyes_bl):
+    def __init__(self, profile_path, lang, answers, tts_cmd, mouth_bl, eyes_bl):
         self.mic_gain = 30
         self.mic_set(self.mic_gain)
         self.profile_path = profile_path
         self.audio_path = profile_path + '/audio/'
+        self.tts_cmd = tts_cmd
         self.eyes_bl = eyes_bl
         self.mouth_bl = mouth_bl
         if self.mouth_bl:
@@ -44,14 +45,12 @@ class AnswerPlayer:
         self.mic_set(0)
         
         if os.path.exists(wav_path):
-            # self.play_wav(self.audio_path + AnswerPlayer.lang + '/' + answer + '.wav', bl_command)
             aplay_exe = 'aplay -Dplug:default ' + str(wav_path)
             aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
             delay = None
         else:
             answer_tts = self.calc_answer(answers[1])
-            aplay_exe = 'flite -voice ' + self.profile_path + '/resources/' + AnswerPlayer.lang + '/' + 'zk_us_bender.flitevox '\
-                + '"' + answer_tts + '"' 
+            aplay_exe = self.tts_cmd  + '"' + answer_tts + '"'             
             aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
             delay = 0.5
 

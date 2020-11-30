@@ -2,7 +2,60 @@
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
 
-class TranslatorRU:
+class AudioAndTTS:
+    tts_cmd = 'espeak -p 65 -s 120 -v ru '
+
+    answers = {
+        **dict.fromkeys(['reboot', 'shutdown'],
+                        (('with_bjah1', 'with_bjah2'), 
+                        ('Для Бендера места нет? Ладно, я построю свой лунный модуль с блэкджеком и шлюхами!',
+                        'Асталависта мешок мяса!'))),
+        'exit': (('lets_get_drunk'), 
+                ('Пошли напьёмся.')),
+        'confirmation': (('dream_on_skintube'),
+                        ('Мечтай кусок мяса!')),
+        'confirmed': (('allright'),
+                    ('Ладно.')),
+        'hey bender': (('bite', 'hello', 'hello_peasants'), 
+                    ('Укуси мой блестящий металлический зад!', 'Здорово плебеи!', 'Привет мешок мяса!')),
+        'birthplace': (('born_in_tijuana'),
+                    ('Я родился в злачном мексиканском городишке, на сборочной линии.')),
+        'birthdate': (('birthdate'),
+                    ('Четыре года назад.')),
+        'who are you': (('im_bender', 'bender_song', 'my_name_is_coilette'),
+                    ('Я - Бендер', 'Меня зовут Коллет', 'Я Титаниус Инглсмит!')),
+        'animal': (('turtle'),
+                ('Черепашка.')),
+        'body': (('bodies'),
+                ('Тела нужны шлюхам и толстякам.')),
+        'bad girl': (('bad_girl'),
+                    ('Ты плохая девочка, да?')),
+        'sing': (('bender_song'), None),
+        'magnet': (('roads_song', 'mountain_song'), None),
+        'new sweater': (('new_sweater'),
+                    ('Новый?! Какой свитер? Я в нём пришёл! Я вас не знаю люди.')),
+        'fall asleep': (('kill_all_humans_1', 'kill_all_humans_2'),
+                    ('Убей всех человекоа... Должен убить всех человеков...', 'Эй детка, Хочешь убить всех человеков?')),
+        'wake up': (('most_wonderful_dream'),
+                ('Мне приснился чудесный сон! И ты там был!')),
+        **dict.fromkeys(['enable', 'disable','set', 'configuration', 'player'], 
+                        (('can_do', 'yes_sir'),
+                        ('Будет сделано!', 'Да сэр!'))),
+        'how are you': (('none_of_your_business', 'right_now_i_feel_sorry_for_you', 'so_embarrassed'),
+                    ('Не твоё дело!', 'Сейчас я сочувствую тебе.', 'Мне так стыдно, хочу чтоб все умерли.')),
+        'electricity': (('plugged_in'), None),
+        'unrecognized': (('beat_children', 'compare_your_lives_to_mine'),
+                        ('Если хочешь избить детей, сделай это сам.', 'Сравните свои жизни с моей, а затем убейте себя!')),
+        'repeated keyphrase': (('im_in_a_hurry'),
+                            ('Слушай парень, я тороплюсь')),
+        'wait you are serious': (('ow_wait_youre_serious'),
+                                ('О, ты серьёзно, тогда я буду смеяться ещё сильнее. Ахахахахаха!')),
+        'laugh': (('laugh'),
+                ('Хахаха')),
+        'no audio': (('silence'), None)
+    }
+
+class STTTranslatorRU:
 
     tr_start_ru_en  = {
         u'бендер': 'bender',
