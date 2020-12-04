@@ -140,3 +140,6 @@ profiles/bender/resources/ru/lm/
 .AppleDouble
 .LSOverride
 .vscode/settings.json
+
+#Azure subscription keys
+subscription*.key

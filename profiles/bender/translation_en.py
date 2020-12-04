@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 # project: pRodriguezAssistant
 import pathlib
+from common.azure_tts import AzureTTS
 
 class AudioAndTTS:
-    tts_cmd = 'flite -voice ' + str(pathlib.Path(__file__).parent.absolute()) + '/resources/en/zk_us_bender.flitevox '
-
+    cloud_tts = AzureTTS(str(pathlib.Path(__file__).parent.absolute()))
+    offline_tts = 'flite -voice ' + str(pathlib.Path(__file__).parent.absolute()) + '/resources/en/zk_us_bender.flitevox '
+    
     answers = {
         **dict.fromkeys(['reboot', 'shutdown'],
                         (('with_bjah1', 'with_bjah2'), 
@@ -47,7 +49,7 @@ class AudioAndTTS:
                             'I\'m so embarrassed, I wish everybody else was dead')),
         'electricity': (('plugged_in'), None),
         'unrecognized': (('beat_children', 'compare_your_lives_to_mine'),
-                        ('Ahh. I guess if you want children beaten, you have to do it yourself.', 
+                        ('Ah. I guess if you want children beaten, you have to do it yourself.', 
                             'Compare yor lives to mine and then kill yourselves!')),
         'repeated keyphrase': (('im_in_a_hurry'),
                             ('Listen buddy I\'m in a hurry here')),

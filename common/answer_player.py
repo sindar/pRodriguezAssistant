@@ -7,12 +7,13 @@ import os
 
 class AnswerPlayer:
     lang = 'en'
-    def __init__(self, profile_path, lang, answers, tts_cmd, mouth_bl, eyes_bl):
+    def __init__(self, profile_path, lang, answers, cloud_tts, offline_tts, mouth_bl, eyes_bl):
         self.mic_gain = 30
         self.mic_set(self.mic_gain)
         self.profile_path = profile_path
         self.audio_path = profile_path + '/audio/'
-        self.tts_cmd = tts_cmd
+        self.cloud_tts = cloud_tts
+        self.offline_tts = offline_tts
         self.eyes_bl = eyes_bl
         self.mouth_bl = mouth_bl
         if self.mouth_bl:
@@ -50,8 +51,14 @@ class AnswerPlayer:
             delay = None
         else:
             answer_tts = self.calc_answer(answers[1])
-            aplay_exe = self.tts_cmd  + '"' + answer_tts + '"'             
-            aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
+            # Second, trying cloud TTS
+            wav_path = self.cloud_tts.text_to_speech(answer_tts)
+            if wav_path:
+                aplay_exe = 'aplay -Dplug:default ' + str(wav_path)
+                aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
+            else:
+                aplay_exe = self.offline_tts  + '"' + answer_tts + '"'             
+                aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
             delay = 0.5
 
         eyes_bl_proc = None

@@ -13,8 +13,8 @@ class PsLiveRecognizer:
     def generatePsCmdLine(self):
         self.cmd_line = 'pocketsphinx_continuous ' \
                         + ' -dictcase yes -inmic yes ' \
-                        + ' -ds 3 -samprate 8000 '
-                        # + ' -logfn /dev/null '
+                        + ' -ds 3 -samprate 8000 ' \
+                        + ' -logfn /dev/null '
                         # + ' -remove_noise no '
 
         if sys_set.RECORD_DEVICE:

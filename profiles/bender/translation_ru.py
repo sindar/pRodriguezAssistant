@@ -3,7 +3,8 @@
 # project: pRodriguezAssistant
 
 class AudioAndTTS:
-    tts_cmd = 'espeak -p 65 -s 120 -v ru '
+    cloud_tts = None
+    offline_tts = 'espeak -p 65 -s 120 -v ru '
 
     answers = {
         **dict.fromkeys(['reboot', 'shutdown'],

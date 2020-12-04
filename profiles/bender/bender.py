@@ -23,16 +23,15 @@ def calc_confirmation():
 
 if audio_lang == 'en':
     from profiles.bender.translation_en import AudioAndTTS
-    answers = AudioAndTTS.answers
-    tts_cmd = AudioAndTTS.tts_cmd
 elif audio_lang == 'ru':
     from profiles.bender.translation_ru import AudioAndTTS
-    answers = AudioAndTTS.answers
-    tts_cmd = AudioAndTTS.tts_cmd
 else:
     from profiles.bender.translation_en import AudioAndTTS
-    answers = AudioAndTTS.answers
-    tts_cmd = AudioAndTTS.tts_cmd
+    
+answers = AudioAndTTS.answers
+cloud_tts = AudioAndTTS.cloud_tts
+offline_tts = AudioAndTTS.offline_tts
+# cloud_tts.text_to_speech('Bite my shine')
 
 if recognize_lang == 'ru':
     from profiles.bender.translation_ru import STTTranslatorRU
@@ -145,5 +144,5 @@ else:
     mouth_bl = None
 
 a_player = AnswerPlayer(str(pathlib.Path(__file__).parent.absolute()),
-                        audio_lang, answers, tts_cmd, eyes_bl=eyes_bl, mouth_bl=mouth_bl)
+                        audio_lang, answers, cloud_tts, offline_tts, eyes_bl=eyes_bl, mouth_bl=mouth_bl)
 m_player = MusicPlayer()
