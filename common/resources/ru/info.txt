@@ -1,1 +1,2 @@
 Put a Russian HMM for the pocketsphinx here.
+Link: https://sourceforge.net/projects/cmusphinx/files/Acoustic%20and%20Language%20Models/Russian/zero_ru_cont_8k_v3.tar.gz/download

@@ -1,1 +1,2 @@
 Put an English HMM for the pocketsphinx here.
+Link: https://sourceforge.net/projects/cmusphinx/files/Acoustic%20and%20Language%20Models/US%20English/cmusphinx-en-us-ptm-8khz-5.2.tar.gz/download
