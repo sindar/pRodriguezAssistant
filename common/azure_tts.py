@@ -35,8 +35,8 @@ class AzureTTS:
     def text_to_speech(self, sentence):
         if self.subscription_key == None:
             self.subscription_key = self.__read_subscription_key()        
-        if self.access_token == None:
-            self.access_token = self.__get_token(subscription_key)
+        if self.subscription_key != None and self.access_token == None:
+            self.access_token = self.__get_token(self.subscription_key)
 
         if self.subscription_key == None or self.access_token == None:
             return None
