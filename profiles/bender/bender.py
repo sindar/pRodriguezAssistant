@@ -21,20 +21,36 @@ def calc_confirmation():
     if (time.monotonic_ns() % 3) == 0:
         return True
 
-if audio_lang == 'en':
-    from profiles.bender.translation_en import AudioAndTTS
-elif audio_lang == 'ru':
+if audio_lang == 'ru':
     from profiles.bender.translation_ru import AudioAndTTS
+    rss_reader = None
 else:
     from profiles.bender.translation_en import AudioAndTTS
+    from common.rss_reader import RSSReader
+    rss_reader = RSSReader()
     
 answers = AudioAndTTS.answers
 cloud_tts = AudioAndTTS.cloud_tts
 offline_tts = AudioAndTTS.offline_tts
-# cloud_tts.text_to_speech('Bite my shine')
 
 if recognize_lang == 'ru':
     from profiles.bender.translation_ru import STTTranslatorRU
+
+from common.music_player import MusicPlayer
+from common.answer_player import AnswerPlayer
+from common.speech_recognizer import PsLiveRecognizer
+
+if BACKLIGHT_ENABLED:
+    from profiles.bender.bender_backlight import BacklightControl
+    eyes_bl = BacklightControl('EYES')
+    mouth_bl = BacklightControl('MOUTH')
+else:
+    eyes_bl = None
+    mouth_bl = None
+
+a_player = AnswerPlayer(str(pathlib.Path(__file__).parent.absolute()),
+                        audio_lang, answers, cloud_tts, offline_tts, eyes_bl=eyes_bl, mouth_bl=mouth_bl)
+m_player = MusicPlayer()
 
 exit_actions = {
     **dict.fromkeys([exit_utts + ' program' for exit_utts in ['quit', 'exit', 'quit the', 'exit the']],
@@ -92,6 +108,16 @@ player_actions = {
                     ['no audio', None, lambda: m_player.send_command('next')])
 }
 
+rss_actions = {
+    **dict.fromkeys(['read the news', 'read news'],
+                    ['rss start', None, lambda: a_player.play_answer(None, rss_reader.read_entry())]),
+    **dict.fromkeys(['next article', 'next topic'],
+                    ['rss next', None, lambda: a_player.play_answer(None, rss_reader.read_entry())]),
+    **dict.fromkeys(['stop reading', 'stop reading news', 'stop reading the news'],
+                    ['rss end', None, None])
+}
+
+
 sleep_actions = {
     'enable sleep': ['configuration', None, lambda: sleep_enable_set(True)],
     'disable sleep': ['configuration', None, lambda: sleep_enable_set(False)]
@@ -126,23 +152,8 @@ actions = {
     **power_actions,
     **only_answer_actions,
     **player_actions,
+    **rss_actions,
     **sleep_actions,
     **repeated_keyphrase_actions,
     **mbtcp_light_actions
 }
-
-from common.music_player import MusicPlayer
-from common.answer_player import AnswerPlayer
-from common.speech_recognizer import PsLiveRecognizer
-
-if BACKLIGHT_ENABLED:
-    from profiles.bender.bender_backlight import BacklightControl
-    eyes_bl = BacklightControl('EYES')
-    mouth_bl = BacklightControl('MOUTH')
-else:
-    eyes_bl = None
-    mouth_bl = None
-
-a_player = AnswerPlayer(str(pathlib.Path(__file__).parent.absolute()),
-                        audio_lang, answers, cloud_tts, offline_tts, eyes_bl=eyes_bl, mouth_bl=mouth_bl)
-m_player = MusicPlayer()

@@ -31,35 +31,54 @@ class AnswerPlayer:
                 answer = answers
         return answer
 
-    def play_answer(self, command):
+    def play_wav(self, path):
+        aplay_exe = 'aplay -Dplug:default ' + str(path)
+        return subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
 
-        if command == 'electricity':
-            bl_command = 'PLUGGED_IN'
+    def play_tts(self, sentence):
+        wav_path = None
+        if self.cloud_tts:
+            wav_path = self.cloud_tts.text_to_speech(sentence)
+
+        if wav_path:
+            aplay_proc = self.play_wav(wav_path)
         else:
-            bl_command = 'TALK'
-
-        answers = self.answers.get(command)
-
-        # Look for a wav-file first
-        answer_wav = self.calc_answer(answers[0])
-        wav_path = self.audio_path + AnswerPlayer.lang + '/' + answer_wav + '.wav'
-        self.mic_set(0)
-        
-        if os.path.exists(wav_path):
-            aplay_exe = 'aplay -Dplug:default ' + str(wav_path)
+            aplay_exe = self.offline_tts  + '"' + sentence + '"'             
             aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
-            delay = None
-        else:
-            answer_tts = self.calc_answer(answers[1])
-            # Second, trying cloud TTS
-            wav_path = self.cloud_tts.text_to_speech(answer_tts)
-            if wav_path:
-                aplay_exe = 'aplay -Dplug:default ' + str(wav_path)
-                aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
+        return aplay_proc
+
+    def play_answer(self, command, sentence = None):
+        if command != None:
+            answers = self.answers.get(command)
+            if answers[0] == None and answers[1] == None:
+                return
+
+            if command == 'electricity':
+                bl_command = 'PLUGGED_IN'
             else:
-                aplay_exe = self.offline_tts  + '"' + answer_tts + '"'             
-                aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
-            delay = 0.5
+                bl_command = 'TALK'
+
+            # Look for the wav-file first
+            answer_wav = self.calc_answer(answers[0])
+            wav_path = self.audio_path + AnswerPlayer.lang + '/' + answer_wav + '.wav'
+
+            if os.path.exists(wav_path):
+                self.mic_set(0)
+                aplay_proc = self.play_wav(wav_path)
+                delay = None
+            else:
+                self.mic_set(0)
+                answer_tts = self.calc_answer(answers[1])
+                # Second, trying the cloud TTS
+                aplay_proc = self.play_tts(answer_tts)
+                delay = 0.5
+        else:
+            if sentence:
+                # Directly speak the sentence:
+                self.mic_set(0)
+                aplay_proc = self.play_tts(sentence)
+                bl_command = 'TALK'
+                delay = 0.5
 
         eyes_bl_proc = None
         mouth_bl_proc = None

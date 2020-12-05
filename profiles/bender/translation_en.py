@@ -41,7 +41,7 @@ class AudioAndTTS:
                     ('Kill all humans... Must kill all humans...', 'Hey sexy mama, wanna kill all humans?')),
         'wake up': (('most_wonderful_dream'),
                 ('I was having the most wonderful dream, I think you were in it.')),
-        **dict.fromkeys(['enable', 'disable','set', 'configuration', 'player'], 
+        **dict.fromkeys(['enable', 'disable','set', 'configuration', 'player', 'rss start', 'rss end'], 
                         (('can_do', 'yes_sir'),
                         ('Can do!', 'Yes sir!'))),
         'how are you': (('none_of_your_business', 'right_now_i_feel_sorry_for_you', 'so_embarrassed'),
@@ -50,12 +50,13 @@ class AudioAndTTS:
         'electricity': (('plugged_in'), None),
         'unrecognized': (('beat_children', 'compare_your_lives_to_mine'),
                         ('Ah. I guess if you want children beaten, you have to do it yourself.', 
-                            'Compare yor lives to mine and then kill yourselves!')),
+                            'Compare your lives to mine and then kill yourselves!')),
         'repeated keyphrase': (('im_in_a_hurry'),
                             ('Listen buddy I\'m in a hurry here')),
         'wait you are serious': (('ow_wait_youre_serious'),
                                 ('Ow wait. You are seroius, let me laugh even harder. Ahahahaha!')),
         'laugh': (('laugh'),
                 ('Hahaha')),
-        'no audio': (('silence'), None)
+        'no audio': (None, None),
+        'rss next': (None, None)
     }

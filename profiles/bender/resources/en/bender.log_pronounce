@@ -5,6 +5,7 @@ ALICE - Main
 AM - Main 
 ANIMAL - Main 
 ARE - Main 
+ARTICLE - Main 
 BAD - Main 
 BENDER - Main 
 BIRTH - Main 
@@ -15,12 +16,14 @@ BODY - Main
 BORN - Main 
 BYE - Main 
 CAN - Main 
+COLOR - Main 
 CONFIGURATION - Main 
 CONFIGURE - Main 
 CORTANA - By LtoS rules
 CRUEL - Main 
 DATE - Main 
 DECREASE - Main 
+DEFAULT - Main 
 DISABLE - Main 
 DO - Main 
 EIGHT - Main 
@@ -35,6 +38,7 @@ FOUR - Main
 FROM - Main 
 GOOD - Main 
 GREAT - Main 
+GREEN - Main 
 HELLO - Main 
 HEY - Main 
 HI - Main 
@@ -45,7 +49,7 @@ I'M - Main
 INCREASE - Main 
 IS - Main 
 LAUNCH - Main 
-LIGHTS - Main 
+LIGHT - Main 
 LIVE - Main 
 LOUD - Main 
 LOUDER - Main 
@@ -54,6 +58,7 @@ MAGNET - Main
 MODE - Main 
 MUSIC - Main 
 NEW - Main 
+NEWS - Main 
 NEXT - Main 
 NINE - Main 
 NORMAL - Main 
@@ -64,13 +69,17 @@ ON - Main
 ONE - Main 
 PAUSE - Main 
 PLAYER - Main 
+PLEASE - Main 
 POINT - Main 
 PROGRAM - Main 
 QUIET - Main 
 QUIETER - Main 
 QUIT - Main 
 RADIO - Main 
+READ - Main 
+READING - Main 
 REBOOT - Main 
+RED - Main 
 SAD - Main 
 SET - Main 
 SEVEN - Main 
@@ -90,6 +99,7 @@ THE - Main
 THINK - Main 
 THREE - Main 
 TO - Main 
+TOPIC - Main 
 TRACK - Main 
 TURN - Main 
 TWO - Main 

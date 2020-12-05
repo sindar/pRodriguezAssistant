@@ -30,7 +30,9 @@ fsm_transition = {
     'repeated keyphrase': 2,
     'exit': 3,
     'reboot': 4,
-    'shutdown': 5
+    'shutdown': 5,
+    'rss start': 6,
+    'rss end': 1
 }
 
 speech_recognizer = None
@@ -103,6 +105,8 @@ def main(argv):
             break
         elif (fsm_state == 5):
             break
+        elif (fsm_state == 6):
+            rss_read_mode(sphinx_proc)
         else:
             continue
 
@@ -268,7 +272,7 @@ def conversation_mode(sphinx_proc):
             else:
                 answer = 'confirmed'
 
-        if answer != 'no audio':
+        if answer != 'no audio' and answer != 'rss next' and answer != 'rss next':
             profile.a_player.play_answer(answer)
 
         if after_action:
@@ -277,6 +281,59 @@ def conversation_mode(sphinx_proc):
         if answer != 'shutdown' or answer != 'reboot':
             if profile.m_player.musicIsPlaying:
                 profile.m_player.send_command('resume')
+
+    if sleep_enabled:
+        sleep_counter_reset()
+
+def rss_read_mode(sphinx_proc):
+    global sleep_enabled
+    global is_sleeping
+    global fsm_state
+    global speech_recognizer
+
+    print ('RSS reader mode:')
+
+    utt = get_utterance(sphinx_proc)
+
+    if speech_recognizer.lang == 'ru':
+        try:
+            utt = profile.STTTranslatorRU.tr_conversation_ru_en[utt]
+        except KeyError as e:
+            utt = 'unrecognized'
+            #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
+    
+    if (profile.name in utt):
+        if sleep_enabled:
+            sleep_counter_reset()
+        fsm_state = 2
+        
+    if is_sleeping:
+        wake_up()
+    else:
+        before_action = None
+        after_action = None
+
+        try:
+            action = profile.actions[utt]
+            answer = action[0]
+            after_action = action[2]
+        except KeyError as e:
+            answer = 'unrecognized'
+
+        print ("answer = " + answer)
+
+        if ('rss' in answer) and (not 'start' in answer):
+            try:
+                fsm_state = fsm_transition[answer]
+            except:
+                fsm_state = 6
+            
+            profile.a_player.play_answer(answer)
+
+            if after_action:
+                after_action()
+        # else:
+        #     fsm_state = 1
 
     if sleep_enabled:
         sleep_counter_reset()
