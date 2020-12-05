@@ -306,11 +306,10 @@ def rss_read_mode(sphinx_proc):
         if sleep_enabled:
             sleep_counter_reset()
         fsm_state = 2
-        
+
     if is_sleeping:
         wake_up()
     else:
-        before_action = None
         after_action = None
 
         try:
@@ -332,8 +331,6 @@ def rss_read_mode(sphinx_proc):
 
             if after_action:
                 after_action()
-        # else:
-        #     fsm_state = 1
 
     if sleep_enabled:
         sleep_counter_reset()
