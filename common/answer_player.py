@@ -36,17 +36,17 @@ class AnswerPlayer:
         return subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
 
     def play_tts(self, sentence):
-        bl_proc = None
-        if self.eyes_bl:
-            bl_proc = self.eyes_bl.exec_cmd('BLINK_NORMAL')
+        # bl_proc = None
+        # if self.eyes_bl:
+        #     bl_proc = self.eyes_bl.exec_cmd('BLINK_NORMAL')
 
         wav_path = None
         if self.cloud_tts:
             wav_path = self.cloud_tts.text_to_speech(sentence)
             
-        if bl_proc:
-            bl_proc.terminate()
-            self.eyes_bl.exec_cmd('ON')
+        # if bl_proc:
+        #     bl_proc.terminate()
+        #     self.eyes_bl.exec_cmd('ON')
 
         if wav_path:
             aplay_proc = self.play_wav(wav_path)

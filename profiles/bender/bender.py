@@ -35,7 +35,6 @@ else:
     from common.rss_reader import RSSReader
     from common.azure_tts import AzureTTS
     cloud_tts = AzureTTS(str(pathlib.Path(__file__).parent.absolute()))
-    cloud_tts = None
     offline_tts = 'flite -voice ' + str(pathlib.Path(__file__).parent.absolute()) + '/resources/en/zk_us_bender.flitevox '
     rss_reader = RSSReader(eyes_bl)
     

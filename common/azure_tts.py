@@ -56,11 +56,18 @@ class AzureTTS:
 
         response = requests.post(constructed_url, headers=headers, data=body)
         if response.status_code == 200:
-            temp_wav = '/dev/shm/azure_tts.wav'
+            temp_wav = '/dev/shm/azure_tts_temp.wav'
+            norm_wav = '/dev/shm/azure_tts_norm.wav'
             with open(temp_wav, 'wb') as audio:
                 audio.write(response.content)
                 print("\nStatus code: " + str(response.status_code) + "\nYour TTS is ready for playback.\n")
-            return temp_wav
+            norm_exe = 'sox --norm ' + temp_wav + ' ' + norm_wav
+            norm_proc = subprocess.Popen(["%s" % norm_exe], shell=True, stdout=subprocess.PIPE)
+            try:
+                code = norm_proc.wait(2)
+            except SubprocessError as to:
+                norm_wav = None
+            return norm_wav
         else:
             print("\nStatus code: " + str(response.status_code) + "\nSomething went wrong. Check your subscription key and headers.\n")
             return None
