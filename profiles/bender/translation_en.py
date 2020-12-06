@@ -5,9 +5,6 @@ import pathlib
 from common.azure_tts import AzureTTS
 
 class AudioAndTTS:
-    cloud_tts = AzureTTS(str(pathlib.Path(__file__).parent.absolute()))
-    offline_tts = 'flite -voice ' + str(pathlib.Path(__file__).parent.absolute()) + '/resources/en/zk_us_bender.flitevox '
-    
     answers = {
         **dict.fromkeys(['reboot', 'shutdown'],
                         (('with_bjah1', 'with_bjah2'), 

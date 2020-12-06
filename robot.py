@@ -306,6 +306,12 @@ def rss_read_mode(sphinx_proc):
         if sleep_enabled:
             sleep_counter_reset()
         fsm_state = 2
+        if (('hi' in utt) or ('hey' in utt) or ('hello' in utt)) and not is_sleeping:
+            answer = 'hey ' + profile.name
+            profile.a_player.play_answer(answer)
+        if is_sleeping:
+            wake_up()
+        return
 
     if is_sleeping:
         wake_up()

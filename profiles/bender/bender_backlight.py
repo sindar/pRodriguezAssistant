@@ -43,8 +43,8 @@ def blink(pixels, pin, mode, timeout = 30):
         phase_2_color = blue
         period = 0.1
     else:
-        back_color = no_color
-        front_color = default_color
+        phase_1_color = no_color
+        phase_2_color = default_color
         period = 0.25
 
     t = 0

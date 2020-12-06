@@ -64,16 +64,3 @@ class AzureTTS:
         else:
             print("\nStatus code: " + str(response.status_code) + "\nSomething went wrong. Check your subscription key and headers.\n")
             return None
-
-# def main(argv):
-#     #print ('Argument List:', str(sys.argv))
-#     tts = AzureTTS()
-#     tts_wav = tts.text_to_speech('Bite my shiny metal ass!')
-
-#     if tts_wav:
-#         aplay_exe = 'aplay -Dplug:default ' + tts_wav
-#         aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
-#         code = aplay_proc.wait()
-
-# if __name__ == "__main__":
-#    main(sys.argv[1:])

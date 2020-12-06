@@ -17,29 +17,6 @@ BACKLIGHT_ENABLED = True
 SLEEP_TASK_ENABLED = True
 UPS_TASK_ENABLED = True
 
-def calc_confirmation():
-    if (time.monotonic_ns() % 3) == 0:
-        return True
-
-if audio_lang == 'ru':
-    from profiles.bender.translation_ru import AudioAndTTS
-    rss_reader = None
-else:
-    from profiles.bender.translation_en import AudioAndTTS
-    from common.rss_reader import RSSReader
-    rss_reader = RSSReader()
-    
-answers = AudioAndTTS.answers
-cloud_tts = AudioAndTTS.cloud_tts
-offline_tts = AudioAndTTS.offline_tts
-
-if recognize_lang == 'ru':
-    from profiles.bender.translation_ru import STTTranslatorRU
-
-from common.music_player import MusicPlayer
-from common.answer_player import AnswerPlayer
-from common.speech_recognizer import PsLiveRecognizer
-
 if BACKLIGHT_ENABLED:
     from profiles.bender.bender_backlight import BacklightControl
     eyes_bl = BacklightControl('EYES')
@@ -48,9 +25,36 @@ else:
     eyes_bl = None
     mouth_bl = None
 
+if audio_lang == 'ru':
+    from profiles.bender.translation_ru import AudioAndTTS
+    rss_reader = None
+    cloud_tts = None
+    offline_tts = 'espeak -p 65 -s 120 -v ru '
+else:
+    from profiles.bender.translation_en import AudioAndTTS
+    from common.rss_reader import RSSReader
+    from common.azure_tts import AzureTTS
+    cloud_tts = AzureTTS(str(pathlib.Path(__file__).parent.absolute()))
+    cloud_tts = None
+    offline_tts = 'flite -voice ' + str(pathlib.Path(__file__).parent.absolute()) + '/resources/en/zk_us_bender.flitevox '
+    rss_reader = RSSReader(eyes_bl)
+    
+answers = AudioAndTTS.answers
+
+if recognize_lang == 'ru':
+    from profiles.bender.translation_ru import STTTranslatorRU
+
+from common.music_player import MusicPlayer
+from common.answer_player import AnswerPlayer
+from common.speech_recognizer import PsLiveRecognizer
+
 a_player = AnswerPlayer(str(pathlib.Path(__file__).parent.absolute()),
                         audio_lang, answers, cloud_tts, offline_tts, eyes_bl=eyes_bl, mouth_bl=mouth_bl)
 m_player = MusicPlayer()
+
+def calc_confirmation():
+    if (time.monotonic_ns() % 3) == 0:
+        return True
 
 exit_actions = {
     **dict.fromkeys([exit_utts + ' program' for exit_utts in ['quit', 'exit', 'quit the', 'exit the']],

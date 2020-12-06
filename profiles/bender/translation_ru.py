@@ -3,9 +3,6 @@
 # project: pRodriguezAssistant
 
 class AudioAndTTS:
-    cloud_tts = None
-    offline_tts = 'espeak -p 65 -s 120 -v ru '
-
     answers = {
         **dict.fromkeys(['reboot', 'shutdown'],
                         (('with_bjah1', 'with_bjah2'), 
