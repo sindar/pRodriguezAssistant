@@ -39,12 +39,13 @@ class AnswerPlayer:
         wav_path = None
         if self.cloud_tts:
             wav_path = self.cloud_tts.text_to_speech(sentence)
-
-        if wav_path:
-            aplay_proc = self.play_wav(wav_path)
         else:
-            aplay_exe = self.offline_tts  + '"' + sentence + '"'             
-            aplay_proc = subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
+            wav_path = '/dev/shm/offline_tts.wav'
+            tts_exe = self.offline_tts + wav_path + ' "' + sentence + '"'
+            tts_proc = subprocess.Popen(["%s" % tts_exe], shell=True, stdout=subprocess.PIPE)
+            code = tts_proc.wait()
+
+        aplay_proc = self.play_wav(wav_path)
         return aplay_proc
 
     def play_answer(self, command, sentence = None):
@@ -71,14 +72,15 @@ class AnswerPlayer:
                 answer_tts = self.calc_answer(answers[1])
                 # Second, trying the cloud TTS
                 aplay_proc = self.play_tts(answer_tts)
-                delay = 0.5
+                delay = None
         else:
             if sentence:
                 # Directly speak the sentence:
                 self.mic_set(0)
+                self.mouth_bl.exec_cmd('ON')
                 aplay_proc = self.play_tts(sentence)
                 bl_command = 'TALK'
-                delay = 0.5
+                delay = None
 
         eyes_bl_proc = None
         mouth_bl_proc = None

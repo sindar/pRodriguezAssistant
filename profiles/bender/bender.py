@@ -29,13 +29,13 @@ if audio_lang == 'ru':
     from profiles.bender.translation_ru import AudioAndTTS
     rss_reader = None
     cloud_tts = None
-    offline_tts = 'espeak -p 65 -s 120 -v ru '
+    offline_tts = 'espeak -p 65 -s 120 -v ru -w '
 else:
     from profiles.bender.translation_en import AudioAndTTS
     from common.rss_reader import RSSReader
     from common.azure_tts import AzureTTS
     cloud_tts = AzureTTS(str(pathlib.Path(__file__).parent.absolute()))
-    offline_tts = 'flite -voice ' + str(pathlib.Path(__file__).parent.absolute()) + '/resources/en/zk_us_bender.flitevox '
+    offline_tts = 'flite -voice ' + str(pathlib.Path(__file__).parent.absolute()) + '/resources/en/zk_us_bender.flitevox -o '
     rss_reader = RSSReader(eyes_bl)
     
 answers = AudioAndTTS.answers
