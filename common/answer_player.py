@@ -56,6 +56,8 @@ class AnswerPlayer:
 
             if command == 'electricity':
                 bl_command = 'PLUGGED_IN'
+            elif command == 'merry xmas':
+                bl_command = 'XMAS'
             else:
                 bl_command = 'TALK'
 
@@ -79,7 +81,6 @@ class AnswerPlayer:
                 self.mic_set(0)
                 self.mouth_bl.exec_cmd('ON')
                 aplay_proc = self.play_tts(sentence)
-                bl_command = 'TALK'
                 delay = None
 
         eyes_bl_proc = None
@@ -89,6 +90,8 @@ class AnswerPlayer:
         if self.eyes_bl:
             if bl_command == 'PLUGGED_IN':
                 eyes_bl_proc = self.eyes_bl.exec_cmd('BLINK_PLUGGED_IN', delay)
+            if bl_command == 'XMAS':
+                eyes_bl_proc = self.eyes_bl.exec_cmd('EYES XMAS', delay)
 
         code = aplay_proc.wait()
 

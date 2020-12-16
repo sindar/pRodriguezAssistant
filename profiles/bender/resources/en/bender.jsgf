@@ -39,7 +39,6 @@ grammar bender;
 <music_player_next> = (next (track | song));
 <music_player_commands> = <music_player_enable> | <music_player_disable> | <music_player_next>;
 
-
 <rss_reader_enable> = (read) [the] (news);
 <rss_reader_disable> = (stop reading)[the][news];
 <rss_reader_next> = (next (article | topic));
@@ -63,12 +62,13 @@ grammar bender;
 <bad_phrase> =  (you are | you're) [very | so] (bad | cruel | evil);
 <sad_phrase> =  (i am | i'm) [very | so] (sad);
 <please_phrase> = please;
+<merry_xmas_phrase> = merry xmas;
 
-<conversation_phrases> = <sad_phrase> | <bad_phrase> | <misc_phrases> | <please_phrase>;
+<conversation_phrases> = <sad_phrase> | <bad_phrase> | <misc_phrases> | <please_phrase> | <merry_xmas_phrase>;
 
 <commands> = <start_command> | <exit_command> | <reboot_command> | <shutdown_command>
                 | <enable_disable_command> | <set_command> | <mode_command>
-                | <misc_phrases> 
+                | <misc_phrases>
                 | <music_player_commands> | <volume_command> | <rss_reader_commands>
                 | <light_commands>;
 

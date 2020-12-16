@@ -54,6 +54,7 @@ class AudioAndTTS:
                                 ('Ow wait. You are seroius, let me laugh even harder. Ahahahaha!')),
         'laugh': (('laugh'),
                 ('Hahaha')),
-        'no audio': (None, None),
-        'rss next': (None, None)
+        'merry xmas': ('xmas', 'Merry Xmas, meatbag!'),
+        'rss next': (None, None),
+        'no audio': (None, None)
     }

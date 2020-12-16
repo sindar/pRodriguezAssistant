@@ -37,12 +37,11 @@ else:
     cloud_tts = AzureTTS(str(pathlib.Path(__file__).parent.absolute()))
     offline_tts = 'flite -voice ' + str(pathlib.Path(__file__).parent.absolute()) + '/resources/en/zk_us_bender.flitevox -o '
     rss_reader = RSSReader(eyes_bl)
-    
+
 answers = AudioAndTTS.answers
 
 if recognize_lang == 'ru':
     from profiles.bender.translation_ru import STTTranslatorRU
-
 from common.music_player import MusicPlayer
 from common.answer_player import AnswerPlayer
 from common.speech_recognizer import PsLiveRecognizer
@@ -99,7 +98,8 @@ only_answer_actions = {
     **dict.fromkeys(['you are bad',"you're bad", 'you are very bad', "you're very bad", 'you are so bad',
                      "you're so bad", 'you are cruel', "you're cruel", 'you are so cruel', "you're so cruel",
                      'you are evil', "you're evil", 'you are so evil', "you're so evil"],
-                    ['laugh', None, None])
+                    ['laugh', None, None]),
+    'merry xmas': ['merry xmas', None, None]
 }
 
 player_actions = {
@@ -141,7 +141,7 @@ mbtcp_light_actions = {
     'turn off the light': ['configuration', lambda: calc_confirmation(), lambda: mbtcp_light.send_command('off')],
     **dict.fromkeys(['turn on the red light', 'set the light to red'],
                     ['configuration', lambda: calc_confirmation(), lambda: mbtcp_light.send_command('red')]),
-    **dict.fromkeys(['turn on the green light', 'set the light to green'], 
+    **dict.fromkeys(['turn on the green light', 'set the light to green'],
                     ['configuration', lambda: calc_confirmation(), lambda: mbtcp_light.send_command('green')]),
     **dict.fromkeys(['turn on the blue light', 'set the light to blue'],
                     ['configuration', lambda: calc_confirmation(), lambda: mbtcp_light.send_command('blue')]),

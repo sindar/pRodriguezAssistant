@@ -25,6 +25,7 @@ no_color = (0, 0, 0)
 orange = (255,165,0)
 darkorange = (255,140,0)
 blue = (0,0,255)
+red = (255,0,0)
 revert_row1 = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
 
 is_talking = False
@@ -66,6 +67,10 @@ def talk(pixels, pin, mode, timeout = 30):
         back_color = darkorange
         front_color = blue
         period = 0.1
+    elif mode == 'xmas':
+        back_color = blue
+        front_color = red
+        period = 0.2
     else:
         back_color = no_color
         front_color = default_color
@@ -129,6 +134,7 @@ def sin_cos_graph(pixels, pin, func, front_color, back_color):
 
 class BacklightControl:
     def __init__(self, strip):
+        global red
         self.pixels = None
         if strip in strips:
             self.__init_pixels(strips[strip])
@@ -138,6 +144,8 @@ class BacklightControl:
             'ON': lambda: fill_pixels(self.pixels, default_color),
             'OFF': lambda: fill_pixels(self.pixels, no_color),
             'TALK': lambda: talk(self.pixels, self.pin, 'normal'),
+            'XMAS': lambda: talk(self.pixels, self.pin, 'xmas'),
+            'EYES XMAS': lambda: fill_pixels(self.pixels, red),
             'PLUGGED_IN': lambda: talk(self.pixels, self.pin, 'plugged_in'),
             'BLINK_NORMAL': lambda: blink(self.pixels, self.pin, 'normal'),
             'BLINK_PLUGGED_IN': lambda: blink(self.pixels, self.pin, 'plugged_in')
