@@ -27,9 +27,11 @@ else:
 
 if audio_lang == 'ru':
     from profiles.bender.translation_ru import AudioAndTTS
+    from common.rss_reader import RSSReader
     rss_reader = None
     cloud_tts = None
-    offline_tts = 'espeak -p 65 -s 120 -v ru -w '
+    offline_tts = 'espeak -p 65 -s 150 -v ru -w '
+    rss_reader = RSSReader(str(pathlib.Path(__file__).parent.absolute()) + '/rss_feeds_ru.csv', eyes_bl)
 else:
     from profiles.bender.translation_en import AudioAndTTS
     from common.rss_reader import RSSReader

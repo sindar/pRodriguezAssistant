@@ -34,7 +34,7 @@ def fill_pixels(pixels, color):
     pixels.fill(color)
     pixels.show()
 
-def blink(pixels, pin, mode, timeout = 30):
+def blink(pixels, pin, mode, timeout = 300):
     if pin != board.D21:
         print('Teeth do not support blink command!')
         return
@@ -58,7 +58,7 @@ def blink(pixels, pin, mode, timeout = 30):
         time.sleep(period)
     t += period * 4
 
-def talk(pixels, pin, mode, timeout = 30):
+def talk(pixels, pin, mode, timeout = 300):
     if pin != board.D18:
         print('Eyes do not support talk command!')
         return

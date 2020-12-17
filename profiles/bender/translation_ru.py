@@ -36,7 +36,7 @@ class AudioAndTTS:
                     ('Убей всех человекоа... Должен убить всех человеков...', 'Эй детка, Хочешь убить всех человеков?')),
         'wake up': (('most_wonderful_dream'),
                 ('Мне приснился чудесный сон! И ты там был!')),
-        **dict.fromkeys(['enable', 'disable','set', 'configuration', 'player'], 
+        **dict.fromkeys(['enable', 'disable','set', 'configuration', 'player', 'rss start'], 
                         (('can_do', 'yes_sir'),
                         ('Будет сделано!', 'Да сэр!'))),
         'how are you': (('none_of_your_business', 'right_now_i_feel_sorry_for_you', 'so_embarrassed'),
@@ -50,7 +50,9 @@ class AudioAndTTS:
                                 ('О, ты серьёзно, тогда я буду смеяться ещё сильнее. Ахахахахаха!')),
         'laugh': (('laugh'),
                 ('Хахаха')),
-        'no audio': (('silence'), None)
+        'no audio': (None, None),
+        'rss next article': (None, None),
+        'rss next feed': (None, None),
     }
 
 class STTTranslatorRU:
@@ -105,5 +107,9 @@ class STTTranslatorRU:
         u'отключи сон': 'disable sleep',
         u'включи засыпание': 'enable sleep',
         u'отключи засыпание': 'disable sleep',
-        u'выход из программы': 'exit the program'
+        u'выход из программы': 'exit the program',
+        **dict.fromkeys([u'расскажи новости', u'читай новости', u'прочти новости'], 'read news'),
+        u'следующая новость': 'next topic',
+        u'следующий канал': 'next feed',
+        u'хватит новостей': 'stop reading'
     }
