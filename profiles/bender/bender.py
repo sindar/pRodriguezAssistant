@@ -115,7 +115,9 @@ rss_actions = {
     **dict.fromkeys(['read the news', 'read news'],
                     ['rss start', lambda: rss_reader.reset(), lambda: a_player.play_answer(None, rss_reader.read_entry())]),
     **dict.fromkeys(['next article', 'next topic'],
-                    ['rss next', None, lambda: a_player.play_answer(None, rss_reader.read_entry())]),
+                    ['rss next article', None, lambda: a_player.play_answer(None, rss_reader.read_entry())]),
+    **dict.fromkeys(['next feed', 'next channel'],
+                    ['rss next feed', None, lambda: a_player.play_answer(None, rss_reader.next_feed())]),
     **dict.fromkeys(['stop reading', 'stop reading news', 'stop reading the news'],
                     ['rss end', None, None])
 }

@@ -72,7 +72,7 @@ def main(argv):
                                          profile.recognize_lang, profile.name)
     sphinx_proc = subprocess.Popen(["%s" % speech_recognizer.cmd_line], shell=True, stdout=subprocess.PIPE)
     print(["%s" % speech_recognizer.cmd_line])
-   
+
     time.sleep(10)
 
     expected_sphinx_pid = sphinx_proc.pid + 1
@@ -301,7 +301,7 @@ def rss_read_mode(sphinx_proc):
         except KeyError as e:
             utt = 'unrecognized'
             #raise ValueError('Undefined key to translate: {}'.format(e.args[0]))
-    
+
     if (profile.name in utt):
         if sleep_enabled:
             sleep_counter_reset()
@@ -332,7 +332,7 @@ def rss_read_mode(sphinx_proc):
                 fsm_state = fsm_transition[answer]
             except:
                 fsm_state = 6
-            
+
             profile.a_player.play_answer(answer)
 
             if after_action:

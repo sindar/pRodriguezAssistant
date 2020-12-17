@@ -1,4 +1,5 @@
 import feedparser
+import re
 
 class RSSReader:
     def __init__(self, feeds_file, eyes_bl = None):
@@ -27,11 +28,10 @@ class RSSReader:
             self.feeds_count = len(self.feeds_list)
 
     def next_feed(self):
-        if self.current_feed_index < self.feeds_count:
+        if self.current_feed_index < (self.feeds_count - 1):
             self.current_feed_index += 1
             self.current_entry = 0
-            self.current_news_feed = feedparser.parse(self.feeds_list[self.current_feed_index][1])
-            self.entries_count = len(self.current_news_feed.entries)
+            self.current_news_feed = None
         else:
             self.reset()
         return self.read_entry()
@@ -47,14 +47,18 @@ class RSSReader:
                 self.current_news_feed = feedparser.parse(self.feeds_list[self.current_feed_index][1])
                 self.entries_count = len(self.current_news_feed.entries)
 
-            result = None
-            if self.current_entry <= self.entries_count:
+            if self.current_entry < (self.entries_count - 1):
                 entry = self.current_news_feed.entries[self.current_entry]
+                if self.current_entry == 0:
+                    result = self.feeds_list[self.current_feed_index][0] + '... '
+                else:
+                    result = ''
+                result += str(entry.title) + '. ' + str(entry.summary_detail['value'])
                 self.current_entry += 1
-                result = str(entry.title) + '. ' + str(entry.summary_detail['value'])
 
             if bl_proc:
                 bl_proc.terminate()
                 self.eyes_bl.exec_cmd('ON')
 
-        return result
+        print(result)
+        return re.sub("`|’|‘", " ", result)

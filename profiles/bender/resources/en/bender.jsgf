@@ -41,8 +41,9 @@ grammar bender;
 
 <rss_reader_enable> = (read) [the] (news);
 <rss_reader_disable> = (stop reading)[the][news];
-<rss_reader_next> = (next (article | topic));
-<rss_reader_commands> = <rss_reader_enable> | <rss_reader_disable> | <rss_reader_next>;
+<rss_reader_next_article> = (next (article | topic));
+<rss_reader_next_feed> = (next (feed | channel));
+<rss_reader_commands> = <rss_reader_enable> | <rss_reader_disable> | <rss_reader_next_article> | <rss_reader_next_feed>;
 
 <volume_command> = (increase | decrease)(volume) | (volume)(increase | decrease)  | (louder | quieter);
 
