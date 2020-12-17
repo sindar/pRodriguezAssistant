@@ -81,6 +81,7 @@ class AnswerPlayer:
                 self.mic_set(0)
                 self.mouth_bl.exec_cmd('ON')
                 aplay_proc = self.play_tts(sentence)
+                bl_command = 'TALK'
                 delay = None
 
         eyes_bl_proc = None

@@ -36,7 +36,7 @@ else:
     from common.azure_tts import AzureTTS
     cloud_tts = AzureTTS(str(pathlib.Path(__file__).parent.absolute()))
     offline_tts = 'flite -voice ' + str(pathlib.Path(__file__).parent.absolute()) + '/resources/en/zk_us_bender.flitevox -o '
-    rss_reader = RSSReader(eyes_bl)
+    rss_reader = RSSReader(str(pathlib.Path(__file__).parent.absolute()) + '/rss_feeds_en.csv', eyes_bl)
 
 answers = AudioAndTTS.answers
 
