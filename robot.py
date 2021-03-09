@@ -11,6 +11,7 @@ import psutil
 from common import power
 from common.speech_recognizer import PsLiveRecognizer
 from profiles.bender import bender as profile
+from common import server
 
 main_thread_is_running = True
 
@@ -24,6 +25,8 @@ sleep_counter_lock = threading.Lock()
 UPS_TASK_ENABLED = profile.UPS_TASK_ENABLED
 UPS_TASK_INTERVAL = 2
 if UPS_TASK_ENABLED: from common import ups_lite
+
+SERVER_TASK_ENABLED = profile.SERVER_TASK_ENABLED
 
 fsm_state = 1
 fsm_transition = {
@@ -66,6 +69,12 @@ def main(argv):
         sleep_thread = threading.Thread(target=sleep_task)
         sleep_thread.daemon = True
         sleep_thread.start()
+
+    if SERVER_TASK_ENABLED:
+        server._RequestHandler.POST_callback = profile.POST_handler
+        server_thread = threading.Thread(target=server.run_server)
+        server_thread.daemon = True
+        server_thread.start()
 
     speech_recognizer = PsLiveRecognizer(str(pathlib.Path().absolute()) + '/common/resources/',
                                          str(pathlib.Path().absolute()) + '/profiles/' + profile.name + '/resources/',

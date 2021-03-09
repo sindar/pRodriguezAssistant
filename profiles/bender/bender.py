@@ -3,6 +3,7 @@
 # project: pRodriguezAssistant
 from common import volume_control
 from common import mbtcp_light
+
 import pathlib
 import time
 
@@ -12,10 +13,12 @@ recognize_lang ='en'
 sleep_enable_set = None
 confirmation_phrase = 'please'
 vol_ctrl = volume_control.VolumeControl()
+http_action = None
 
 BACKLIGHT_ENABLED = True
 SLEEP_TASK_ENABLED = True
 UPS_TASK_ENABLED = True
+SERVER_TASK_ENABLED = True
 
 if BACKLIGHT_ENABLED:
     from profiles.bender.bender_backlight import BacklightControl
@@ -51,6 +54,14 @@ from common.speech_recognizer import PsLiveRecognizer
 a_player = AnswerPlayer(str(pathlib.Path(__file__).parent.absolute()),
                         audio_lang, answers, cloud_tts, offline_tts, eyes_bl=eyes_bl, mouth_bl=mouth_bl)
 m_player = MusicPlayer()
+
+def POST_handler(type):
+    if type == 'cigar':
+        a_player.play_answer('smoking')
+    elif type == 'liquor':
+        a_player.play_answer('drinking')
+    elif type == 'jack':
+        a_player.play_answer('electricity')
 
 def calc_confirmation():
     if (time.monotonic_ns() % 3) == 0:
