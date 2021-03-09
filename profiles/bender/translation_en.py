@@ -44,6 +44,7 @@ class AudioAndTTS:
         'how are you': (('none_of_your_business', 'right_now_i_feel_sorry_for_you', 'so_embarrassed'),
                     ('None of your business!', 'Right now I feel sorry for you',
                             'I\'m so embarrassed, I wish everybody else was dead')),
+        'insert liquor': (('insert_liquor'), ('Please insert liquor!')),
         'smoking': (('smoking'), None),
         'drinking': (('drinking'), None),
         'electricity': (('plugged_in'), None),

@@ -56,7 +56,9 @@ a_player = AnswerPlayer(str(pathlib.Path(__file__).parent.absolute()),
 m_player = MusicPlayer()
 
 def POST_handler(type):
-    if type == 'cigar':
+    if type == 'connect':
+        a_player.play_answer('insert liquor')
+    elif type == 'cigar':
         a_player.play_answer('smoking')
     elif type == 'liquor':
         a_player.play_answer('drinking')
