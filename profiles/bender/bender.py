@@ -15,10 +15,10 @@ confirmation_phrase = 'please'
 vol_ctrl = volume_control.VolumeControl()
 http_action = None
 
-BACKLIGHT_ENABLED = True
-SLEEP_TASK_ENABLED = True
-UPS_TASK_ENABLED = True
-SERVER_TASK_ENABLED = True
+BACKLIGHT_ENABLED = False
+SLEEP_TASK_ENABLED = False
+UPS_TASK_ENABLED = False
+SERVER_TASK_ENABLED = False
 
 if BACKLIGHT_ENABLED:
     from profiles.bender.bender_backlight import BacklightControl
@@ -40,6 +40,8 @@ else:
     from common.rss_reader import RSSReader
     from common.azure_tts import AzureTTS
     cloud_tts = AzureTTS(str(pathlib.Path(__file__).parent.absolute()))
+    if cloud_tts.subscription_key == None:
+        cloud_tts = None
     offline_tts = 'flite -voice ' + str(pathlib.Path(__file__).parent.absolute()) + '/resources/en/zk_us_bender.flitevox -o '
     rss_reader = RSSReader(str(pathlib.Path(__file__).parent.absolute()) + '/rss_feeds_en.csv', eyes_bl)
 
