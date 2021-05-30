@@ -70,8 +70,8 @@ class BacklightControl:
             'BLINK_PLUGGED_IN': lambda: blink('plugged_in')
         }
 
-    def __del__(self):
-        self.pixels.deinit()
+    # def __del__(self):
+    #     self.pixels.deinit()
 
     def exec_cmd(self, command, delay = None):
         if delay:
