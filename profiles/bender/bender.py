@@ -15,14 +15,15 @@ confirmation_phrase = 'please'
 vol_ctrl = volume_control.VolumeControl()
 http_action = None
 
-BACKLIGHT_ENABLED = False
+BACKLIGHT_ENABLED = True
 SLEEP_TASK_ENABLED = False
 UPS_TASK_ENABLED = False
 SERVER_TASK_ENABLED = False
 
 if BACKLIGHT_ENABLED:
-    from profiles.bender.bender_backlight import BacklightControl
-    eyes_bl = BacklightControl('EYES')
+    from profiles.bender.bender_backlight_apa import BacklightControl
+    # eyes_bl = BacklightControl('EYES')
+    eyes_bl = None
     mouth_bl = BacklightControl('MOUTH')
 else:
     eyes_bl = None

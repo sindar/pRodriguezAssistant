@@ -2,6 +2,7 @@
 # project: pRodriguezAssistant
 import board
 import neopixel
+import apa102
 import time
 import math
 from multiprocessing import Process
@@ -29,6 +30,8 @@ red = (255,0,0)
 revert_row1 = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
 
 is_talking = False
+
+apa_dev = apa102.APA102(num_led=3)
 
 def fill_pixels(pixels, color):
     pixels.fill(color)
