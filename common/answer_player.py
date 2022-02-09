@@ -79,7 +79,8 @@ class AnswerPlayer:
             if sentence:
                 # Directly speak the sentence:
                 self.mic_set(0)
-                self.mouth_bl.exec_cmd('ON')
+                if self.mouth_bl:
+                    self.mouth_bl.exec_cmd('ON')
                 aplay_proc = self.play_tts(sentence)
                 bl_command = 'TALK'
                 delay = None
