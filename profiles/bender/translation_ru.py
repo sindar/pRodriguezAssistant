@@ -41,6 +41,7 @@ class AudioAndTTS:
                         ('Будет сделано!', 'Да сэр!'))),
         'how are you': (('none_of_your_business', 'right_now_i_feel_sorry_for_you', 'so_embarrassed'),
                     ('Не твоё дело!', 'Сейчас я сочувствую тебе.', 'Мне так стыдно, хочу чтоб все умерли.')),
+        'insert liquor': (('insert_liquor'), ('Пожалуйста налейте ликёр!')),
         'electricity': (('plugged_in'), None),
         'unrecognized': (('beat_children', 'compare_your_lives_to_mine'),
                         ('Если хочешь избить детей, сделай это сам.', 'Сравните свои жизни с моей, а затем убейте себя!')),
