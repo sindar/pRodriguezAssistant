@@ -137,9 +137,13 @@ profiles/bender/resources/ru/lm/
 # content below from: https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
 # General
 .DS_Store
+._.DS_Store
 .AppleDouble
 .LSOverride
 .vscode/settings.json
 
 #Azure subscription keys
 subscription*.key
+
+# Idea
+.idea/

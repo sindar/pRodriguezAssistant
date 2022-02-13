@@ -20,4 +20,4 @@ sgmllib3k==1.0.0
 smbus==1.1.post2
 spidev==3.5
 sysv-ipc==1.0.1
-urllib3==1.26.2
+urllib3==1.26.5
