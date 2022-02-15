@@ -2,13 +2,16 @@
 # project: pRodriguezAssistant
 import board
 import neopixel
+import apa102
 import time
 import math
 from multiprocessing import Process
 
 #parameters list: pin, count, brightness
-eyes_leds = (board.D21, 1, 1) # two eyes in parallel
-mouth_leds = (board.D18, 18, 0.5)
+EYE_LED = board.D21
+MOUTH_LED = board.D18
+eyes_leds = (EYE_LED, 1, 1) # two eyes in parallel
+mouth_leds = (MOUTH_LED, 18, 0.5)
 
 strips = {
     'EYES': eyes_leds,
@@ -30,12 +33,14 @@ revert_row1 = {0: 5, 1: 4, 2: 3, 3: 2, 4: 1, 5: 0}
 
 is_talking = False
 
+apa_dev = apa102.APA102(num_led=3)
+
 def fill_pixels(pixels, color):
     pixels.fill(color)
     pixels.show()
 
 def blink(pixels, pin, mode, timeout = 300):
-    if pin != board.D21:
+    if pin != EYE_LED:
         print('Teeth do not support blink command!')
         return
 
@@ -59,7 +64,7 @@ def blink(pixels, pin, mode, timeout = 300):
     t += period * 4
 
 def talk(pixels, pin, mode, timeout = 300):
-    if pin != board.D18:
+    if pin != MOUTH_LED:
         print('Eyes do not support talk command!')
         return
 
@@ -98,7 +103,7 @@ def talk(pixels, pin, mode, timeout = 300):
         t += period * 4
 
 def fill_range(pixels, pin, start, end, front_color, back_color = None):
-    if pin != board.D18:
+    if pin != MOUTH_LED:
         print('Eyes do not support talk command!')
         return
 
@@ -109,7 +114,7 @@ def fill_range(pixels, pin, start, end, front_color, back_color = None):
     pixels.show()
 
 def sin_cos_graph(pixels, pin, func, front_color, back_color):
-    if pin != board.D18:
+    if pin != MOUTH_LED:
         print('Eyes do not support talk command!')
         return
     if func != math.sin and func != math.cos:
