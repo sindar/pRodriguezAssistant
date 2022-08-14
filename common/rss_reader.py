@@ -1,10 +1,15 @@
 import feedparser
 import re
+from common.answer_player import AnswerPlayer
+from nltk import tokenize
+import re
+import time
 
 class RSSReader:
-    def __init__(self, feeds_file, eyes_bl = None):
+    def __init__(self, feeds_file, a_player = None, eyes_bl = None):
         self.eyes_bl = eyes_bl
         self.reset(feeds_file)
+        self.a_player = a_player
 
     def read_feeds(self):
         feeds_list = []
@@ -61,4 +66,12 @@ class RSSReader:
                 self.eyes_bl.exec_cmd('ON')
 
         print(result)
+        #self.a_player.play_answer(None, re.sub("`|’|‘", " ", result))
+        # for sentence in tokenize.sent_tokenize(re.sub("`|’|‘", " ", result)):
+        
+        # sentences = re.split(r' *[\.\?!][\'"\)\]]* *', result)
+        # for sentence in sentences:
+        #     if sentence and not sentence.isspace():
+        #         self.a_player.play_answer(None, sentence)
+        
         return re.sub("`|’|‘", " ", result)

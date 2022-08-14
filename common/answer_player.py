@@ -8,7 +8,7 @@ import os
 class AnswerPlayer:
     lang = 'en'
     def __init__(self, profile_path, lang, answers, cloud_tts, offline_tts, mouth_bl, eyes_bl):
-        self.mic_gain = 30
+        self.mic_gain = 20
         self.mic_set(self.mic_gain)
         self.profile_path = profile_path
         self.audio_path = profile_path + '/audio/'
@@ -35,13 +35,21 @@ class AnswerPlayer:
         aplay_exe = 'aplay -Dplug:default ' + str(path)
         return subprocess.Popen(["%s" % aplay_exe], shell=True, stdout=subprocess.PIPE)
 
-    def play_tts(self, sentence):
-        wav_path = None
+    def play_tts(self, sentence, wav_path = None):
         if self.cloud_tts:
             wav_path = self.cloud_tts.text_to_speech(sentence)
         else:
-            wav_path = '/dev/shm/offline_tts.wav'
-            tts_exe = self.offline_tts + wav_path + ' "' + sentence + '"'
+            if wav_path == None:
+                wav_path = '/dev/shm/offline_tts.wav'
+
+            if 'RHVoice' in self.offline_tts:
+                text_proc = subprocess.Popen(["echo %s > /dev/shm/offline_tts.txt" % sentence], shell=True, stdout=subprocess.PIPE) 
+                code = text_proc.wait()
+                tts_exe = self.offline_tts + ' -i ' + '/dev/shm/offline_tts.txt' + ' -o ' +  wav_path
+                print("tts_exe: " + tts_exe)
+            else:
+                tts_exe = self.offline_tts + wav_path + ' "' + sentence + '"'
+
             tts_proc = subprocess.Popen(["%s" % tts_exe], shell=True, stdout=subprocess.PIPE)
             code = tts_proc.wait()
 
@@ -73,14 +81,14 @@ class AnswerPlayer:
                 self.mic_set(0)
                 answer_tts = self.calc_answer(answers[1])
                 # Second, trying the cloud TTS
-                aplay_proc = self.play_tts(answer_tts)
+                aplay_proc = self.play_tts(answer_tts, wav_path)
                 delay = None
         else:
             if sentence:
                 # Directly speak the sentence:
                 self.mic_set(0)
                 if self.mouth_bl:
-                    self.mouth_bl.exec_cmd('ON')
+                     self.mouth_bl.exec_cmd('ON')
                 aplay_proc = self.play_tts(sentence)
                 bl_command = 'TALK'
                 delay = None

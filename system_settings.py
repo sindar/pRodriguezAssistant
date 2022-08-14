@@ -3,7 +3,7 @@
 # project: pRodriguezAssistant
 
 RECORD_MIXER = 'Mic'
-RECORD_DEVICE = None #example: plughw:1,0
+RECORD_DEVICE = 'plughw:1,0' #example: plughw:1,0
 
 SPEAKER_MIXER = 'Speaker'
 #The scale of the speaker voulme modes and step depends on device

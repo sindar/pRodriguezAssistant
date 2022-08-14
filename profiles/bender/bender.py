@@ -8,22 +8,25 @@ import pathlib
 import time
 
 name = 'bender'
-audio_lang = 'en'
-recognize_lang ='en'
+audio_lang = 'ru'
+recognize_lang ='ru'
 sleep_enable_set = None
 confirmation_phrase = 'please'
 vol_ctrl = volume_control.VolumeControl()
 http_action = None
 
 BACKLIGHT_ENABLED = True
-SLEEP_TASK_ENABLED = True
-UPS_TASK_ENABLED = True
+SLEEP_TASK_ENABLED = False
+UPS_TASK_ENABLED = False
 SERVER_TASK_ENABLED = True
 
 if BACKLIGHT_ENABLED:
     from profiles.bender.bender_backlight import BacklightControl
     eyes_bl = BacklightControl('EYES')
+    #eyes_bl = None
     mouth_bl = BacklightControl('MOUTH')
+    # eyes_bl = mouth_bl
+    #mouth_bl = None
 else:
     eyes_bl = None
     mouth_bl = None
@@ -33,15 +36,17 @@ if audio_lang == 'ru':
     from common.rss_reader import RSSReader
     rss_reader = None
     cloud_tts = None
-    offline_tts = 'espeak -p 65 -s 150 -v ru -w '
+    # offline_tts = 'espeak-ng -p 65 -s 150 -v ru -w '
+    offline_tts = 'RHVoice-test -p vitaliy '
     rss_reader = RSSReader(str(pathlib.Path(__file__).parent.absolute()) + '/rss_feeds_ru.csv', eyes_bl)
 else:
     from profiles.bender.translation_en import AudioAndTTS
     from common.rss_reader import RSSReader
     from common.azure_tts import AzureTTS
-    cloud_tts = AzureTTS(str(pathlib.Path(__file__).parent.absolute()))
-    if cloud_tts.subscription_key == None:
-        cloud_tts = None
+    #cloud_tts = AzureTTS(str(pathlib.Path(__file__).parent.absolute()))
+    #if cloud_tts.subscription_key == None:
+    #    cloud_tts = None
+    cloud_tts = None
     offline_tts = 'flite -voice ' + str(pathlib.Path(__file__).parent.absolute()) + '/resources/en/zk_us_bender.flitevox -o '
     rss_reader = RSSReader(str(pathlib.Path(__file__).parent.absolute()) + '/rss_feeds_en.csv', eyes_bl)
 
@@ -173,7 +178,7 @@ actions = {
     **volume_actions,
     **power_actions,
     **only_answer_actions,
-    **player_actions,
+    # **player_actions,
     **rss_actions,
     **sleep_actions,
     **repeated_keyphrase_actions,
