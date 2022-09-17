@@ -1,4 +1,4 @@
-## Your rude personal ASSistant:) [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/L3L32CDN6) <br> 
+## Your rude personal ASSistant:)<br> 
 A Python version using pocketsphix.<br>
 Work in progress(planned for release in 2096)...<br>
 
